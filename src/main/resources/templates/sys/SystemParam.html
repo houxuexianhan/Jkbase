@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 
+</head>
+<body >
+ <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        	系统参数管理
+        <small>对系统参数配置设置</small>
+        <!-- Button trigger modal -->
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>主页</a></li>
+        <li>系统管理</li>
+        <li class="active">系统参数管理</li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box" id="rolefunction_box">
+            <div class="box-header">
+              <h3 class="box-title"><span style="color: red;">在对系统参数修改时请慎重，否则很可能会导致系统功能异常！</span></h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+            	<form id="formParams" action="post">
+            	<table class="table table-bordered table-striped">
+            		<thead><tr><th>参数名</th><th>参数值</th><th>说明</th></tr></thead>
+            		<tbody>
+            			<tr>
+	            			<td>添加用户时的默认密码</td>
+	            			<td><input type="text" name="default_password" value="${default_password!'888888'}" style="width:100%;"/></td>
+	            			<td>在添加用户以及重置密码时使用的默认密码,可在用户个人中心中自行修改</td>
+            			</tr>
+            			<tr>
+	            			<td>注册企业用户时所绑定的默认单位部门ID</td>
+	            			<td><input type="number" name="default_member_companyid" value="${default_member_companyid!'34'}" style="width:100%;"/></td>
+	            			<td>注册时用户所属的默认单位部门，可在用户个人中心中自行修改</td>
+            			</tr>
+            			<tr>
+	            			<td>注册企业用户时所分配的默认用户角色ID</td>
+	            			<td><input type="number" name="default_member_user_role" value="${default_member_user_role!'23'}" style="width:100%;"/></td>
+	            			<td>该角色拥有的权限有限，通常只有查看企业信息的权限</td>
+            			</tr>
+            			<tr>
+	            			<td>企业用户审核通过后默认被分配的用户角色ID</td>
+	            			<td><input type="number" name="default_member_approve_userrole" value="${default_member_approve_userrole!'22'}" style="width:100%;"/></td>
+	            			<td>该角色拥有企业管理权限，如可以注册车辆查看营收情况等</td>
+            			</tr>
+            			<tr>
+	            			<td>企业用户审核通过后<b>下属单位</b>默认被分配的用户角色ID</td>
+	            			<td><input type="number" name="default_member_approve_childrole" value="${default_member_approve_childrole!'24'}" style="width:100%;"/></td>
+	            			<td>该角色拥有企业管理权限，如可以注册车辆查看营收情况等</td>
+            			</tr>
+            			<tr>
+	            			<td>用户头像上传路径</td>
+	            			<td><input type="text" name="resources_upload_path" value="${resources_upload_path!'/resources/upload/userImg/'}" style="width:100%;"/></td>
+	            			<td>必须以‘/resources/’路径开头</td>
+            			</tr>
+            			<tr>
+	            			<td>三证合一（组织机构）扫描件上传路径</td>
+	            			<td><input type="text" name="resources_upload_path_agency" value="${resources_upload_path_agency!'/resources/upload/agency/'}" style="width:100%;"/></td>
+	            			<td>必须以‘/resources/’路径开头</td>
+            			</tr>
+            			<tr>
+	            			<td>登录验证失败的次数</td>
+	            			<td><input type="number" name="login_failure_count" value="${login_failure_count!'5'}" style="width:100%;"/></td>
+	            			<td>登录验证失败的次数，失败后会弹出验证码加强验证</td>
+            			</tr>
+            			<tr><td colspan="2" align="center"><span style="font-weight: bolder;">邮件服务</span></td></tr>
+            			<tr>
+	            			<td>邮件服务器主机(SMTP)</td>
+	            			<td><input type="text" name="mail_host" value="${mail_host!'smtp.163.com'}" style="width:100%;"/></td>
+	            			<td>邮件服务器主机host，目前只支持SMTP协议(可以是163或者qq)</td>
+            			</tr>
+            			<tr>
+	            			<td>邮件服务器端口</td>
+	            			<td><input type="number" name="mail_port" value="${mail_port!'25'}" style="width:100%;"/></td>
+	            			<td>邮件服务器端口</td>
+            			</tr>
+            			<tr>
+	            			<td>邮件服务登录账号</td>
+	            			<td><input type="email" name="mail_username" value="${mail_username!'username@163.com'}" style="width:100%;"/></td>
+	            			<td>登录邮件服务器的账号，例如username@163.com</td>
+            			</tr>
+            			<tr>
+	            			<td>邮件服务登录密码</td>
+	            			<td><input type="password" name="mail_password" value="${mail_password!'234'}" style="width:100%;"/></td>
+	            			<td>登录邮件服务器的密码，该密码通常是通过短信动态授权第三方登录的密码</td>
+            			</tr>
+            			<tr>
+	            			<td>连接服务器超时(毫秒)</td>
+	            			<td><input type="number" name="mail_smtp_timeout" value="${mail_smtp_timeout!'25000'}" style="width:100%;"/></td>
+	            			<td>使用账号密码登录邮件服务器连接超时(毫秒)</td>
+            			</tr>
+            			<tr>
+	            			<td>邮件的发送账号</td>
+	            			<td><input type="email" name="mail_from" value="${mail_from!'username@163.com'}" style="width:100%;"/></td>
+	            			<td>邮件的发送账号，用于系统发送邮件的账号，例如username@163.com</td>
+            			</tr>
+            			<tr>
+	            			<td>发送测试邮件账号，看配置是否正确</td>
+	            			<td><input type="email" id="mailTo" placeholder="example@163.com" style="width:100%;"/></td>
+	            			<td><button type="button" class="btn btn-primary" onclick="sendTestMail()">发送测试邮件</button></td>
+            			</tr>
+            			<tr><td colspan="3" align="center">
+            				<#if f63?? &&f63.access>
+            				<button type="button" class="btn btn-primary" onclick="saveParams(63)">${f63.fName}</button>
+            				</#if>
+            				<button type="button" class="btn btn-primary" onclick="$('#formParams')[0].reset()">重置</button>
+            			</td></tr>
+            		</tbody>
+				</table>
+				</form>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+<script>
+$(document).ready(function() {
+});
+var regMail = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+/* 功能 */
+function saveParams(fid){
+	if(confirm("更改参数设置很有可能会导致系统功能异常(如果出现问题，请联系技术人员)，确定要保存更改吗？"))
+    {
+		var from = $('#formParams input[name=mail_from]').val();
+		var username = $('#formParams input[name=mail_username]').val();
+		if(!regMail.test(from) || !regMail.test(username)){
+			alert('邮箱格式不正确，请输入有效的邮件账号！');
+			return ;
+		}
+		var data = $('#formParams').serializeArray();
+		var obj=new Object(); 
+		$.each(data,function(index,param){  
+	        if(!(param.name in obj)){  
+	            obj[param.name]=param.value;  
+	        }  
+	    });  
+		$.ajax({
+	        type: "POST",
+	        url: "SysMgr/params_modify.do?fid="+fid,
+	        contentType: "application/json; charset=utf-8",
+	        data: JSON.stringify(obj),
+	        dataType: "json",
+	        success: function (message) {
+	            alert(message.info);
+	        },
+	        error: function (message) {
+	        	alert(message);
+	        }
+	    });
+    }
+}
+function sendTestMail(){
+	var to = $('#mailTo').val();
+	var from = $('#formParams input[name=mail_from]').val();
+	var username = $('#formParams input[name=mail_username]').val();
+	var password = $('#formParams input[name=mail_password]').val();
+	var host  = $('#formParams input[name=mail_host]').val();
+	var port  = $('#formParams input[name=mail_port]').val();
+	if(!regMail.test(to) || !regMail.test(from) || !regMail.test(username)){
+		alert('邮箱格式不正确，请输入有效的邮件账号！');
+		return ;
+	}
+	var p = {mail_host:host,mail_port:port,mail_username:username,mail_password:password,mail_from:from,mail_to:to};
+	$.post("SysMgr/params_sendTestMail.do",p,function(data){
+		data = eval('('+data+')');
+		alert(data.info);
+	});
+}
+</script>
+</body>
+</html>

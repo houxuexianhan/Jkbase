@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jack.jkbase.mapper.SysCompanyMapper" >
+  <resultMap id="BaseResultMap" type="com.jack.jkbase.entity.ViewSysCompany" >
+    <id column="CompanyID" property="companyid" jdbcType="INTEGER" />
+    <result column="C_CName" property="cCname" jdbcType="NVARCHAR" />
+    <result column="C_ParentID" property="cParentid" jdbcType="INTEGER" />
+    <result column="C_ShowOrder" property="cShoworder" jdbcType="INTEGER" />
+    <result column="C_Level" property="cLevel" jdbcType="INTEGER" />
+    <result column="C_ChildCount" property="cChildcount" jdbcType="INTEGER" />
+    <result column="C_AreaId" property="cAreaid" jdbcType="INTEGER" />
+    <!--  -->
+    <result column="C_AreaName" property="cAreaname" />
+     <association property="area" javaType="com.jack.jkbase.entity.SysArea"
+    	 resultMap="com.jack.jkbase.mapper.SysAreaMapper.BaseResultMap"/>
+    	 
+  </resultMap>
+  <!-- selectAll -->
+  <select id="selectAll" resultMap="BaseResultMap">
+  	select * from View_sys_Company order by C_Level,C_ShowOrder
+  </select>
+  <!-- 删除本身以及子节点 -->
+  <delete id="deleteAllByParent" parameterType="java.lang.Integer">
+  	  delete from sys_Company where CompanyID = #{param1} or C_ParentID = #{param1}
+  </delete>
+  
+  <!-- 自动 -->
+  <sql id="Base_Column_List" >
+    CompanyID, C_CName, C_ParentID, C_ShowOrder, C_Level, C_ChildCount, C_AreaId
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select *
+    from View_sys_Company
+    where CompanyID = #{companyid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_Company
+    where CompanyID = #{companyid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="companyid">
+    insert into sys_Company ( C_CName, C_ParentID, 
+      C_ShowOrder, C_Level, C_ChildCount, 
+      C_AreaId)
+    values (#{cCname,jdbcType=NVARCHAR}, #{cParentid,jdbcType=INTEGER}, 
+      #{cShoworder,jdbcType=INTEGER}, #{cLevel,jdbcType=INTEGER}, #{cChildcount,jdbcType=INTEGER}, 
+      #{cAreaid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="companyid">
+    insert into sys_Company
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cCname != null" >
+        C_CName,
+      </if>
+      <if test="cParentid != null" >
+        C_ParentID,
+      </if>
+      <if test="cShoworder != null" >
+        C_ShowOrder,
+      </if>
+      <if test="cLevel != null" >
+        C_Level,
+      </if>
+      <if test="cChildcount != null" >
+        C_ChildCount,
+      </if>
+      <if test="cAreaid != null" >
+        C_AreaId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="cCname != null" >
+        #{cCname,jdbcType=NVARCHAR},
+      </if>
+      <if test="cParentid != null" >
+        #{cParentid,jdbcType=INTEGER},
+      </if>
+      <if test="cShoworder != null" >
+        #{cShoworder,jdbcType=INTEGER},
+      </if>
+      <if test="cLevel != null" >
+        #{cLevel,jdbcType=INTEGER},
+      </if>
+      <if test="cChildcount != null" >
+        #{cChildcount,jdbcType=INTEGER},
+      </if>
+      <if test="cAreaid != null" >
+        #{cAreaid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jack.jkbase.entity.SysCompany" >
+    update sys_Company
+    <set >
+      <if test="cCname != null" >
+        C_CName = #{cCname,jdbcType=NVARCHAR},
+      </if>
+      <if test="cParentid != null" >
+        C_ParentID = #{cParentid,jdbcType=INTEGER},
+      </if>
+      <if test="cShoworder != null" >
+        C_ShowOrder = #{cShoworder,jdbcType=INTEGER},
+      </if>
+      <if test="cLevel != null" >
+        C_Level = #{cLevel,jdbcType=INTEGER},
+      </if>
+      <if test="cChildcount != null" >
+        C_ChildCount = #{cChildcount,jdbcType=INTEGER},
+      </if>
+      <if test="cAreaid != null" >
+        C_AreaId = #{cAreaid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where CompanyID = #{companyid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jack.jkbase.entity.SysCompany" >
+    update sys_Company
+    set C_CName = #{cCname,jdbcType=NVARCHAR},
+      C_ParentID = #{cParentid,jdbcType=INTEGER},
+      C_ShowOrder = #{cShoworder,jdbcType=INTEGER},
+      C_Level = #{cLevel,jdbcType=INTEGER},
+      C_ChildCount = #{cChildcount,jdbcType=INTEGER},
+      C_AreaId = #{cAreaid,jdbcType=INTEGER}
+    where CompanyID = #{companyid,jdbcType=INTEGER}
+  </update>
+</mapper>

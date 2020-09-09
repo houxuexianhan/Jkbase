@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+  <i class="fa fa-bell-o"></i>
+  <span class="label label-warning" id="MSG_COUNT_LABEL">${KEY_MESSAGE_COUNT!''}</span>
+</a>
+<ul class="dropdown-menu">
+<li>
+  <ul class="menu" style="overflow: hidden;width: 100%;">
+   <#if Session.member??>
+	 <#if  KEY_COUNT_CAR?? >
+	   <li>
+	      <a href="javascript:void(0)" onclick="$('#SIDE_MENU_66').click()">
+	       <i class="fa fa-bus text-yellow"></i>有 ${KEY_COUNT_CAR} 辆车辆审核不通过，被打回
+	     </a>
+	   </li>
+	   </#if>
+	   <#if KEY_MEMBER_UNAPPROVE??>
+	   <li>
+	     <a href="javascript:void(0)" onclick="$('#SIDE_MENU_65').click()">
+	       <i class="fa fa-users text-red"></i>${KEY_MEMBER_UNAPPROVE} 
+	     </a>
+	   </li>
+	   </#if> 
+   <#elseif Session.company??>
+   	  <#if  KEY_COUNT_CAR?? >
+   	   <li>
+	      <a href="javascript:void(0)" onclick="$('#SIDE_MENU_66').click()">
+	       <i class="fa fa-bus text-yellow"></i>有 ${KEY_COUNT_CAR} 辆车辆审核不通过，被打回
+	     </a>
+	   </li>
+	   </#if>
+   <#else>
+      <#if  KEY_COUNT_CAR?? >
+	   <li>
+	      <a href="javascript:void(0)" onclick="$('#SIDE_MENU_23').click()">
+	       <i class="fa fa-bus text-yellow"></i>有 ${KEY_COUNT_CAR} 辆车辆信息待审核
+	     </a>
+	   </li>
+	   </#if>
+	   <#if KEY_COUNT_MEMBER??>
+	   <li>
+	     <a href="javascript:void(0)" onclick="$('#SIDE_MENU_35').click()">
+	       <i class="fa fa-users text-red"></i> 有 ${KEY_COUNT_MEMBER} 位会员信息待审核 
+	     </a>
+	   </li>
+	   </#if>
+   </#if>
+ </ul>
+</li>
+</ul>

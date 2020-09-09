@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jack.jkbase.mapper.SysFunctionMapper" >
+  <resultMap id="BaseResultMap" type="com.jack.jkbase.entity.ViewSysFunction" >
+    <id column="FunctionId" property="functionid" jdbcType="INTEGER" />
+    <result column="F_ModuleId" property="fModuleid" jdbcType="INTEGER" />
+    <result column="F_Value" property="fValue" jdbcType="INTEGER" />
+    <result column="F_Name" property="fName" jdbcType="NVARCHAR" />
+    <result column="F_Desc" property="fDesc" jdbcType="NVARCHAR" />
+    <result column="F_Enable" property="fEnable" jdbcType="INTEGER" />
+    <!-- 视图 -->
+    <association property="module" javaType="com.jack.jkbase.entity.ViewSysModule" 
+  	  resultMap="com.jack.jkbase.mapper.SysModuleMapper.BaseResultMap"/>
+  </resultMap>
+   
+  <!-- 根据某个应用查询其所有模块对应的功能列表 -->
+  <select id="selectByApp"  resultMap="BaseResultMap">
+  	select * from View_sys_Function
+  	where M_AppID = #{value} 
+  	order by M_AppID,M_OrderLevel,F_Value
+  </select>
+  <!-- 根据某个模块查询所有功能列表 -->
+  <select id="selectByModule" resultMap="BaseResultMap">
+  	select * from View_sys_Function
+  	where F_ModuleId = #{value}
+  	order by M_AppID,M_OrderLevel,F_Value
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+  	select * from View_sys_Function order by M_AppID,M_OrderLevel,F_Value
+  </select>
+  <select id="selectMaxValue" resultType="Integer">
+   select 
+   <if test="_databaseId == 'mysql'">
+   	 ifnull(max(F_Value*2),1) 
+   </if>
+  	<if test="_databaseId == 'sqlserver'">
+         isnull(max(F_Value*2),1) 
+      </if>
+      from sys_Function where F_ModuleId=#{value}
+  </select>
+  <!-- 自动生成 -->
+  <sql id="Base_Column_List" >
+    FunctionId, F_ModuleId, F_Name, F_Value, F_Desc, F_Enable
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+    select * from View_sys_Function where FunctionId = #{value}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_Function
+    where FunctionId = #{functionid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="functionid" >
+    insert into sys_Function ( F_ModuleId, F_Name, 
+      F_Value, F_Desc, F_Enable
+      )
+    values (#{fModuleid,jdbcType=INTEGER}, #{fName,jdbcType=NVARCHAR}, 
+      #{fValue,jdbcType=INTEGER}, #{fDesc,jdbcType=NVARCHAR}, #{fEnable,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="functionid" >
+    insert into sys_Function
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fModuleid != null" >
+        F_ModuleId,
+      </if>
+      <if test="fName != null" >
+        F_Name,
+      </if>
+      <if test="fValue != null" >
+        F_Value,
+      </if>
+      <if test="fDesc != null" >
+        F_Desc,
+      </if>
+      <if test="fEnable != null" >
+        F_Enable,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fModuleid != null" >
+        #{fModuleid,jdbcType=INTEGER},
+      </if>
+      <if test="fName != null" >
+        #{fName,jdbcType=NVARCHAR},
+      </if>
+      <if test="fValue != null" >
+        #{fValue,jdbcType=INTEGER},
+      </if>
+      <if test="fDesc != null" >
+        #{fDesc,jdbcType=NVARCHAR},
+      </if>
+      <if test="fEnable != null" >
+        #{fEnable,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jack.jkbase.entity.SysFunction" >
+    update sys_Function
+    <set >
+      <if test="fModuleid != null" >
+        F_ModuleId = #{fModuleid,jdbcType=INTEGER},
+      </if>
+      <if test="fName != null" >
+        F_Name = #{fName,jdbcType=NVARCHAR},
+      </if>
+      <if test="fValue != null" >
+        F_Value = #{fValue,jdbcType=INTEGER},
+      </if>
+      <if test="fDesc != null" >
+        F_Desc = #{fDesc,jdbcType=NVARCHAR},
+      </if>
+      <if test="fEnable != null" >
+        F_Enable = #{fEnable,jdbcType=INTEGER},
+      </if>
+    </set>
+    where FunctionId = #{functionid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" >
+    update sys_Function
+    set F_ModuleId = #{fModuleid,jdbcType=INTEGER},
+      F_Name = #{fName,jdbcType=NVARCHAR},
+      <!-- F_Value = #{fValue,jdbcType=INTEGER}, -->
+      F_Desc = #{fDesc,jdbcType=NVARCHAR},
+      F_Enable = #{fEnable,jdbcType=INTEGER}
+    where FunctionId = #{functionid,jdbcType=INTEGER}
+  </update>
+</mapper>

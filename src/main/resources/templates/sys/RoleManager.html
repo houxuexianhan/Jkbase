@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 
+</head>
+<body>
+<!-- roleAppModal -->
+<div class="modal fade" id="roleAppModal" tabindex="-1" role="dialog"  data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >Title</h4>
+      </div>
+      <div class="modal-body">
+		  <form  class="model-form" action="SysMgr/roleapp_access.do" method="post">
+		    <input id="formAction" name="action" type="hidden" />
+		    <input id="formFucntion" name="fid" type="hidden" />
+		     <div class="form-group">
+		          <label class="control-label" for="input01">选择角色</label>
+		          <div class="controls">
+		          	<input id="cc" class="easyui-combobox" name="aRoleid" 
+		          	data-options="valueField:'roleid',editable:false,required:true,textField:'rRolename',url:'SysMgr/role_combo.do' ">
+		          </div>
+		       	 </div>
+		    <div class="form-group">
+		          <label class="control-label" for="input01">选择应用</label>
+		          <div class="controls">
+		          	<input id="cc" class="easyui-combobox" name="aAppid" 
+		          	data-options="valueField:'appid',editable:false,required:true,textField:'aAppname',url:'FrmMgr/getAppsExcludeSysCombo.do' ">
+		           <!--  <input name="aAppName" type="text" placeholder="placeholder" class="form-control"> -->
+		          </div>
+		       	 </div>
+		  </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" onclick="saveRoleApp()">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end Modal -->
+ <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        	角色应用管理及其权限设置
+        <small>设置角色应用的权限</small>
+        <!-- Button trigger modal -->
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>主页</a></li>
+        <li><a href="#">系统管理</a></li>
+        <li class="active">角色应用管理</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">角色应用列表<span>(角色在<b>角色用户管理</b>模块中添加)</span></h3>
+              <#if f18?? &&f18.access >
+               <a href="#" data-action="create" class="function-button"
+               	 data-toggle="modal" data-target="#roleAppModal" data-fid="18" data-fvalue="${f18.fValue}">
+              <i class="fa fa-plus-circle" aria-hidden="true"></i>${f18.fName}</a> </#if>
+              
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="roleAppTable" class="display">
+                <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>应用ID</th>
+                  <th>角色名称</th>
+                  <th>应用名称</th>
+                  <th>应用描述</th>
+                  <th>是否系统</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+               
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+          <#if f22?? &&f22.access>
+		  <div class="box" id="formPermission">
+	  		<input type="hidden" name="roleId"/>
+	  		<input type="hidden" name="appId"/>
+	  		<input type="hidden" name="fid"/>
+            <div class="box-header">
+              <h3 class="box-title">角色应用权限设置：</h3>
+              <span id="permSpanHeader">角色应用</span>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body" id="permTable">
+               	<span>请点击 <b>${f22.fDesc}</b> 按钮来获取相应角色的权限列表</span>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          </#if>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+<!-- DataTables -->
+<script>
+//var output = { data: [] };//返回的格式
+var roleAppTable;
+var permissionTable;
+$(document).ready(function() {
+	//easyui 重新解析
+	$.parser.parse();
+	roleAppTable = $('#roleAppTable').DataTable({
+		"paging": false,
+		"lengthChange": true,
+		"searching": false,
+		"ordering": false,
+		"info": true,
+		"autoWidth": false,
+		"language": {
+			"url": "${request.contextPath}/dist/Chinese.json"
+		},
+		ajax: 'SysMgr/roleapp_getAll.do',
+		columns: [
+            { data: "aRoleid" ,visible:false},
+            { data: "aAppid" ,visible:false},
+            { data: "roleName" },
+            { data: "app.aAppname" },
+            { data: "app.aAppdesc" },
+            { data: "app.aIssys" , "render": function ( data, type, row ) {
+                return data===1?"是":"否" ;
+            }},
+            {
+          	  data:null,
+          	  className:"center",
+          	  render:function(data,type,row){
+          		 var str = '';
+         		//设置权限
+        		 str += '<#if f22?? &&f22.access> <a href="#" data-fid="22" class="editor_set" ><i class="fa fa-key"></i>${f22.fDesc}</a></#if>'; 
+        		 //删除 
+        		 str += '<#if f20?? &&f20.access> <a href="#" data-fid="20" class="editor_remove" data-target="#roleAppModal"><i class="fa fa-trash-o"></i>${f20.fDesc}</a></#if>';
+          		 return str;
+          	  } 
+            }
+        ],
+        scrollX: true,
+        select: {
+			info:false,
+			style:"single"
+		}
+	});	
+	$('#roleAppModal').on('show.bs.modal', function (event) {
+		  var modal = $(this);
+		  var button = $(event.relatedTarget);
+		  var action = button.data('action') ;
+		  var fid = button.data('fid');
+		  modal.find('#formFucntion').val(fid);
+		  var title = 'title';
+		  if('create'==action){
+			  title = '添加角色可以访问的应用';
+		  }
+		  modal.find('.modal-title').text(title);
+		  modal.find('#formAction').val(action);
+		
+	});
+	// Delete a record
+	$('#roleAppTable').on('click', 'a.editor_remove', function (e) {
+	    e.preventDefault();
+	    var target = $(this).data('target');
+	    if(confirm("确定要删除该条角色应用记录吗？"))
+	    {
+	    	var row ;
+	    	var params = {};
+	    	params.fid = $(this).data('fid');
+	    	params.action = 'remove';
+	    	if('#roleAppModal'==target){
+	    		row= roleAppTable.row($(this).closest('tr')).data();
+	    		var rowIdx = roleAppTable.row($(this).closest('tr')).index();
+	    		params.aRoleid = row.aRoleid;
+	    		params.aAppid = row.aAppid;
+	    		$.post('SysMgr/roleapp_access.do',params,function(data){
+		    		//console.log(data);
+		    		var data = eval('(' + data + ')');
+		    		if(data.success){
+		    			roleAppTable.row(rowIdx).remove().draw(false);
+		    			new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+		    			$('#permTable').empty();
+			        }else{
+			        	new $.Zebra_Dialog(data.info,{modal: false});
+			        }
+		    	});
+	    	}
+	    }
+	} );
+	// 设置权限
+	$('#roleAppTable').on('click', 'a.editor_set', function (e) {
+	    e.preventDefault();
+	    var row= roleAppTable.row($(this).closest('tr')).data();
+	    var f = $('#formPermission');
+	    f.find('input[name=roleId]').val(row.aRoleid);
+	    f.find('input[name=appId]').val(row.aAppid);
+	    f.find('input[name=fid]').val($(this).data('fid'));
+	    var params = {};
+	    params.appId = row.aAppid;
+	    params.roleId = row.aRoleid;
+	    $('#permSpanHeader').html(row.roleName+"-"+row.app.aAppname);
+	    $('#permTable').load('SysMgr/roleapp_getFuncs.do',params);
+	} );
+});
+/* 功能 */
+function saveRoleApp(){
+	$('#roleAppModal .model-form').form('submit', {
+	    success: function(data){
+	    	//console.log(data);
+	        var data = eval('(' + data + ')');  // change the JSON string to javascript object
+	        if(data.success){
+	        	$('#roleAppModal').modal('hide');
+	 	        roleAppTable.row.add(data.data).select().draw(false);
+	 	       new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+	        }else{
+	        	new $.Zebra_Dialog(data.info,{modal: false});
+	        }
+	    }
+	});
+}
+//保存更改的权限设置
+function savePermission(){
+	//遍历table 拼接参数
+	var ja = [];
+	$('#permissionTable tr[role=module]').each(function(){
+		var jo = {};
+		jo.moduleCode = $(this).data('modulecode');
+		var mValue = 0;
+		$(this).find('.tdPerm input[type=checkbox]:checked').each(function(){
+			var fValue = $(this).data('fvalue');
+			mValue += fValue;
+		});
+		jo.mValue = mValue;
+		ja.push(jo);
+	});
+	var params = {};
+	params.roleId = $('#formPermission input[name=roleId]').val();
+	params.appId = $('#formPermission input[name=appId]').val();
+	params.fid = $('#formPermission input[name=fid]').val();;
+	params.values = JSON.stringify(ja);
+	$.post('SysMgr/roleapp_savePermission.do',params,function(data){
+		var data = eval('(' + data + ')');
+		new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+	});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 
+</head>
+<body >
+ <div id="UserManager_userDialog" class="easyui-dialog" title="请选择单位" style="width:400px;height:200px;"
+        data-options="iconCls:'icon-save',resizable:true,modal:true,closed:true">
+   <div id="UserManager_userTree"></div>     
+</div>
+<!-- change password -->
+<!-- change password -->
+<!-- userModal -->
+<div class="modal fade" id="userModal" tabindex="-1" role="dialog"  data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >Title</h4>
+      </div>
+      <div class="modal-body">
+		  <form  class="model-form" action="SysMgr/user_access.do" method="post">
+		    <input name="userid" type="hidden" value="-1"/>
+		    <input name="uCompanyid" type="hidden"/>
+		    <input id="formAction" name="action" type="hidden" />
+		    <input id="formFucntion" name="fid" type="hidden" />
+		    <div class="form-group">
+		          <label class="control-label" >*用户账号（登录名）</label>
+		          <div class="controls">
+		            <input name="uLoginname" type="text" placeholder="如:100100" class="form-control">
+		          </div>
+		        </div>
+		   <div class="form-group">
+	          <label class="control-label">用户类型(仅用来区分用户，与权限无关)</label>
+	          <div class="controls">
+				<label class="radio-inline">
+				  <input type="radio" name="uType"  value="1">管理用户
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" name="uType"  checked="checked"  value="2">企业用户
+				</label>
+	         		 </div>
+	        	</div>
+		    <div class="form-group">
+	          <label class="control-label">用户状态</label>
+	          <div class="controls">
+	            <label class="radio-inline">
+				  <input type="radio" name="uStatus" checked="checked"  value="0">正常
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" name="uStatus" value="1">禁止
+				</label>
+	         		 </div>
+	        	</div>
+		    <div class="form-group">
+		          <label class="control-label" >用户姓名</label>
+		          <div class="controls">
+		            <input name="uCname" type="text" placeholder="" class="form-control">
+		          </div>
+		        </div>
+	       <div class="form-group">
+	          <label class="control-label" >联系电话</label>
+	          <div class="controls">
+	            <input name="uMobileno" type="number" placeholder="" class="form-control">
+	          </div>
+	        </div>
+		    <div class="form-group">
+		          <label class="control-label" for="input01">单位部门
+		          <a href="#" id="selectCompany" class="dt-button" onclick="$('#UserManager_userDialog').dialog('open');">请选择<i class="fa fa-caret-down" aria-hidden="true"></i></a>
+		          </label>
+		          <div class="controls">
+		            <input name="u_CompanyName" type="text" placeholder="请选择单位部门" class="form-control" readonly="readonly">
+		          </div>
+		        </div>
+		   <div class="form-group" id="formRoles">
+	          <label class="control-label">所属角色</label>
+	          <div class="controls">
+	        	 <#list roles as role>
+	              <label class="checkbox-inline">
+				  <input type="checkbox" name="roles" data-roleid="${role.roleid}"  value="${role.roleid}">${role.rRolename}
+				</label>
+				</#list>
+	           </div>
+	        	</div>
+		     <div class="form-group">
+	          <label class="control-label" >扩展字段</label>
+	          <div class="controls">
+	            <input name="uExtendfield" type="text" placeholder="" class="form-control">
+	          </div>
+	        </div>
+		  </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" onclick="saveUser()">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end Modal -->
+
+ <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        	用户管理
+        <small>对系统用户的增删改查</small>
+        <!-- Button trigger modal -->
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>主页</a></li>
+        <li><a href="#">系统管理</a></li>
+        <li class="active">用户管理</li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box" id="roleuser_box">
+            <div class="box-header">
+              <h3 class="box-title">用户列表</h3>
+              <#if f25?? &&f25.access >
+              <a href="#" data-action="create" data-fid="25" data-fvalue="${f25.fValue}" 
+              		class="dt-button button-create" data-toggle="modal" data-target="#userModal">
+              <i class="fa fa-user-plus" aria-hidden="true"></i>${f25.fName}</a> </#if>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="userTable" class="display">
+                <thead>
+                <tr>
+                  <th></th>
+                  <th></th>
+                  <th>用户账号</th>
+                  <th>用户姓名</th>
+                  <th>联系电话</th>
+                  <th>单位部门</th>
+                  <th>类型</th>
+                  <th>备注</th>
+                  <th>状态</th>
+                  <th>注册时间</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                  <th></th>
+                  <th></th>
+                  <th>用户账号</th>
+                  <th>用户姓名</th>
+                  <th>联系电话</th>
+                  <th>单位部门</th>
+                  <th>类型</th>
+                   <th>备注</th>
+                  <th>状态</th>
+                  <th>注册时间</th>
+                  <th>操作</th>
+                </tr>
+                </tfoot>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+<script>
+var userTable;
+$(document).ready(function() {
+	//easyui 重新解析
+	$.parser.parse();
+	userTable = $('#userTable').DataTable({
+		rowId: 'userid',
+		responsive: true,
+		scrollX: true,
+		select: {
+			info:false,
+			style:"single"
+		},
+		lengthMenu: [ 15 ,40,30,20 , 50, 60],
+		"paging": true,
+		"pagingType": "full_numbers",
+		"lengthChange": true,
+		"searching": true,
+		"ordering": false,
+		"info": true,
+		"autoWidth": false,
+		"language": {
+			"url": "/dist/Chinese.json"
+		},
+		ajax: 'SysMgr/user_getAll.do',
+		columns: [
+            { data: "userid" ,visible:false},
+            { data: "uType" ,visible:false},
+            { data: "uLoginname"},
+            { data: "uCname"},
+            { data: "uMobileno"},
+            { data: "u_CompanyName"},
+            { data: "u_TypeText"},
+            { data: "uExtendfield"},
+            { data: "u_StatusText"},
+            { data: "uJointime",render:function(data,type,row){
+            	return moment(data).format("YYYY-MM-DD HH:mm:ss");
+            }},
+            {
+          	  data:null,
+          	  className:"center",
+          	  render:function(data,type,row){
+          		  var str = '';
+          		  if(row.userid!=1){
+          			  //重置密码
+          			  str += '<#if f60?? &&f60.access> <a href="#" data-fid="60" class="editor_reset" ><i class="fa fa-key"></i>${f60.fDesc}</a></#if>';
+          			  //编辑
+          			  str += '<#if f26?? &&f26.access> <a href="#" data-fid="26" class="editor_edit" data-action="edit" data-toggle="modal" data-target="#userModal"><i class="fa fa-pencil-square-o"></i>${f26.fDesc}</a></#if>'; 
+          			  //删除 
+          			  str += '<#if f28?? &&f28.access> <a href="#" data-fid="28" class="editor_remove" data-target="#userModal"><i class="fa fa-user-times"></i>${f28.fDesc}</a></#if>';
+          		  }
+          		  return str;
+          	  } 
+            }
+        ],
+        initComplete: function () {
+            this.api().columns().every( function () {
+                var column = this;
+                var prop = column.dataSrc();
+                if(prop=='u_CompanyName'||prop=='u_TypeText'){
+                	var select = $('<select><option value=""></option></select>')
+                     .appendTo( $(column.footer()).empty() )
+                     .on( 'change', function () {
+                         var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                         column.search( val ? '^'+val+'$' : '', true, false ).draw();
+                     } );
+  
+	                 column.data().unique().sort().each( function ( d, j ) {
+	                     select.append( '<option value="'+d+'">'+d+'</option>' )
+	                 } );
+                }else{
+                	$(column.footer()).empty();
+                }
+            } );
+        }
+	});	
+	$('#userModal').on('show.bs.modal', function (event) {
+		  var modal = $(this);
+		  var button = $(event.relatedTarget);
+		  var action = button.data('action') ;
+		  var fid = button.data('fid');
+		  var title = 'title';
+		  if("edit"==action){
+			  //获取用户所具有的角色列表
+			  var  row = userTable.row($(button).closest('tr')).data();
+			  var userId = row.userid;
+			  $.post('SysMgr/roleuser_getByUser.do',{userId:userId},function(data){
+				  var roles = eval('('+data+')');
+				  $('#userModal #formRoles input[type=checkbox]').each(function(){
+					  var ck = $(this);
+					  var ckRoleId = ck.data('roleid');
+					  ck.prop('checked',false);
+					  for(var i=0;i<roles.length;i++){
+						  if(roles[i].rRoleid == ckRoleId){
+							  ck.prop('checked',true);
+							  break; 
+						  }
+					  }
+				  });
+			  });
+			  modal.find('.model-form input[name=uLoginname]').prop("readonly",true);
+			  title = '编辑';
+			  //row.uJointime = moment(row.uJointime).format("YYYY-MM-DD HH:mm:ss");
+			  modal.find('.model-form').form('load',row);
+		  }else if('create'==action){
+			  title = '添加';
+			  modal.find('.model-form').form('reset');//先重置
+			  modal.find('.model-form input[name=uLoginname]').prop("readonly",false);
+		  }
+		  modal.find('#formFucntion').val(fid);
+		  modal.find('.modal-title').text(title);
+		  modal.find('#formAction').val(action);
+	});
+	$('#userTable').on('click', 'a.editor_remove', function (e) {
+	    e.preventDefault();
+	    //var target = $(this).data('target');
+	    if(confirm("确定要删除该条记录吗？"))
+	    {
+    		var row= userTable.row($(this).closest('tr')).data();
+    		var rowIdx = userTable.row($(this).closest('tr')).index();
+    		var params = {};
+   	    	params.fid = $(this).data('fid');
+   	    	params.action = 'remove';
+   	    	params.userid = row.userid;
+    		$.post('SysMgr/user_access.do',params,function(data){
+	    		var data = eval('(' + data + ')');
+	    		if(data.success){
+	    			userTable.row(rowIdx).remove().draw(false);
+		        }else{
+		        	alert(data.info);
+		        }
+	    	});
+	    }
+	} );
+	//重置密码
+	$('#userTable').on('click', 'a.editor_reset', function (e) {
+	    e.preventDefault();
+	    if(confirm("确定要将其密码重置为初始密码吗？"))
+	    {
+    		var row= userTable.row($(this).closest('tr')).data();
+    		var params = {};
+   	    	params.fid = $(this).data('fid');
+   	    	params.action = 'reset';
+   	    	params.userid = row.userid;
+    		$.post('SysMgr/user_access.do',params,function(data){
+	    		var data = eval('(' + data + ')');
+	    		alert(data.info);
+	    	});
+	    }
+	} );
+	//初始化treeview 数据
+	$.post('SysMgr/company_getTreeSelect.do',{},function(data){
+		 var data = eval('(' + data + ')');
+		 if(data.success){
+			 $('#UserManager_userTree').treeview({
+				data: data.data,	
+				showTags:false,
+				//showCheckbox:true,
+				onNodeSelected: function(event, data) {
+					var tags = data.tags;
+					$('#userModal .model-form input[name=uCompanyid]').val(tags[0]);
+					$('#userModal .model-form input[name=u_CompanyName]').val(data.text);
+					$('#UserManager_userDialog').dialog('close');
+				}
+			});
+		 }else{
+			 alert(data.info);
+		 }
+	}); 
+});
+/* 功能 */
+function saveUser(){
+	$('#userModal .model-form').form('submit', {
+		onSubmit: function(){
+			var uLoginname = $(this).find('input[name=uLoginname]').val();
+			var uCname = $(this).find('input[name=uCname]').val();
+			var uCompany= $(this).find('input[name=u_CompanyName]').val();
+			if($.trim(uLoginname)==''){
+				alert('登录名不允许为空！');
+				return false;
+			}
+			if($.trim(uCname)==''){
+				alert('用户姓名不允许为空！');
+				return false;
+			}
+			if($.trim(uCompany)==''){
+				alert('所属单位部门不允许为空！');
+				return false;
+			}
+		},
+	    success: function(data){
+	    	//console.log(data);
+	        var data = eval('(' + data + ')');  // change the JSON string to javascript object
+	        var action = $('#userModal #formAction').val();
+	        if(data.success){
+	        	$('#userModal').modal('hide');
+	        	if('edit'==action){
+	        		userTable.row('#'+data.data.userid).data(data.data).select().draw(false);
+	 	        }else if('create'==action){
+	 	        	userTable.row.add(data.data).select().draw(false);
+	 	        }
+	        }else{
+	        	alert(data.info);
+	        }
+	    }
+	});
+}
+</script>
+</body>
+</html>

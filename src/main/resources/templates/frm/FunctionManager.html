@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 
+</head>
+<body >
+<!-- functionModal -->
+<div class="modal fade" id="functionModal" tabindex="-1" role="dialog"  data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >Title</h4>
+      </div>
+      <div class="modal-body">
+		  <form  class="model-form" action="FrmMgr/function_access.do" method="post">
+		    <input name="functionid" type="hidden" value="-1"/>
+		    <input id="formAction" name="action" type="hidden" />
+		    <input id="formFucntion" name="fid" type="hidden" />
+		    <div class="form-group">
+		          <label class="control-label" >*所属模块</label>     
+		          <div class="controls">
+		            <input id="cc" class="easyui-combobox" name="fModuleid" 
+		          	data-options="valueField:'moduleid',editable:false,required:true,missingMessage:'模块不能为空',
+		          	groupField:'mParentname',textField:'mCname',url:'FrmMgr/module_getComboExcludeParent.do' ">
+		          </div>
+		        </div>
+		    <div class="form-group">
+		          <label class="control-label" >*功能名称</label>
+		          <div class="controls">
+		            <input name="fName" type="text" placeholder="例如:删除、打印、导出" class="form-control">
+		          </div>
+		        </div>
+		    <div class="form-group">
+		          <label class="control-label" >简称(可用于按钮的显示)</label>
+		          <div class="controls">
+		            <input name="fDesc" type="text" placeholder="例如:删除" class="form-control">
+		          </div>
+		        </div>
+		    <div class="form-group">
+	          <label class="control-label">是否可用</label>
+	          <div class="controls">
+	            <label class="radio-inline">
+				  <input type="radio" name="fEnable"  checked="checked"  value="1">是
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" name="fEnable"  value="0">否
+				</label>
+	         		 </div>
+	        	</div>
+		  </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" onclick="saveFunction()">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end Modal -->
+
+ <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        	功能管理
+        <small>对模块功能的增删改查</small>
+        <!-- Button trigger modal -->
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>主页</a></li>
+        <li><a href="#">系统管理</a></li>
+        <li class="active">功能管理</li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box" id="rolefunction_box">
+            <div class="box-header">
+              <h3 class="box-title">功能列表</h3>
+              <#if f34?? && f34.access >
+              <a href="#" data-action="create" data-fid="34" data-fvalue="${f34.fValue}" 
+              		class="dt-button button-create" data-toggle="modal" data-target="#functionModal">
+              <i class="fa fa-plus-circle" aria-hidden="true"></i>${f34.fName}</a> </#if>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="functionTable" class="display">
+                <thead>
+                <tr>
+                  <th>功能ID</th>
+                  <th>功能名称</th>
+                  <th>所属模块</th>
+                  <th>父级模块</th>
+                  <th>所属应用</th>
+                  <th>权限值</th>
+                  <th>简称</th>
+                  <th>是否可用</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                  <th>功能ID</th>
+                  <th>模块ID</th>
+                  <th>功能名称</th>
+                  <th>所属模块</th>
+                  <th>所属应用</th>
+                  <th>权限值</th>
+                  <th>简称</th>
+                  <th>是否可用</th>
+                  <th>操作</th>
+                </tr>
+                </tfoot>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+<script>
+var functionTable;
+$(document).ready(function() {
+	//easyui 重新解析
+	$.parser.parse();
+	functionTable = $('#functionTable').DataTable({
+		rowId: 'functionid',
+        scrollX: true,
+        responsive: true,
+		select: 'single',
+		lengthMenu: [ 15,40,30,20 , 50, 60],
+		"paging": true,
+		"pagingType": "full_numbers",
+		"lengthChange": true,
+		"searching": true,
+		"ordering": false,
+		"info": true,
+		"autoWidth": false,
+		"language": {
+			 "url": "/dist/Chinese.json"
+		},
+		ajax: 'FrmMgr/function_getAll.do',
+		columns: [
+            { data: "functionid" ,visible:true},
+            { data: "fName"},
+            { data: "module.mCname"},
+            { data: "module.mParentname"},  
+            { data: "module.aAppname"},
+            { data: "fValue"},
+            { data: "fDesc"},
+            { data: "fEnable",render:function(data,type,row){
+            	return data?"是":"否";
+            }},
+            {
+          	  data:null,
+          	  className:"center",
+          	  render:function(data,type,row){
+          		 var str = '';
+        		 //编辑
+        		 str += '<#if f35?? && f35.access> <a href="#" data-fid="35" class="editor_edit" data-action="edit" data-toggle="modal" data-target="#functionModal"><i class="fa fa-pencil-square-o"></i>${f35.fDesc}</a></#if>'; 
+        		 //删除 
+        		 str += '<#if f36?? && f36.access> <a href="#" data-fid="36" class="editor_remove" data-target="#functionModal"><i class="fa fa-trash-o"></i>${f36.fDesc}</a></#if>';
+         		 return str;
+          	  } 
+            }
+        ],
+        initComplete: function () {
+            this.api().columns().every( function () {
+                var column = this;
+                var prop = column.dataSrc();
+                if(prop=='module.mParentname'||prop=='module.aAppname'){	
+                	var select = $('<select><option value=""></option></select>')
+                     .appendTo( $(column.footer()).empty() )
+                     .on( 'change', function () {
+                         var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                         column.search( val ? '^'+val+'$' : '', true, false ).draw();
+                     } );
+  
+	                 column.data().unique().sort().each( function ( d, j ) {
+	                     select.append( '<option value="'+d+'">'+d+'</option>' )
+	                 } );
+                }else{
+                	$(column.footer()).empty();
+                }
+            } );
+        }
+	});	
+	//编辑或添加
+	$('#functionModal').on('show.bs.modal', function (event) {
+		  var modal = $(this);
+		  var button = $(event.relatedTarget);
+		  var action = button.data('action') ;
+		  var fid = button.data('fid');
+		  var title = 'title';
+		  if("edit"==action){
+			  title = '编辑';
+			  var  row = functionTable.row($(button).closest('tr')).data();
+			  //row.uJointime = moment(row.uJointime).format("YYYY-MM-DD HH:mm:ss");
+			  modal.find('.model-form').form('load',row);
+		  }else if('create'==action){
+			  title = '添加';
+			  //modal.find('.model-form').form('reset');//先重置
+		  }
+		  modal.find('#formFucntion').val(fid);
+		  modal.find('.modal-title').text(title);
+		  modal.find('#formAction').val(action);
+	});
+	$('#functionTable').on('click', 'a.editor_remove', function (e) {
+	    e.preventDefault();
+	    //var target = $(this).data('target');
+	    if(confirm("确定要删除该条记录吗？"))
+	    {
+    		var row= functionTable.row($(this).closest('tr')).data();
+    		var rowIdx = functionTable.row($(this).closest('tr')).index();
+    		var params = {};
+   	    	params.fid = $(this).data('fid');
+   	    	params.action = 'remove';
+   	    	params.functionid = row.functionid;
+    		$.post('FrmMgr/function_access.do',params,function(data){
+	    		var data = eval('(' + data + ')');
+	    		if(data.success){
+	    			functionTable.row(rowIdx).remove().draw(false);
+	    			new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+		        }else{
+		        	new $.Zebra_Dialog(data.info,{modal: false});
+		        }
+	    	});
+	    }
+	} );
+});
+/* 功能 */
+function saveFunction(){
+	$('#functionModal .model-form').form('submit', {
+		onSubmit: function(){
+			var fName = $(this).find('input[name=fName]').val();
+			var fValue = $(this).find('input[name=fValue]').val();
+			if($.trim(fName)==''){
+				alert('功能名不允许为空！');
+				return false;
+			}
+			return $(this).form('validate');
+		},
+	    success: function(data){
+	    	console.log(data);
+	        var data = eval('(' + data + ')');  // change the JSON string to javascript object
+	        var action = $('#functionModal #formAction').val();
+	        if(data.success){
+	        	$('#functionModal').modal('hide');
+	        	if('edit'==action){
+	        		functionTable.row('#'+data.data.functionid).data(data.data).select().draw(false);
+	 	        }else if('create'==action){
+	 	        	functionTable.row.add(data.data).select().draw(false);
+	 	        }
+	        	new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+	        }else{
+	        	new $.Zebra_Dialog(data.info,{modal: false});
+	        }
+	    }
+	});
+}
+</script>
+</body>
+</html>

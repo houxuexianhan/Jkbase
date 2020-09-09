@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body >
+<!-- fieldValueModal -->
+<div class="modal fade" id="fieldValueModal" tabindex="-1" role="dialog"  data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >Title</h4>
+      </div>
+      <div class="modal-body">
+		  <form  class="model-form" action="SysMgr/fieldvalue_access.do" method="post">
+		    <input name="valueid" type="hidden" value="-1" />
+		    <input id="formAction" name="action" type="hidden" />
+		    <input id="formFucntion" name="fid" type="hidden" />
+		    <div class="form-group">
+	          <label class="control-label" >字段类型</label>
+	          <div class="controls">
+	          	<input class="easyui-combobox" name="vFieldid" id="vFKey"
+		          	data-options="textField:'fCname',valueField:'fieldid',editable:false,required:true,
+		          		url:'FrmMgr/field_combo.do'">
+	          </div>
+	         </div>
+		    <div class="form-group">
+		          <label class="control-label" >*数据字段值(名称)</label>     
+		          <div class="controls">
+		            <input name="vText" type="text" placeholder="例如:个" class="form-control">
+		          </div>
+		        </div>
+		   <div class="form-group">
+		          <label class="control-label" >数据字段排序</label>
+		          <div class="controls">
+		            <input name="vShoworder" type="number" placeholder="例如:8" class="form-control">
+		          </div>
+		        </div>
+		  </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" onclick="saveField()">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end Modal -->
+
+ <div class="content-wrapper" >
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        	数据字典
+        <small>对应用字段值的增删改查</small>
+        <!-- Button trigger modal -->
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>主页</a></li>
+        <li><a href="#">系统管理</a></li>
+        <li class="active">数据字典</li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box" id="rolefunction_box">
+          	<div class="box-body">
+          		<table id="fieldTable" class="display">
+                <thead>
+                <tr>
+                  <th>字段类型ID</th>
+                  <th>字段类型名称</th>
+                  <th>字段类型描述</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+              </table>
+            </div>
+            <div class="box-header">
+              <h3 class="box-title">数据字段列表</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="fieldValueTable" class="display">
+                <thead>	
+                <tr>
+                  <th>字段类型ID</th>
+                  <th>数据字段值(名称)</th>
+                  <th>数据字段排序</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+                <tfoot>	
+                <tr>
+                  <th>字段类型ID</th>
+                  <th>数据字段值(名称)</th>
+                  <th>数据字段排序</th>
+                  <th>操作</th>
+                </tr>
+                </tfoot>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+<script>
+var fieldValueTable;
+var fieldTable;
+$(document).ready(function() {
+	//easyui 重新解析
+	$.parser.parse();
+	fieldTable = $('#fieldTable').DataTable({
+		rowId: 'fieldid',
+		responsive: true,
+		"paging": false,
+		"lengthChange": false,
+		"searching": false,
+		"ordering": false,
+		"info": false,
+		"autoWidth": false,
+		"language": {
+			"url": "/dist/Chinese.json"
+		},
+		ajax: 'FrmMgr/field_getAll.do',
+		columns: [
+			{ data: "fieldid" ,visible:true},     
+            { data: "fCname",render:function(data,type,row){
+         		 
+    		 	return '<a href="#" class="search">'+data+'</a>';
+     	  	} },
+            { data: "fRemark"},
+            {
+            	data:null,
+            	className:"center",
+            	render:function(data,type,row){
+	            	var str = '';
+	            	//添加2
+            		str += '<#if f47?? &&f47.access><a href="#" data-action="create" data-fid="47" class="dt-button button-create" '
+            		+' data-toggle="modal" data-target="#fieldValueModal"><i class="fa fa-plus-circle" aria-hidden="true"></i>${f47.fName}</a></#if>';
+            		return str;
+            	}
+           	} 
+        ],
+        scrollX: true,
+		select: 'single'
+	});	
+	fieldValueTable = $('#fieldValueTable').DataTable({
+		rowId: 'valueid',
+		scrollX: true,
+		select: 'single',
+		"paging": true,
+		responsive: true,
+		"pagingType": "full_numbers",
+		"lengthChange": true,
+		"lengthMenu": [ 15,30,20 , 50, 60, 40 ],
+		"searching": true,
+		"ordering": false,
+		"info": true,
+		"autoWidth": false,
+		"language": {
+			"url": "/dist/Chinese.json"
+		},
+		ajax: 'SysMgr/fieldvalue_getAll.do',
+		columns: [
+			{ data: "vFieldid" ,visible:true},     
+            { data: "vText"},
+            { data: "vShoworder"},
+            {
+          	  data:null,
+          	  className:"center",
+          	  render:function(data,type,row){
+          		 var str = '';
+          		 //编辑
+        		 str += '<#if f48?? &&f48.access> <a href="#" data-fid="48" class="editor_edit" data-action="edit" data-toggle="modal" data-target="#fieldValueModal"><i class="fa fa-pencil-square-o"></i>${f48.fDesc}</a></#if>'; 
+        		 //删除 
+        		 str += '<#if f49?? &&f49.access> <a href="#" data-fid="49" class="editor_remove" data-target="#fieldValueModal"><i class="fa fa-trash-o"></i>${f49.fDesc}</a></#if>';
+         		 return str;
+          	  } 
+            }
+        ],
+        initComplete: function () {
+            this.api().columns().every( function () {
+                var column = this;
+                var prop = column.dataSrc();
+                if(prop=='vFieldid'){	
+                	var select = $('<select><option value=""></option></select>')
+                     .appendTo( $(column.footer()).empty() )
+                     .on( 'change', function () {
+                         var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                         column.search( val ? '^'+val+'$' : '', true, false ).draw();
+                     } );
+  
+	                 column.data().unique().sort().each( function ( d, j ) {
+	                     select.append( '<option value="'+d+'">'+d+'</option>' )
+	                 } );
+                }else{
+                	$(column.footer()).empty();
+                }
+            } );
+        }
+        
+	});	
+	$('#fieldTable').on('click','a.search',function(){
+		var row= fieldTable.row($(this).closest('tr')).data();
+		fieldValueTable.search(row.fKey).draw();
+	});
+	//编辑或添加
+	$('#fieldValueModal').on('show.bs.modal', function (event) {
+		  var modal = $(this);
+		  var button = $(event.relatedTarget);
+		  var action = button.data('action') ;
+		  var fid = button.data('fid');
+		  var title = 'title';
+		  if("edit"==action){
+			  title = '编辑';
+			  var  row = fieldValueTable.row($(button).closest('tr')).data();
+			  modal.find('.model-form').form('load',row);
+			  modal.find('.model-form #vFKey').combobox('readonly',false);
+		  }else if('create'==action){
+			  title = '添加数据字段';
+			  //modal.find('.model-form').form('reset');
+			  var  row = fieldTable.row($(button).closest('tr')).data();
+			  modal.find('.model-form #vFKey').combobox('readonly',true);
+			  modal.find('.model-form #vFKey').combobox('setValue',row.fieldid);
+			  //modal.find('.model-form input[name=vCode]').val(row.fKey+"_0");
+		  }
+		  modal.find('#formFucntion').val(fid);
+		  modal.find('.modal-title').text(title);
+		  modal.find('#formAction').val(action);
+	});
+	$('#fieldValueTable').on('click', 'a.editor_remove', function (e) {
+	    e.preventDefault();
+	    //var target = $(this).data('target');
+	    if(confirm("确定要删除该条记录吗？"))
+	    {
+    		var row= fieldValueTable.row($(this).closest('tr')).data();
+    		var rowIdx = fieldValueTable.row($(this).closest('tr')).index();
+    		var params = {};
+   	    	params.fid = $(this).data('fid');
+   	    	params.action = 'remove';
+   	    	params.valueid = row.valueid;
+    		$.post('SysMgr/fieldvalue_access.do',params,function(data){
+	    		var data = eval('(' + data + ')');
+	    		if(data.success){
+	    			fieldValueTable.row(rowIdx).remove().draw(false);
+	    			new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+		        }else{
+		        	new $.Zebra_Dialog(data.info,{modal: false});
+		        }
+	    	});
+	    }
+	} );
+});
+/* 功能 */
+function saveField(){
+	$('#fieldValueModal .model-form').form('submit', {
+		onSubmit: function(){
+			var vText = $(this).find('input[name=vText]').val();
+			var vShoworder = $(this).find('input[name=vShoworder]').val();
+			if($.trim(vText)==''){
+				alert('字段名称不允许为空！');
+				return false;
+			}
+			if($.trim(vShoworder)==''){
+				alert('排序值不允许为空！');
+				return false;
+			}
+			return $(this).form('validate');
+		},
+	    success: function(data){
+	        var data = eval('(' + data + ')');  // change the JSON string to javascript object
+	        var action = $('#fieldValueModal #formAction').val();
+	        if(data.success){
+	        	$('#fieldValueModal').modal('hide');
+	        	if('edit'==action){
+	        		fieldValueTable.row('#'+data.data.valueid).data(data.data).select().draw(false);
+	 	        }else if('create'==action){
+	 	        	fieldValueTable.row.add(data.data).select().draw(false);
+	 	        }
+	        	new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+	        }else{
+	        	new $.Zebra_Dialog(data.info,{modal: false});
+	        }
+	    }
+	});
+}
+</script>
+</body>
+</html>

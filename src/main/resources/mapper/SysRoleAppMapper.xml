@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jack.jkbase.mapper.SysRoleAppMapper" >
+  <resultMap id="BaseResultMap" type="com.jack.jkbase.entity.SysRoleApp" >
+    <id column="A_RoleID" property="aRoleid" jdbcType="INTEGER" />
+    <id column="A_AppID" property="aAppid" jdbcType="INTEGER" />
+  </resultMap>
+    <resultMap type="com.jack.jkbase.entity.ViewRoleApp" id="ViewRoleApp" extends="BaseResultMap">
+  	<result column="R_RoleName" property="roleName"/>
+  	<association property="app" javaType="com.jack.jkbase.entity.SysApp" resultMap="com.jack.jkbase.mapper.SysAppMapper.BaseResultMap"/>
+  </resultMap>
+  
+  <select id="selectAll" resultMap="ViewRoleApp">
+  	select * from View_sys_RoleApp
+  </select>
+	<select id="selectByPK" resultMap="ViewRoleApp" parameterType="SysRoleApp">
+		select * from View_sys_RoleApp
+		where A_RoleID = #{aRoleid,jdbcType=INTEGER}
+      and A_AppID = #{aAppid,jdbcType=INTEGER}
+	</select>
+	
+<!-- 自动 -->
+  <delete id="deleteByPrimaryKey" >
+    delete from sys_RoleApp where A_RoleID = #{aRoleid} and A_AppID = #{aAppid};
+    delete from sys_RolePermission where P_RoleID=#{aRoleid} and P_AppID = #{aAppid};
+  </delete>
+  <insert id="insert" parameterType="com.jack.jkbase.entity.SysRoleApp" >
+    insert into sys_RoleApp (A_RoleID, A_AppID)
+    values (#{aRoleid,jdbcType=INTEGER}, #{aAppid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jack.jkbase.entity.SysRoleApp" >
+    insert into sys_RoleApp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="aRoleid != null" >
+        A_RoleID,
+      </if>
+      <if test="aAppid != null" >
+        A_AppID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="aRoleid != null" >
+        #{aRoleid,jdbcType=INTEGER},
+      </if>
+      <if test="aAppid != null" >
+        #{aAppid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+</mapper>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>AdminLTE 2 | Permission</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+</head>
+<body>
+	<table id="permissionTable" class="table table-bordered">
+		<tbody>
+		<#list data as p>
+		 	<#if p.parent!=''><tr ><td colspan="2" >
+		 	<span style="font-weight: bolder;padding-left: 10px;">${p.parent}</span></td></tr></#if>
+			<#list p.modules as m>
+		  <tr role="module" data-modulecode="${m.moduleid}">
+		  <td width="15%"  class="tdModule">
+		    <div class="checkbox">
+		    <label>
+		      <input type="checkbox">${m.mCname}
+		    </label>
+		  </div>
+		  </td>
+		  
+		   <td class="tdPerm">
+		   <#list m.funcs as f>
+		  <div style="min-width: 200px;display: inline;margin-right: 20px;" class="checkbox">
+		    <label>
+		    	<#if f.access >
+		    	<input type="checkbox" checked="checked" data-fvalue="${f.fValue}">
+				<#else>	
+				<input type="checkbox" data-fvalue="${f.fValue}">	    	
+		    	</#if>
+		      	${f.fName}
+		    </label>
+		    </div>
+		    </#list>
+		    </td>
+		 </tr> 
+		 	</#list>
+		</#list>
+	  </tbody>               
+	</table>
+	<#if data?size gt 0>
+	<div style="text-align: center;padding: 3px;">
+		<div class="checkbox" style="display:inline;margin-right: 40px;">
+			<label><input type="checkbox" name="checkAll"/>全选</label>
+		</div>
+		<button type="button" class="btn btn-primary" onclick='if(confirm("确定要保存更改的权限设置吗？")) savePermission();'>保存权限设置</button>
+	</div>
+	</#if>
+<script type="text/javascript">
+$(function(){
+	//初始化  仅当所有功能都勾选时 模块才勾选
+	$('#permissionTable tr[role=module]').each(function(){
+		var module = $(this).find('.tdModule input[type=checkbox]');
+		var c = true;
+		$(this).find('.tdPerm input[type=checkbox]').each(function(){
+			c = c && $(this).prop('checked');
+		});
+		module.prop('checked',c);
+	});
+	//事件 全选逻辑
+	$('#permissionTable .tdModule input[type=checkbox]').change(function(){
+		var c = $(this).prop('checked');//不要再使用attr来获取了
+		$(this).closest('tr').find('.tdPerm input[type=checkbox]').each(function(){
+			$(this).prop('checked',c);
+		});
+	});
+	//事件 对于任意功能的 点击事件，若全选，则将模块勾选
+	$('#permissionTable .tdPerm input[type=checkbox]').change(function(){
+		var module =  $(this).closest('tr').find('.tdModule input[type=checkbox]');
+		if($(this).prop('checked')==false) module.prop('checked',false);
+		else{
+			var c=true;
+			$(this).closest('tr').find('.tdPerm input[type=checkbox]').each(function(){
+				c = c && $(this).prop('checked');
+			});
+			module.prop('checked',c);
+		}
+	});
+	//全选
+	$('input[name=checkAll]').change(function(){
+		var c = $(this).prop('checked');
+		$('#permissionTable input[type=checkbox]').prop('checked',c);
+	});
+});
+
+
+</script>
+</body>
+</html>

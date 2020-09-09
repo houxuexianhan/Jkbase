@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body >
+<!-- fieldModal -->
+<div class="modal fade" id="fieldModal" tabindex="-1" role="dialog"  data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >Title</h4>
+      </div>
+      <div class="modal-body">
+		  <form  class="model-form" action="FrmMgr/field_access.do" method="post">
+		    <input name="fieldid" type="hidden" value="-1"/>
+		    <input id="formAction" name="action" type="hidden" />
+		    <input id="formFucntion" name="fid" type="hidden" />
+		    <div class="form-group">
+		          <label class="control-label" >*字段类型名称</label>
+		          <div class="controls">
+		            <input name="fCname" type="text" placeholder="例如:计量单位" class="form-control">
+		          </div>
+		        </div>
+		   <div class="form-group">
+		          <label class="control-label" >字段类型描述</label>
+		          <div class="controls">
+		            <input name="fRemark" type="text" placeholder="例如:个、件等" class="form-control">
+		          </div>
+		        </div>
+		  </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" onclick="saveField()">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end Modal -->
+
+ <div class="content-wrapper" >
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        	应用字段管理
+        <small>对应用字段的增删改查</small>
+        <!-- Button trigger modal -->
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>主页</a></li>
+        <li><a href="#">框架应用管理</a></li>
+        <li class="active">应用字段管理</li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box" id="rolefunction_box">
+            <div class="box-header">
+              <h3 class="box-title">应用字段列表</h3>
+              <#if f43?? && f43.access >
+              <a href="#" data-action="create" data-fid="42" data-fvalue="${f42.fValue}" 
+              		class="dt-button button-create" data-toggle="modal" data-target="#fieldModal">
+              <i class="fa fa-plus-circle" aria-hidden="true"></i>${f43.fName}</a> </#if>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="fieldTable" class="display">
+                <thead>
+                <tr>
+                  <th>字段类型ID</th>
+                  <th>字段类型名称</th>
+                  <th>字段类型描述</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+<script>
+var fieldTable;
+$(document).ready(function() {
+	//easyui 重新解析
+	$.parser.parse();
+	fieldTable = $('#fieldTable').DataTable({
+		rowId: 'fieldid',
+		"paging": false,
+		"pagingType": "full_numbers",
+		"lengthChange": false,
+		"searching": false,
+		"ordering": false,
+		"info": true,
+		"autoWidth": false,
+		"language": {
+			"url": "/dist/Chinese.json"
+		},
+		ajax: 'FrmMgr/field_getAll.do',
+		columns: [
+			{ data: "fieldid" ,visible:true},     
+            { data: "fCname"},
+            { data: "fRemark"},
+            {
+          	  data:null,
+          	  className:"center",
+          	  render:function(data,type,row){
+          		 var str = '';
+          		 //编辑
+        		 str += '<#if f44??&&f44.access> <a href="#" data-fid="44" class="editor_edit" data-action="edit" data-toggle="modal" data-target="#fieldModal"><i class="fa fa-pencil-square-o"></i>${f44.fDesc}</a></#if>'; 
+        		 //删除
+        		 str += '<#if f45??&&f45.access>   <a href="#" data-fid="45" class="editor_remove" data-target="#fieldModal"><i class="fa fa-trash-o"></i>${f45.fDesc}</a></#if>';
+         		 return str;
+          	  } 
+            }
+        ],
+        scrollX: true,
+		select: 'single'
+	});	
+	////编辑或添加
+	$('#fieldModal').on('show.bs.modal', function (event) {
+		  var modal = $(this);
+		  var button = $(event.relatedTarget);
+		  var action = button.data('action') ;
+		  var fid = button.data('fid');
+		  var title = 'title';
+		  if("edit"==action){
+			  title = '编辑';
+			  var  row = fieldTable.row($(button).closest('tr')).data();
+			  //row.uJointime = moment(row.uJointime).format("YYYY-MM-DD HH:mm:ss");
+			  modal.find('.model-form').form('load',row);
+		  }else if('create'==action){
+			  title = '添加';
+			  modal.find('.model-form').form('reset');//先重置
+		  }
+		  modal.find('#formFucntion').val(fid);
+		  modal.find('.modal-title').text(title);
+		  modal.find('#formAction').val(action);
+	});
+	$('#fieldTable').on('click', 'a.editor_remove', function (e) {
+	    e.preventDefault();
+	    //var target = $(this).data('target');
+	    if(confirm("确定要删除该条记录吗？"))
+	    {
+    		var row= fieldTable.row($(this).closest('tr')).data();
+    		var rowIdx = fieldTable.row($(this).closest('tr')).index();
+    		var params = {};
+   	    	params.fid = $(this).data('fid');
+   	    	params.action = 'remove';
+   	    	params.fieldid = row.fieldid;
+    		$.post('FrmMgr/field_access.do',params,function(data){
+	    		var data = eval('(' + data + ')');
+	    		if(data.success){
+	    			fieldTable.row(rowIdx).remove().draw(false);
+	    			new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+		        }else{
+		        	new $.Zebra_Dialog(data.info,{modal: false});
+		        }
+	    	});
+	    }
+	} );
+});
+/* 功能 */
+function saveField(){
+	$('#fieldModal .model-form').form('submit', {
+		onSubmit: function(){
+			var fKey = $(this).find('input[name=fKey]').val();
+			var fCname = $(this).find('input[name=fCname]').val();
+			if($.trim(fCname)==''){
+				alert('字段名称不允许为空！');
+				return false;
+			}
+			return $(this).form('validate');
+		},
+	    success: function(data){
+	        var data = eval('(' + data + ')');  // change the JSON string to javascript object
+	        var action = $('#fieldModal #formAction').val();
+	        if(data.success){
+	        	$('#fieldModal').modal('hide');
+	        	if('edit'==action){
+	        		fieldTable.row('#'+data.data.fieldid).data(data.data).select().draw(false);
+	 	        }else if('create'==action){
+	 	        	fieldTable.row.add(data.data).select().draw(false);
+	 	        	new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+	 	        }
+	        }else{
+	        	new $.Zebra_Dialog(data.info,{modal: false});
+	        }
+	    }
+	});
+}
+</script>
+</body>
+</html>

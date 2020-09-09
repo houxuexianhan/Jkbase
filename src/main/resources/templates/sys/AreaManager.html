@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body >
+<!-- functionModal -->
+<div class="modal fade" id="AreaModal" tabindex="-1" role="dialog"  data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >Title</h4>
+      </div>
+      <div class="modal-body">
+		  <form  class="model-form" action="SysMgr/area_access.do" method="post">
+		    <input name="areaid" type="hidden" value="-1" />
+		    <input name="aLevel" type="hidden" value="1"/>
+		    <input name="aParentid" type="hidden" value="0"/>
+		    <input id="formAction" name="action" type="hidden" />
+		    <input id="formFucntion" name="fid" type="hidden" />
+		    <div class="form-group">
+		          <label class="control-label" >*行政区名称</label>
+		          <div class="controls">
+		            <input name="aAreaname" type="text" placeholder="例如:北京市" class="form-control">
+		          </div>
+		        </div>
+		   <div class="form-group">
+		          <label class="control-label" >*标准代码(国家标准)</label>
+		          <div class="controls">
+		            <input name="aAreano" type="number" placeholder="例如:460100" class="form-control">
+		          </div>
+		        </div>
+		   <div class="form-group">
+	          <label class="control-label">行政区级别</label>
+	          <div class="controls">
+	            <input class="easyui-combobox" name="aLevelname" 
+		          	data-options="valueField:'vText',editable:false,required:true,textField:'vText',url:'SysMgr/fieldvalue_combo.do?key=5'">
+	          </div>
+	        </div>
+		   <div class="form-group">
+		          <label class="control-label" >所属行政区(父级)</label>
+		          <div class="controls">
+		            <input name="aParentName" readonly="readonly" type="text" value="顶级行政区" class="form-control">
+		          </div>
+		       </div>
+	      <div class="form-group">
+	          <label class="control-label">*行政区域</label>
+	          <div class="controls">
+	            <input class="easyui-combobox" name="aZoning" id="aZoning"
+		          	data-options="valueField:'vText',editable:false,required:true,textField:'vText',url:'SysMgr/fieldvalue_combo.do?key=4'">
+	          </div>
+	        </div>
+		
+		    <div class="form-group">
+		          <label class="control-label" >自定义编码(拼音缩写)</label>
+		          <div class="controls">
+		            <input name="aAreacode" type="text" placeholder="例如:BJ" class="form-control">
+		          </div>
+		        </div>
+	        <div class="form-group">
+	          <label class="control-label" >排序值</label>
+	          <div class="controls">
+	            <input name="aShoworder" type="number" placeholder="例如:8" class="form-control">
+	          </div>
+	        	</div>
+		  </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" onclick="saveArea()">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end Modal -->
+
+ <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        	行政区管理
+        <small>对行政区的增删改查</small>
+        <!-- Button trigger modal -->
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="${request.contextPath}"><i class="fa fa-dashboard"></i>主页</a></li>
+        <li>系统管理</li>
+        <li class="active">行政区管理</li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box" id="rolefunction_box">
+            <div class="box-header">
+              <h3 class="box-title">行政区列表</h3>
+              <#if f54?? &&f54.access> 
+              <a href="#" data-fid="54" data-action="addTop" data-toggle="modal" data-target="#AreaModal"><i class="fa fa-plus-circle"></i>${f54.fDesc}</a>
+              </#if>
+             <#if f65?? &&f65.access> 
+              <a href="#" data-fid="65" onclick='if(confirm("确认要导出Excel吗")) window.open("SysMgr/area_export.do","_blank");'><i class="fa fa-file-excel-o"></i>${f65.fDesc}</a>
+              </#if>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body" id="areaTable">
+            <table id="dg" class="easyui-treegrid" 
+        		data-options="url:'SysMgr/area_getAll.do',idField:'areaid',treeField:'aAreaname',
+        		fitColumns:true,rownumbers:true,nowrap:false"
+        		>
+			    <thead>
+			        <tr>
+			            <th data-options="field:'aAreaname',width:500">行政区名称</th>
+			            <th data-options="field:'aLevelname',width:300">行政区级别</th>
+			            <th data-options="field:'aZoning',width:300">行政区域</th>
+			            <th data-options="field:'aAreano',width:300">标准代码</th>
+			            <th data-options="field:'aAreacode',width:100">自定义编码</th>
+			            <th data-options="field:'aShoworder',width:100">排序</th>
+			            <th data-options="field:'_operate',width:300,align:'center',formatter:formatOper">操作</th>
+			        </tr>
+			    </thead>
+			</table>
+			<script type="text/javascript">
+				function formatOper(value,row,index){
+					var str = '';
+					//编辑
+					str += '<#if f51?? &&f51.access> <a href="#"  data-action="create" data-toggle="modal" data-target="#AreaModal" data-fid="51"><i class="fa fa-plus-circle"></i>${f51.fName}</a></#if>';
+					//编辑
+					str += '<#if f52?? &&f52.access> <a href="#" data-action="edit" data-toggle="modal" data-target="#AreaModal" data-fid="52"><i class="fa fa-pencil-square-o"></i>${f52.fDesc}</a></#if>'; 
+					//删除 
+					str += '<#if f53?? &&f53.access> <a href="#" data-fid="53" class="editor_remove" ><i class="fa fa-trash-o"></i>${f53.fDesc}</a></#if>';
+					return str;
+				}
+			</script>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+<script>
+$(function() {
+	$.parser.parse();
+	$('#AreaModal').on('show.bs.modal', function (event) {
+		  var modal = $(this);
+		  var button = $(event.relatedTarget);
+		  var action = button.data('action') ;
+		  var fid = button.data('fid');
+		  var title = 'title';
+		  if("edit"==action){
+    		  var row = $('#dg').treegrid('getSelected');  
+    		  var level = row.aLevel;
+			  title = '编辑';
+			  modal.find('.model-form').form('load',row);
+			  modal.find('.model-form #aZoning').combobox('readonly',level != 1);//顶级才 可以 编辑 行政区划
+			  var parent = $('#dg').treegrid('getParent',row.areaid);
+			  modal.find('.model-form input[name=aParentName]').val(parent?parent.aAreaname:"顶级行政区");
+		  }else if('create'==action){
+			  var row = $('#dg').treegrid('getSelected');  
+			  var level = row.aLevel;
+			  title = '添加子级行政区';
+			  modal.find('.model-form').form('reset');//先重置
+			  modal.find('.model-form input[name=aParentName]').val(row.aAreaname);
+			  modal.find('.model-form input[name=aParentid]').val(row.areaid);
+			  modal.find('.model-form input[name=aLevel]').val(++level);
+			  modal.find('.model-form #aZoning').combobox('readonly',true);
+			  modal.find('.model-form #aZoning').combobox('setValue',row.aZoning);
+		  }else if('addTop'==action){
+			  title = '添加顶级行政区';
+			  modal.find('.model-form').form('reset');//先重置
+			  modal.find('.model-form input[name=aParentid]').val(0);
+			  modal.find('.model-form input[name=aLevel]').val(1);
+			  modal.find('.model-form #aZoning').combobox('readonly',false);
+		  }
+		  modal.find('#formFucntion').val(fid);
+		  modal.find('.modal-title').text(title);
+		  modal.find('#formAction').val(action);
+	});
+	/* 功能 */
+	$('#areaTable').on('click', 'a.editor_remove', function (e) {
+	    e.preventDefault();
+	    if(confirm("将会连同所有子行政区一起删除，确定删除吗？"))
+	    {
+   		    var node = $('#dg').treegrid('getSelected');  
+    		var params = {};
+   	    	params.fid = $(this).data('fid');
+   	    	params.action = 'remove';
+   	    	params.areaid = node.areaid;
+    		$.post('SysMgr/area_access.do',params,function(data){
+	    		var data = eval('(' + data + ')');
+	    		if(data.success){
+	    			$('#dg').treegrid('remove',node.areaid);
+	    			new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+		        }else{
+		        	new $.Zebra_Dialog(data.info,{modal: false});
+		        }
+	    	});
+	    }
+	} );
+} ); 
+//编辑或修改
+function saveArea(){
+	$('#AreaModal .model-form').form('submit', {
+		onSubmit: function(){
+			var aAreano = $(this).find('input[name=aAreano]').val();	
+			var aAreacode= $(this).find('input[name=aAreacode]').val();
+			var aAreaname = $(this).find('input[name=aAreaname]').val();
+			var aShoworder = $(this).find('input[name=aShoworder]').val();
+			if($.trim(aAreano)==''){
+				alert('国家标准代码不允许为空！');
+				return false;
+			}
+			if($.trim(aAreacode)==''){
+				alert('自定义编码不允许为空！');
+				return false;
+			}
+			if($.trim(aAreaname)==''){
+				alert('行政区名称不允许为空！');
+				return false;
+			}
+			if($.trim(aShoworder)==''){
+				alert('排序值不允许为空！');
+				return false;
+			}
+			return $(this).form('validate');
+		},
+	    success: function(data){
+	        var data = eval('(' + data + ')');  // change the JSON string to javascript object
+	        var action = $('#AreaModal #formAction').val();
+	        var node = $('#dg').treegrid('getSelected');  
+	        if(data.success){
+	        	var array = [];
+ 	        	array.push(data.data);
+	        	$('#AreaModal').modal('hide');
+	        	if('edit'==action){
+	        		$('#dg').treegrid('update',{id:node.areaid,row:data.data});
+	 	        }else if('create'==action){//添加子节点
+	 	        	if(node){
+	 	        		$('#dg').treegrid('append',{parent:node.areaid,data:array});
+	 	        	}else{
+	 	        		$('#dg').treegrid('append',{data:array});
+	 	        	}
+	 	        	$('#dg').treegrid('select',data.data.areaid);
+	 	        	$('#dg').treegrid('refresh',data.data.areaid);
+	 	        }else if('addTop'==action){
+	 	        	//添加顶级节点
+	 	        	$('#dg').treegrid('append',{data:array});
+	 	        	$('#dg').treegrid('select',data.data.areaid);
+	 	        	$('#dg').treegrid('refresh',data.data.areaid);
+	 	        }
+	        	new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+	        }else{
+	        	new $.Zebra_Dialog(data.info,{modal: false});
+	        }
+	    }
+	});
+}
+</script>
+</body>
+</html>

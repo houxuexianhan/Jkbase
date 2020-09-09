@@ -1,0 +1,232 @@
+package com.jack.jkbase.controller;
+
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.jack.jkbase.entity.SysApp;
+import com.jack.jkbase.entity.SysField;
+import com.jack.jkbase.entity.SysFunction;
+import com.jack.jkbase.entity.SysModule;
+import com.jack.jkbase.entity.SysUser;
+import com.jack.jkbase.entity.ViewSysFunction;
+import com.jack.jkbase.entity.ViewSysModule;
+import com.jack.jkbase.mapper.SysAppMapper;
+import com.jack.jkbase.mapper.SysFieldMapper;
+import com.jack.jkbase.mapper.SysFunctionMapper;
+import com.jack.jkbase.mapper.SysModuleMapper;
+import com.jack.jkbase.util.Helper;
+import com.jack.jkbase.util.Result;
+@Controller
+@RequestMapping("/FrmMgr")
+public class FrmMgrController {
+	@Autowired HttpSession session ;
+	@Autowired SysAppMapper appMapper;
+	@Autowired SysModuleMapper moduleMapper ;
+	@Autowired SysFunctionMapper funcMapper ;
+	@Autowired SysFieldMapper fieldMapper ;
+	//模块功能
+	@RequestMapping(value = "/FunctionManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
+	public String page_FunctionManager() {		
+		return "frm/FunctionManager";
+	}
+	@RequestMapping(value = "/ModuleManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
+	public String page_moduleManager(Model model) {
+		return "frm/ModuleMgr";
+	}
+	@RequestMapping(value = "/ConfigManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
+	public String page_configManager(Model model) {
+		return "frm/ConfigManager";
+	}
+	@RequestMapping(value = "/FieldManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
+	public String page_fieldManager(Model model) {
+		return "frm/FieldManager";
+	}
+	@RequestMapping(value = "/SystemErrorLog.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
+	public String page_systemErrorLog(Model model) {
+		return "frm/SystemErrorLog";
+	}
+	@RequestMapping(value = "/EventManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
+	public String page_eventLog(Model model) {
+		return "frm/EventManager";
+	}
+	//--------------------------应用--------------------------------------------------
+	
+	@RequestMapping(value = "/getAppsCombo.do", produces="text/html;charset=utf-8")
+	@ResponseBody
+	public String app_getAppsCombo(){
+		return JSON.toJSONString(appMapper.findAll());
+	}
+	@RequestMapping(value = "/getAppsByRoleCombo.do", produces="text/html;charset=utf-8")
+	@ResponseBody
+	public String app_getAppsByRoleCombo(int roleId){
+		return JSON.toJSONString(appMapper.findByRole(roleId));
+	}
+	@RequestMapping(value = "/getAppsExcludeSysCombo.do", produces="text/html;charset=utf-8")
+	@ResponseBody
+	public String app_getAppsExcludeSysCombo(){
+		SysUser loginUser = (SysUser)session.getAttribute(Helper.SESSION_USER);
+		if(loginUser.getUserid()==Helper.adminId) return JSON.toJSONString(appMapper.findAll());
+		else return JSON.toJSONString(appMapper.findByaIssys(0));
+	}
+	//*************************************模块 应用*******************************
+	@RequestMapping(value = "/module_getApps.do",produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String module_getApps(){
+		JSONObject jo = new JSONObject();
+		List<SysApp> list = appMapper.findAll();
+		JSONArray ja = new JSONArray();
+		ja.addAll(list);
+		jo.put("data", ja);
+		return jo.toJSONString();
+	}
+	@RequestMapping(value = "/module_appAccess.do",params=Helper.PARAM_FUNCTION_ID, method = RequestMethod.POST, produces="text/html;charset=utf-8")
+	@ResponseBody
+	public String module_appAccess(int fid,String action,SysApp app) {
+		if(!Helper.F_ACTION_REMOVE.equals(action)&&StringUtils.isEmpty(app.getaAppname()))
+			return JSON.toJSONString(new Result(false,"操作失败：应用名称不能为空！"));  
+		try{
+			if(Helper.F_ACTION_CREATE.equals(action)){
+				appMapper.insert(app);
+				return JSON.toJSONString(new Result(true,"添加成功！",appMapper.selectByPrimaryKey(app.getAppid())));
+			}else if(Helper.F_ACTION_EDIT.equals(action)){
+				appMapper.updateByPrimaryKey(app);
+				return JSON.toJSONString(new Result(true,"修改成功！",appMapper.selectByPrimaryKey(app.getAppid())));
+			}else if(Helper.F_ACTION_REMOVE.equals(action)){
+				appMapper.deleteByPrimaryKey(app.getAppid());
+				return  JSON.toJSONString(new Result(true,"删除成功！"));
+			}else{
+				return JSON.toJSONString(new Result(false,"请求参数action错误："+action));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			return JSON.toJSONString(new Result(false,"操作失败出现异常：请检查应用名称是否重复！"));
+		}
+	}
+	@RequestMapping(value = "/module_moduleAccess.do",params=Helper.PARAM_FUNCTION_ID, method = RequestMethod.POST, produces="text/html;charset=utf-8")
+	@ResponseBody
+	public String module_moduleAccess(int fid,String action,SysModule module) {
+		if(!Helper.F_ACTION_REMOVE.equals(action)&&StringUtils.isEmpty(module.getmCname()))
+			return JSON.toJSONString(new Result(false,"操作失败：模块名称不能为空！"));  
+		try{
+			if(Helper.F_ACTION_CREATE.equals(action)){
+				moduleMapper.insert(module);
+				return JSON.toJSONString(new Result(true,"添加成功！",moduleMapper.selectByPrimaryKey(module.getModuleid())));
+			}else if(Helper.F_ACTION_EDIT.equals(action)){
+				moduleMapper.updateByPrimaryKey(module);
+				return JSON.toJSONString(new Result(true,"修改成功！",moduleMapper.selectByPrimaryKey(module.getModuleid())));
+			}else if(Helper.F_ACTION_REMOVE.equals(action)){
+				moduleMapper.deleteByPrimaryKey(module.getModuleid());
+				return  JSON.toJSONString(new Result(true,"删除成功！"));
+			}else{
+				return JSON.toJSONString(new Result(false,"请求参数action错误："+action));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			return JSON.toJSONString(new Result(false,"操作出现异常:"+e.getMessage().substring(0,40)));
+		}
+	}
+	@RequestMapping(value = "/getModules.do", produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String module_getModules() {
+		List<ViewSysModule> list = moduleMapper.selectAll();
+		JSONArray ja = new JSONArray();
+		ja.addAll(list);
+		JSONObject jo = new JSONObject();
+		jo.put("data", ja);
+		return jo.toJSONString();
+	}
+	@RequestMapping(value = "/module_getComboExcludeParent.do", produces="text/html;charset=utf-8")
+	@ResponseBody
+	public String module_getComboExcludeParent(){
+		return JSON.toJSONString(moduleMapper.selectComboExcludeParent());
+	}
+	
+	//************************模块功能******************************
+	@RequestMapping(value = "/function_access.do", produces="text/html;charset=utf-8",params=Helper.PARAM_FUNCTION_ID,method=RequestMethod.POST)
+	@ResponseBody
+	public String function_access(String action,SysFunction model) {
+		if(!Helper.F_ACTION_REMOVE.equals(action)&&StringUtils.isEmpty(model.getfName()))
+			return JSON.toJSONString(new Result(false,"操作失败：功能名称不能为空！")); 
+		try{
+			if(Helper.F_ACTION_CREATE.equals(action)){
+				model.setfValue(funcMapper.selectMaxValue(model.getfModuleid()));
+				funcMapper.insertSelective(model);
+				return JSON.toJSONString(new Result(true,"添加成功！",funcMapper.selectByPrimaryKey(model.getFunctionid())));
+			}else if(Helper.F_ACTION_EDIT.equals(action)){
+				funcMapper.updateByPrimaryKey(model);
+				return JSON.toJSONString(new Result(true,"修改成功！",funcMapper.selectByPrimaryKey(model.getFunctionid())));
+			}else if(Helper.F_ACTION_REMOVE.equals(action)){
+				funcMapper.deleteByPrimaryKey(model.getFunctionid());
+				return  JSON.toJSONString(new Result(true,"删除成功！",model));
+			}else{
+				return JSON.toJSONString(new Result(false,"请求参数action错误："+action));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			return JSON.toJSONString(new Result(false,"操作出现异常:"+e.getMessage().substring(0,30)));
+		}
+	}
+	@RequestMapping(value = "/function_getAll.do", produces="text/html;charset=utf-8")
+	@ResponseBody
+	public String function_getAll() {
+		JSONObject jo = new JSONObject();
+		List<ViewSysFunction> list = funcMapper.selectAll();
+		JSONArray ja = new JSONArray();
+		ja.addAll(list);
+		jo.put("data", ja);
+		return jo.toJSONString();
+	}
+	
+	////**************字段****************************************
+	@RequestMapping(value = "/field_getAll.do",produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String field_getAll(){
+		JSONObject jo = new JSONObject();
+		List<SysField> list = fieldMapper.findAll();
+		JSONArray ja = new JSONArray();
+		ja.addAll(list);
+		jo.put("data", ja);
+		return jo.toJSONString();
+	}
+	@RequestMapping(value = "/field_access.do", produces="text/html;charset=utf-8",params=Helper.PARAM_FUNCTION_ID,method=RequestMethod.POST)
+	@ResponseBody
+	public String field_access(String action,SysField model) {
+		if(!Helper.F_ACTION_REMOVE.equals(action)&&StringUtils.isEmpty(model.getfCname())) 
+			return JSON.toJSONString(new Result(false,"操作失败：字段名称不能为空！"));
+		try{
+			if(Helper.F_ACTION_CREATE.equals(action)){
+				fieldMapper.insert(model);
+				return JSON.toJSONString(new Result(true,"添加成功！",fieldMapper.selectByPrimaryKey(model.getFieldid())));
+			}else if(Helper.F_ACTION_EDIT.equals(action)){
+				fieldMapper.updateByPrimaryKey(model);
+				return JSON.toJSONString(new Result(true,"修改成功！",fieldMapper.selectByPrimaryKey(model.getFieldid())));
+			}else if(Helper.F_ACTION_REMOVE.equals(action)){
+				fieldMapper.deleteByPrimaryKey(model.getFieldid());
+				return  JSON.toJSONString(new Result(true,"删除成功！",model));
+			}else{
+				return JSON.toJSONString(new Result(false,"请求参数action错误："+action));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			return JSON.toJSONString(new Result(false,"操作出现异常:"+e.getMessage().substring(0,40)));
+		}
+	}
+	@RequestMapping(value = "/field_combo.do",produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String field_combo(){
+		return  JSON.toJSONString(fieldMapper.findAll());
+	}
+	
+}

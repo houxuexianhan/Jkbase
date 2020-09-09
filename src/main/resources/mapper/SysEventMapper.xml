@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jack.jkbase.mapper.SysEventMapper" >
+  <resultMap id="BaseResultMap" type="com.jack.jkbase.entity.SysEvent" >
+    <id column="EventID" property="eventid" jdbcType="BIGINT" />
+    <result column="E_UserName" property="eUsername" jdbcType="NVARCHAR" />
+    <result column="E_UserID" property="eUserid" jdbcType="INTEGER" />
+    <result column="E_DateTime" property="eDatetime" jdbcType="TIMESTAMP" />
+    <result column="E_AppID" property="eAppid" jdbcType="INTEGER" />
+    <result column="E_AppName" property="eAppname" jdbcType="NVARCHAR" />
+    <result column="E_ModName" property="eModname" jdbcType="NVARCHAR" />
+    <result column="E_ModCode" property="eModcode" jdbcType="VARCHAR" />
+    <result column="E_From" property="eFrom" jdbcType="NVARCHAR" />
+    <result column="E_Type" property="eType" jdbcType="INTEGER" />
+    <result column="E_IP" property="eIp" jdbcType="VARCHAR" />
+    <result column="E_Record" property="eRecord" jdbcType="NVARCHAR" />
+  </resultMap>
+  <!-- 分页查询 -->
+   <select id="selectByPage" databaseId="sqlserver" resultMap="com.jack.jkbase.mapper.SysEventMapper.BaseResultMap,com.jack.jkbase.util.PageMapper.RecordCount">
+  	 select * from 
+		 (select top ${pageSize} * from 
+	   	   (select top ${pageSize*pageIndex} * from  sys_Event 
+		 	 <include refid="where_selectByPage" />
+		 	 order by E_DateTime desc) TB2  
+		  		order by E_DateTime) as t 
+		  order by t.E_DateTime desc
+   
+   select count(*) RecordCount from sys_Event <include refid="where_selectByPage" />
+  </select>
+   <select id="selectByPage" databaseId="mysql" resultMap="com.jack.jkbase.mapper.SysEventMapper.BaseResultMap,com.jack.jkbase.util.PageMapper.RecordCount">
+  	 select * from sys_Event
+  	 <include refid="where_selectByPage" />
+  	 order by EventID desc
+  	  limit ${pageSize*(pageIndex-1)},${pageSize};
+   
+   select count(*) RecordCount from sys_Event ;
+  </select>
+ <sql id="where_selectByPage">
+	<where>
+		<if test="username!=null and username!=''">E_UserName like '%'+ #{username}+'%'</if>
+		<if test="eventType!=null and eventType>0">and E_Type=#{eventType}</if>
+		<if test="startDate!=null">and E_DateTime &gt;=#{startDate}</if>
+		<if test="endDate!=null">and E_DateTime  &lt;#{endDate}</if>
+	</where>
+</sql>
+  
+  <sql id="Base_Column_List" >
+    EventID, E_UserName, E_UserID, E_DateTime, E_AppID, E_AppName, E_ModName, E_ModCode, 
+    E_From, E_Type, E_IP, E_Record
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_Event
+    where EventID = #{eventid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sys_Event
+    where EventID = #{eventid,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" >
+    insert into sys_Event ( E_UserName, E_UserID, 
+      E_DateTime, E_AppID, E_AppName, 
+      E_ModName, E_ModCode, E_From, 
+      E_Type, E_IP, E_Record
+      )
+    values ( #{eUsername,jdbcType=NVARCHAR}, #{eUserid,jdbcType=INTEGER}, 
+      #{eDatetime,jdbcType=TIMESTAMP}, #{eAppid,jdbcType=INTEGER}, #{eAppname,jdbcType=NVARCHAR}, 
+      #{eModname,jdbcType=NVARCHAR}, #{eModcode,jdbcType=VARCHAR}, #{eFrom,jdbcType=NVARCHAR}, 
+      #{eType,jdbcType=INTEGER}, #{eIp,jdbcType=VARCHAR}, #{eRecord,jdbcType=NVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" >
+    insert into sys_Event
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="eUsername != null" >
+        E_UserName,
+      </if>
+      <if test="eUserid != null" >
+        E_UserID,
+      </if>
+      <if test="eDatetime != null" >
+        E_DateTime,
+      </if>
+      <if test="eAppid != null" >
+        E_AppID,
+      </if>
+      <if test="eAppname != null" >
+        E_AppName,
+      </if>
+      <if test="eModname != null" >
+        E_ModName,
+      </if>
+      <if test="eModcode != null" >
+        E_ModCode,
+      </if>
+      <if test="eFrom != null" >
+        E_From,
+      </if>
+      <if test="eType != null" >
+        E_Type,
+      </if>
+      <if test="eIp != null" >
+        E_IP,
+      </if>
+      <if test="eRecord != null" >
+        E_Record,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="eUsername != null" >
+        #{eUsername,jdbcType=NVARCHAR},
+      </if>
+      <if test="eUserid != null" >
+        #{eUserid,jdbcType=INTEGER},
+      </if>
+      <if test="eDatetime != null" >
+        #{eDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="eAppid != null" >
+        #{eAppid,jdbcType=INTEGER},
+      </if>
+      <if test="eAppname != null" >
+        #{eAppname,jdbcType=NVARCHAR},
+      </if>
+      <if test="eModname != null" >
+        #{eModname,jdbcType=NVARCHAR},
+      </if>
+      <if test="eModcode != null" >
+        #{eModcode,jdbcType=VARCHAR},
+      </if>
+      <if test="eFrom != null" >
+        #{eFrom,jdbcType=NVARCHAR},
+      </if>
+      <if test="eType != null" >
+        #{eType,jdbcType=INTEGER},
+      </if>
+      <if test="eIp != null" >
+        #{eIp,jdbcType=VARCHAR},
+      </if>
+      <if test="eRecord != null" >
+        #{eRecord,jdbcType=NVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jack.jkbase.entity.SysEvent" >
+    update sys_Event
+    <set >
+      <if test="eUsername != null" >
+        E_UserName = #{eUsername,jdbcType=NVARCHAR},
+      </if>
+      <if test="eUserid != null" >
+        E_UserID = #{eUserid,jdbcType=INTEGER},
+      </if>
+      <if test="eDatetime != null" >
+        E_DateTime = #{eDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="eAppid != null" >
+        E_AppID = #{eAppid,jdbcType=INTEGER},
+      </if>
+      <if test="eAppname != null" >
+        E_AppName = #{eAppname,jdbcType=NVARCHAR},
+      </if>
+      <if test="eModname != null" >
+        E_ModName = #{eModname,jdbcType=NVARCHAR},
+      </if>
+      <if test="eModcode != null" >
+        E_ModCode = #{eModcode,jdbcType=VARCHAR},
+      </if>
+      <if test="eFrom != null" >
+        E_From = #{eFrom,jdbcType=NVARCHAR},
+      </if>
+      <if test="eType != null" >
+        E_Type = #{eType,jdbcType=INTEGER},
+      </if>
+      <if test="eIp != null" >
+        E_IP = #{eIp,jdbcType=VARCHAR},
+      </if>
+      <if test="eRecord != null" >
+        E_Record = #{eRecord,jdbcType=NVARCHAR},
+      </if>
+    </set>
+    where EventID = #{eventid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jack.jkbase.entity.SysEvent" >
+    update sys_Event
+    set E_UserName = #{eUsername,jdbcType=NVARCHAR},
+      E_UserID = #{eUserid,jdbcType=INTEGER},
+      E_DateTime = #{eDatetime,jdbcType=TIMESTAMP},
+      E_AppID = #{eAppid,jdbcType=INTEGER},
+      E_AppName = #{eAppname,jdbcType=NVARCHAR},
+      E_ModName = #{eModname,jdbcType=NVARCHAR},
+      E_ModCode = #{eModcode,jdbcType=VARCHAR},
+      E_From = #{eFrom,jdbcType=NVARCHAR},
+      E_Type = #{eType,jdbcType=INTEGER},
+      E_IP = #{eIp,jdbcType=VARCHAR},
+      E_Record = #{eRecord,jdbcType=NVARCHAR}
+    where EventID = #{eventid,jdbcType=BIGINT}
+  </update>
+</mapper>

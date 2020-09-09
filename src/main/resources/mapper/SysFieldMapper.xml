@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jack.jkbase.mapper.SysFieldMapper" >
+  <resultMap id="BaseResultMap" type="com.jack.jkbase.entity.SysField" >
+    <id column="FieldID" property="fieldid" jdbcType="INTEGER" />
+    <result column="F_CName" property="fCname" jdbcType="NVARCHAR" />
+    <result column="F_Remark" property="fRemark" jdbcType="NVARCHAR" />
+  </resultMap>
+   <select id="findAll" resultMap="BaseResultMap">
+  	select * from sys_Field 
+  </select>
+  
+  <sql id="Base_Column_List" >
+    FieldID, F_CName, F_Remark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select *
+    from sys_Field
+    where FieldID = #{fieldid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_Field
+    where FieldID = #{fieldid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="fieldid">
+    insert into sys_Field ( F_CName, F_Remark
+      )
+    values (#{fCname,jdbcType=NVARCHAR}, #{fRemark,jdbcType=NVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="fieldid">
+    insert into sys_Field
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fCname != null" >
+        F_CName,
+      </if>
+      <if test="fRemark != null" >
+        F_Remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fCname != null" >
+        #{fCname,jdbcType=NVARCHAR},
+      </if>
+      <if test="fRemark != null" >
+        #{fRemark,jdbcType=NVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jack.jkbase.entity.SysField" >
+    update sys_Field
+    <set >
+      <if test="fCname != null" >
+        F_CName = #{fCname,jdbcType=NVARCHAR},
+      </if>
+      <if test="fRemark != null" >
+        F_Remark = #{fRemark,jdbcType=NVARCHAR},
+      </if>
+    </set>
+    where FieldID = #{fieldid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jack.jkbase.entity.SysField" >
+    update sys_Field
+    set F_CName = #{fCname,jdbcType=NVARCHAR},
+      F_Remark = #{fRemark,jdbcType=NVARCHAR}
+    where FieldID = #{fieldid,jdbcType=INTEGER}
+  </update>
+</mapper>

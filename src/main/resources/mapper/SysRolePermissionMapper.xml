@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jack.jkbase.mapper.SysRolePermissionMapper" >
+  <resultMap id="BaseResultMap" type="com.jack.jkbase.entity.SysRolePermission" >
+        <id column="PermissionID" property="permissionid" jdbcType="INTEGER" />
+    <result column="P_RoleID" property="pRoleid" jdbcType="INTEGER" />
+    <result column="P_AppID" property="pAppid" jdbcType="INTEGER" />
+    <result column="P_ModuleID" property="pModuleid" jdbcType="INTEGER" />
+    <result column="P_Value" property="pValue" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap type="com.jack.jkbase.entity.ViewUserRolePerm" id="ViewUserRolePerm" extends="BaseResultMap">
+  	<result column="R_UserID" property="R_UserID"/>
+  	<result column="R_RoleID" property="R_RoleID"/>
+  	<result column="P_ModuleId" property="P_ModuleId"/>
+  </resultMap>
+  
+   <!-- 查找某个用户对某个模块的权限值 -->
+  <select id="selectModulePerm" resultMap="ViewUserRolePerm">
+  	select * from View_sys_UserRolePerm
+  	where R_UserID=#{param1} and P_ModuleId = #{param2}
+  </select>
+  <!-- 验证某用户在某模块对某个功能是否有权限进行操作 ,返回空字符串表示成功-->
+  <select id="permissionValidate" resultType="java.lang.String">
+  {call proc_sys_permission_validate(
+  	#{param1},
+	#{param2}
+  )}
+  </select>
+  <!--  InsertBatch -->
+  <insert id="insertOrUpdate">
+	  <selectKey keyProperty="permissionid" resultType="int" order="BEFORE">
+	    select count(*) from sys_RolePermission 
+	    WHERE P_RoleID = #{pRoleid} and P_AppID = #{pAppid} and P_ModuleID = #{pModuleid};
+	  </selectKey>
+	  <choose>
+        <when test="permissionid==0">
+             insert into sys_RolePermission ( P_RoleID, P_AppID, P_ModuleID, P_Value) 
+             values (#{pRoleid}, #{pAppid}, #{pModuleid}, #{pValue});
+        </when>
+        <otherwise>
+            update sys_RolePermission SET P_Value =#{pValue}
+			WHERE P_RoleID = #{pRoleid} and P_AppID = #{pAppid} and P_ModuleID = #{pModuleid};
+        </otherwise>
+     </choose>
+  </insert>
+  <!-- select by roleapp -->
+  <select id="selectByRoleApp" resultMap="BaseResultMap">
+  	select * from sys_RolePermission
+  	where P_RoleID = #{param1}
+      and P_AppID = #{param2}
+  </select>
+  <!-- 自动  -->
+ <sql id="Base_Column_List" >
+    PermissionID, P_RoleID, P_AppID, P_ModuleID, P_Value
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_RolePermission
+    where PermissionID = #{permissionid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_RolePermission
+    where PermissionID = #{permissionid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.jack.jkbase.entity.SysRolePermission" >
+    insert into sys_RolePermission (PermissionID, P_RoleID, P_AppID, 
+      P_ModuleID, P_Value)
+    values (#{permissionid,jdbcType=INTEGER}, #{pRoleid,jdbcType=INTEGER}, #{pAppid,jdbcType=INTEGER}, 
+      #{pModuleid,jdbcType=INTEGER}, #{pValue,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jack.jkbase.entity.SysRolePermission" >
+    insert into sys_RolePermission
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="permissionid != null" >
+        PermissionID,
+      </if>
+      <if test="pRoleid != null" >
+        P_RoleID,
+      </if>
+      <if test="pAppid != null" >
+        P_AppID,
+      </if>
+      <if test="pModuleid != null" >
+        P_ModuleID,
+      </if>
+      <if test="pValue != null" >
+        P_Value,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="permissionid != null" >
+        #{permissionid,jdbcType=INTEGER},
+      </if>
+      <if test="pRoleid != null" >
+        #{pRoleid,jdbcType=INTEGER},
+      </if>
+      <if test="pAppid != null" >
+        #{pAppid,jdbcType=INTEGER},
+      </if>
+      <if test="pModuleid != null" >
+        #{pModuleid,jdbcType=INTEGER},
+      </if>
+      <if test="pValue != null" >
+        #{pValue,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jack.jkbase.entity.SysRolePermission" >
+    update sys_RolePermission
+    <set >
+      <if test="pRoleid != null" >
+        P_RoleID = #{pRoleid,jdbcType=INTEGER},
+      </if>
+      <if test="pAppid != null" >
+        P_AppID = #{pAppid,jdbcType=INTEGER},
+      </if>
+      <if test="pModuleid != null" >
+        P_ModuleID = #{pModuleid,jdbcType=INTEGER},
+      </if>
+      <if test="pValue != null" >
+        P_Value = #{pValue,jdbcType=INTEGER},
+      </if>
+    </set>
+    where PermissionID = #{permissionid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jack.jkbase.entity.SysRolePermission" >
+    update sys_RolePermission
+    set P_RoleID = #{pRoleid,jdbcType=INTEGER},
+      P_AppID = #{pAppid,jdbcType=INTEGER},
+      P_ModuleID = #{pModuleid,jdbcType=INTEGER},
+      P_Value = #{pValue,jdbcType=INTEGER}
+    where PermissionID = #{permissionid,jdbcType=INTEGER}
+  </update>
+</mapper>

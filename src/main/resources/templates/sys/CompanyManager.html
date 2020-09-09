@@ -1,0 +1,258 @@
+	<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body >
+<div id="dd" class="easyui-dialog" title="请选择行政区" style="width:400px;height:200px;"
+        data-options="iconCls:'icon-save',resizable:true,modal:true,closed:true">
+   <div id="tree"></div>     
+</div>
+<!-- functionModal -->
+<div class="modal fade" id="CompanyModal" tabindex="-1" role="dialog"  data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >Title</h4>
+      </div>
+      <div class="modal-body">
+		  <form  class="model-form" action="SysMgr/company_access.do" method="post">
+		    <input name="companyid" type="hidden" value="-1" />
+		    <input name="cAreaid" type="hidden">
+		    <input name="cLevel" type="hidden" value="1"/>
+		    <input name="cParentid" type="hidden" value="0"/>
+		    <input id="formAction" name="action" type="hidden" />
+		    <input id="formFucntion" name="fid" type="hidden" />
+		    <div class="form-group">
+		          <label class="control-label" >*单位(部门)名称</label>
+		          <div class="controls">
+		            <input name="cCname" type="text" placeholder="例如:开发部" class="form-control">
+		          </div>
+		        </div>
+		     <div class="form-group">
+		          <label class="control-label" >*上级部门</label>
+		          <div class="controls">
+		            <input name="cParentCname" type="text" value="顶级部门" class="form-control" readonly="readonly">
+		          </div>
+		        </div>
+		   <div class="form-group">
+		          <label class="control-label" >*所属行政区
+		          <a href="#" id="selectCompany" class="dt-button" onclick="$('#dd').dialog('open');">请选择<i class="fa fa-caret-down" aria-hidden="true"></i></a>
+		          </label>
+		          <div class="controls">
+		            <input name="cAreaName" type="text"  class="form-control" placeholder="请选择行政区" readonly="readonly">
+		          </div>
+		        </div>
+	        <div class="form-group">
+	          <label class="control-label" >排序值</label>
+	          <div class="controls">
+	            <input name="cShoworder" type="number" placeholder="例如:8" class="form-control">
+	          </div>
+	        	</div>
+		  </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" onclick="saveCompany()">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end Modal -->
+
+ <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        	单位部门管理
+        <small>对单位部门管理的增删改查</small>
+        <!-- Button trigger modal -->
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>主页</a></li>
+        <li><a href="#">系统管理</a></li>
+        <li class="active">单位部门管理管理</li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box" id="rolefunction_box">
+            <div class="box-header">
+              <h3 class="box-title">单位部门列表</h3>
+              <#if f59?? &&f59.access> 
+              <a href="#" data-fid="59" data-action="addTop" data-toggle="modal" data-target="#CompanyModal"><i class="fa fa-plus-circle"></i>${f59.fDesc}</a>
+              </#if>
+              <#if f66?? &&f66.access> 
+              <a href="#" data-fid="66" onclick='if(confirm("确认要导出Excel吗")) window.open("SysMgr/company_export.do","_blank");'><i class="fa fa-file-excel-o"></i>${f66.fDesc}</a>
+              </#if>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body" id="companyTable">
+            <table id="dg" class="easyui-treegrid" 
+        		data-options="url:'SysMgr/company_getAll.do',idField:'companyid',treeField:'cCname',
+        		fitColumns:true,rownumbers:true,nowrap:false"
+        		>
+			    <thead>
+			        <tr>
+			            <th data-options="field:'cCname',width:500">单位(部门)名称</th>
+			            <th data-options="field:'cAreaname',width:300">所属行政区</th>
+			            <!-- <th data-options="field:'cChildcount',width:300">子部门数</th> -->
+			            <th data-options="field:'companyid',width:80">ID</th>
+			            <th data-options="field:'cShoworder',width:100">排序</th>
+			            <th data-options="field:'_operate',width:300,align:'center',formatter:formatOper">操作</th>
+			        </tr>
+			    </thead>
+			</table>
+			<script type="text/javascript">
+				function formatOper(value,row,index){
+					var str = '';
+					//添加子级
+					str += '<#if f56?? &&f56.access> <a href="#"  data-action="create" data-toggle="modal" data-target="#CompanyModal" data-fid="56"><i class="fa fa-plus-circle"></i>${f56.fName}</a></#if>';
+					//编辑
+					str += '<#if f57?? &&f57.access> <a href="#" data-action="edit" data-toggle="modal" data-target="#CompanyModal" data-fid="57"><i class="fa fa-pencil-square-o"></i>${f57.fDesc}</a></#if>'; 
+					//删除 
+					str += '<#if f58?? &&f58.access> <a href="#" data-fid="58" class="editor_remove" ><i class="fa fa-trash-o"></i>${f58.fDesc}</a></#if>';
+					return str;
+				}
+			</script>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+<script>
+$(function() {
+	$.parser.parse();
+	$('#CompanyModal').on('show.bs.modal', function (event) {
+		  var modal = $(this);
+		  var button = $(event.relatedTarget);
+		  var action = button.data('action') ;
+		  var fid = button.data('fid');
+		  var title = 'title';
+		  if("edit"==action){
+    		  var row = $('#dg').treegrid('getSelected');  
+    		  var level = row.cLevel;
+			  title = '编辑';
+			  modal.find('.model-form').form('load',row);
+			  var parent = $('#dg').treegrid('getParent',row.companyid);
+			  modal.find('.model-form input[name=cParentCname]').val(parent?parent.cCname:"顶级部门");
+		  }else if('create'==action){
+			  var row = $('#dg').treegrid('getSelected');  
+			  var level = row.cLevel;
+			  title = '添加子部门';
+			  modal.find('.model-form').form('reset');//先重置
+			  modal.find('.model-form input[name=cParentCname]').val(row.cCname);
+			  modal.find('.model-form input[name=cParentid]').val(row.companyid);
+			  modal.find('.model-form input[name=cLevel]').val(++level);
+			  modal.find('.model-form input[name=cAreaName]').val(row.cAreaName);
+			  modal.find('.model-form input[name=cAreaid]').val(row.cAreaid);
+		  }else if('addTop'==action){
+			  title = '添加顶级部门';
+			  modal.find('.model-form').form('reset');//先重置
+			  modal.find('.model-form input[name=cParentid]').val(0);
+			  modal.find('.model-form input[name=cLevel]').val(1);
+		  }
+		  modal.find('#formFucntion').val(fid);
+		  modal.find('.modal-title').text(title);
+		  modal.find('#formAction').val(action);
+	});
+	//初始化treeview 数据
+	$.post('SysMgr/area_getTreeSelect.do',{},function(data){
+		 var data = eval('(' + data + ')');
+		 if(data.success){
+			 $('#tree').treeview({
+				data: data.data,	
+				showTags:false,
+				//showCheckbox:true,
+				onNodeSelected: function(event, data) {
+					var tags = data.tags;
+					$('#CompanyModal .model-form input[name=cAreaid]').val(tags[0]);
+					$('#CompanyModal .model-form input[name=cAreaName]').val(data.text);
+					$('#dd').dialog('close');
+				}
+			});
+		 }
+	}); 
+	/* 功能 */
+	$('#companyTable').on('click', 'a.editor_remove', function (e) {
+	    e.preventDefault();
+	    if(confirm("将会连同所有子部门一起删除，确定删除吗？"))
+	    {
+   		    var node = $('#dg').treegrid('getSelected');  
+    		var params = {};
+   	    	params.fid = $(this).data('fid');
+   	    	params.action = 'remove';
+   	    	params.companyid = node.companyid;
+    		$.post('SysMgr/company_access.do',params,function(data){
+	    		var data = eval('(' + data + ')');
+	    		if(data.success){
+	    			$('#dg').treegrid('remove',node.companyid);
+	    			new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+		        }else{
+		        	new $.Zebra_Dialog(data.info,{modal: false});
+		        }
+	    	});
+	    }
+	} );
+} ); 
+//编辑或修改
+function saveCompany(){
+	$('#CompanyModal .model-form').form('submit', {
+		onSubmit: function(){
+			var cAreaName = $(this).find('input[name=cAreaName]').val();	
+			var cCname = $(this).find('input[name=cCname]').val();
+			var cShoworder = $(this).find('input[name=cShoworder]').val();
+			if($.trim(cAreaName)==''){
+				alert('所属行政区不允许为空！');
+				return false;
+			}
+			if($.trim(cCname)==''){
+				alert('单位名称不允许为空！');
+				return false;
+			}
+			if($.trim(cShoworder)==''){
+				alert('排序值不允许为空！');
+				return false;
+			}
+			return $(this).form('validate');
+		},
+	    success: function(data){
+	        var data = eval('(' + data + ')');  // change the JSON string to javascript object
+	        var action = $('#CompanyModal #formAction').val();
+	        var node = $('#dg').treegrid('getSelected');  
+	        if(data.success){
+	        	var array = [];
+ 	        	array.push(data.data);
+	        	$('#CompanyModal').modal('hide');
+	        	if('edit'==action){
+	        		$('#dg').treegrid('update',{id:node.companyid,row:data.data});
+	 	        }else if('create'==action){//添加子节点
+	 	        	if(node){
+	 	        		$('#dg').treegrid('append',{parent:node.companyid,data:array});
+	 	        	}else{
+	 	        		$('#dg').treegrid('append',{data:array});
+	 	        	}
+	 	        	$('#dg').treegrid('select',data.data.companyid);
+	 	        }else if('addTop'==action){
+	 	        	//添加顶级节点
+	 	        	$('#dg').treegrid('append',{data:array});
+	 	        	$('#dg').treegrid('select',data.data.companyid);
+	 	        }
+	        	new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+	        }else{
+	        	new $.Zebra_Dialog(data.info,{modal: false});
+	        }
+	    }
+	});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 
+</head>
+<body>
+<!-- appModal -->
+<div class="modal fade" id="appModal" tabindex="-1" role="dialog"  data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >Title</h4>
+      </div>
+      <div class="modal-body">
+		  <form  class="model-form" action="FrmMgr/module_appAccess.do" method="post">
+		    <input name="appid" type="hidden" value="-1"/>
+		    <input id="formAction" name="action" type="hidden" />
+		    <input id="formFucntion" name="fid" type="hidden" />
+		    <div class="form-group">
+		          <label class="control-label" >*应用名称</label>
+		          <div class="controls">
+		            <input name="aAppname" type="text" placeholder="例如:**系统" class="form-control">
+		          </div>
+		        </div>
+		    <div class="form-group">
+		          <label class="control-label" for="input01">应用描述</label>
+		          <div class="controls">
+		            <input name="aAppdesc" type="text" placeholder="描述" class="form-control">
+		          </div>
+		        </div>
+		
+		    <div class="form-group">
+		          <label class="control-label" for="input01">应用URL</label>
+		          <div class="controls">
+		            <input name="aAppurl" type="text" placeholder="URL" class="form-control">
+		          </div>
+		        </div>
+		    <div class="form-group">
+		          <label class="control-label" for="input01">版本</label>
+		          <div class="controls">
+		            <input name="aVersion" type="text" placeholder="例如:1.0" class="form-control">
+		          </div>
+		        </div>
+		   <div class="form-group">
+	          <label class="control-label">是否系统框架</label>
+	          <div class="controls">
+	            <label class="radio-inline">
+				  <input type="radio" name="aIssys" value="1"> 是
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" name="aIssys" checked="checked"  value="0"> 否
+				</label>
+	         		 </div>
+	        	</div>
+		  </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary " onclick="saveApp()" >保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end Modal -->
+<!-- moduleModal -->
+<div class="modal fade" id="moduleModal" tabindex="-1" role="dialog"  data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >Title</h4>
+      </div>
+      <div class="modal-body">
+		  <form  class="model-form" action="FrmMgr/module_moduleAccess.do" method="post">
+		    <input name="moduleid" type="hidden" value="-1"/>
+		    <input name="mParentid" type="hidden" value="0"/>
+		    <input id="formAction" name="action" type="hidden" />
+		    <input id="formFucntion" name="fid" type="hidden" />
+		    <div class="form-group">
+		          <label class="control-label" for="input01">*所属应用</label>
+		          <div class="controls">
+		          	<input id="cc" class="easyui-combobox" name="mAppid" style="width:300px;"
+		          	data-options="valueField:'appid',editable:false,required:true,textField:'aAppname',url:'FrmMgr/getAppsCombo.do'">
+		           <!--  <input name="aAppname" type="text" placeholder="placeholder" class="form-control"> -->
+		          </div>
+		       	 </div>
+		    <div class="form-group">
+		          <label class="control-label" for="input01">父级模块</label>
+		          <div class="controls">
+		            <input name="mParentname" type="text" disabled="disabled" class="form-control" value="顶级模块">
+		          </div>
+		        </div>
+		    <div class="form-group">
+		          <label class="control-label" >模块分类名称</label>
+		          <div class="controls">
+		            <input name="mCname" type="text" placeholder="" class="form-control">
+		          </div>
+		        </div>
+		    <div class="form-group">
+		          <label class="control-label" for="input01">排序(请按照‘顶级模块+序号’的方式设定)</label>
+		          <div class="controls">
+		            <input  name="mOrderlevel" type="text" placeholder="例如:0007" class="form-control">
+		          </div>
+		        </div>
+			<div class="form-group">
+		          <label class="control-label" for="input01">模块URL</label>
+		          <div class="controls">
+		            <input name="mUrl" type="text" placeholder="" class="form-control">
+		          </div>
+		        </div>
+		    <div class="form-group">
+		          <label class="control-label" for="input01">模块图标</label>
+		          <div class="controls">
+		            <input name="mIcon" type="text" placeholder="css的class例如:fa fa-book" class="form-control">
+		          </div>
+		        </div>
+		   
+	       
+		   <div class="form-group">
+	          <label class="control-label">是否系统模块</label>
+	          <div class="controls">
+	            <label class="radio-inline">
+				  <input type="radio" name="mIssys" id="inlineRadio1"  value="1"> 是
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" name="mIssys" id="inlineRadio2" checked="checked"  value="0"> 否
+				</label>
+	         		 </div>
+	        	</div>
+	       <div class="form-group">
+	          <label class="control-label">是否关闭</label>
+	          <div class="controls">
+	            <label class="radio-inline">
+				  <input type="radio" name="mIsclose" id="inlineRadio1"  value="1"> 是
+				</label>
+				<label class="radio-inline">
+				  <input type="radio" name="mIsclose" id="inlineRadio2" checked="checked"  value="0"> 否
+				</label>
+	         		 </div>
+	        	</div>
+		  </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary " onclick="saveModule()">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end Modal -->
+ <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        	模块管理
+        <small>管理各个应用模块</small>
+        <!-- Button trigger modal -->
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>主页</a></li>
+        <li><a href="#">应用框架管理</a></li>
+        <li class="active">模块管理</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">	
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">应用列表</h3>
+              <#if f7?? && f7.access >
+              <a  href="#" data-action="create" class="dt-button button-create function-button" 
+              				data-fvalue="${f7.fValue}" data-fid="7" data-toggle="modal" data-target="#appModal">
+              <i class="fa fa-plus-circle" aria-hidden="true"></i>${f7.fName}</a> </#if>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="appTable" class="table table-striped">
+                <thead>
+                <tr>
+                  <th>appid</th>
+                  <th>应用名称</th>
+                  <th>应用描述</th>
+                  <th>应用URL</th>
+                  <th>版本</th>
+                  <th>是否框架</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+		  <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">模块列表</h3>
+               <#if f5?? && f5.access >
+              <a href="#" data-action="create" class="dt-button button-create function-button" data-fvalue="${f5.fValue}" data-fid="5"
+                		data-toggle="modal" data-target="#moduleModal">
+              <i class="fa fa-plus-circle" aria-hidden="true"></i>${f5.fDesc}</a></#if>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="moduleTable" class="table table-striped">
+                <thead>
+                <tr>
+                  <th>mParentid</th>
+                  <th>mAppid</th>
+                  <th>模块ID</th>
+                  <th>模块分类名称</th>
+                  <th>排序</th>
+                  <th>模块URL</th>
+                  <th>模块图标</th>
+                  <th>父级模块</th>
+                  <th>所属应用</th>
+                  <th>是否系统模块</th>
+                  <th>是否关闭</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+                <tfoot>
+                 <tr>
+                  <th>mParentid</th>
+                  <th>mAppid</th>
+                  <th>模块ID</th>
+                  <th>模块分类名称</th>
+                  <th>排序</th>
+                  <th>模块URL</th>
+                  <th>模块图标</th>
+                  <th>父级模块</th>
+                  <th>所属应用</th>
+                  <th>是否系统模块</th>
+                  <th>是否关闭</th>
+                  <th>操作</th>
+                </tr>
+                </tfoot>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  
+<!-- DataTables -->
+<script>
+//var output = { data: [] };//返回的格式
+var appTable;
+var moduleTable;
+$(document).ready(function() {
+	//easyui 重新解析
+	$.parser.parse();
+	appTable = $('#appTable').DataTable({
+		rowId: 'appid',
+		scrollX: true,
+		select: 'single',
+		responsive: false,
+		"paging": false,
+		"lengthChange": true,
+		"searching": false,
+		"ordering": false,
+		"info": true,
+		"autoWidth": false,
+		"language": {
+		    "url": "/dist/Chinese.json"
+		},
+		ajax: 'FrmMgr/module_getApps.do',
+		columns: [
+            { data: "appid" ,visible:false},
+            { data: "aAppname",render:function(data,type,row){
+            	return '<a href="#" class="search" title="搜索此应用下的模块">'+data+'</a>';
+            }},
+            { data: "aAppdesc" },
+            { data: "aAppurl" },
+            { data: "aVersion" },
+            { data: "aIssys" , "render": function ( data, type, row ) {
+                return data===1?"是":"否" ;
+            }},
+            {
+          	  data:null,
+          	  className:"center",
+          	  render:function(data,type,row){
+          		 var str = "";
+          		//编辑
+        		 str += '<#if f9?? && f9.access> <a href="#" data-fid="9" class="editor_edit" data-action="edit" data-toggle="modal" data-target="#appModal"><i class="fa fa-pencil-square-o"></i>${f9.fDesc}</a></#if>'; 
+           		 if(row['aIssys'] == 0){
+           			 
+            		 //删除 
+            		 str += '<#if f4?? && f4.access> <a href="#" data-fid="4" class="editor_remove" data-target="#appModal"><i class="fa fa-trash-o"></i>${f4.fDesc}</a></#if>';
+             		 
+           		 }
+           		 return str;
+          	  } 
+            }
+        ]
+	});	
+	moduleTable = $('#moduleTable').DataTable({
+		rowId: 'moduleid',
+		scrollX: true,
+		responsive: true,
+		select: 'single',
+		lengthMenu: [ 15, 40, 50, 60,20 ],
+		"pagingType": "full_numbers",
+		"paging": true,
+		"lengthChange": true,
+		"searching": true,
+		"ordering": false,
+		"info": true,
+		"autoWidth": false,
+		"language": {
+			"url": "/dist/Chinese.json"	
+		},
+		ajax: 'FrmMgr/getModules.do',
+		columns: [
+            { data: "mParentid" ,visible:false},
+            { data: "mAppid" ,visible:false},
+            { data: "moduleid" ,visible:true},
+            { data: "mCname" },
+            { data: "mOrderlevel" },
+            { data: "mUrl" },
+            { data: "mIcon" },
+            { data: "mParentname"},
+            { data: "aAppname"},
+            { data: "mIssys" , "render": function ( data, type, row ) {
+                return data===1?"是":"否" ;
+            }},
+            { data: "mIsclose" , "render": function ( data, type, row ) {
+                return data===1?"是":"否" ;
+            }},
+            {
+          	  data:null,
+          	  className:"center",
+          	  render:function(data,type,row){
+          		 var str = '';
+          		 //添加按钮 的权限 2
+       			 //if($.trim(row.mUrl)=='')
+       			 if(row.mParentid==0)
+           		 {
+           			 str += '<#if f6?? && f6.access><a href="#" class="editor_edit function-button" data-action="create_sub_module" data-moduleid="'+row.moduleid+'"'+
+           		    ' data-mcname="'+row.mCname+'" data-mappid="'+row.mAppid+'" title="${f6.fName}"'+
+           		 	' data-toggle="modal" data-fid="6"  data-target="#moduleModal"><i class="fa fa-plus-circle"></i>${f6.fDesc} </a></#if>';
+           		 }
+          		 //编辑
+          		 str += '<#if f8?? && f8.access> <a href="#" data-fid="8" class="editor_edit" data-action="edit" data-toggle="modal" data-target="#moduleModal"><i class="fa fa-pencil-square-o"></i>${f8.fDesc}</a></#if>'; 
+        		 //删除 
+        		 str += '<#if f3?? && f3.access> <a href="#" data-fid="3" class="editor_remove" data-target="#moduleModal"><i class="fa fa-trash-o"></i>${f3.fDesc}</a></#if>';
+         		 
+           		 return str;
+          	  } 
+            }
+        ],
+        "createdRow": function ( row, data, index ) {
+            if(data.mParentid == 0) $(row).css( 'background-color','yellow' );
+        },
+        initComplete: function () {
+            this.api().columns().every( function () {
+                var column = this;
+                var prop = column.dataSrc();
+                if(prop=='mParentname'||prop=='aAppname'){
+                	var select = $('<select><option value=""></option></select>')
+                     .appendTo( $(column.footer()).empty() )
+                     .on( 'change', function () {
+                         var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                         column.search( val ? '^'+val+'$' : '', true, false ).draw();
+                     } );
+  
+	                 column.data().unique().sort().each( function ( d, j ) {
+	                     select.append( '<option value="'+d+'">'+d+'</option>' )
+	                 } );
+                }else{
+                	$(column.footer()).empty();
+                }
+            } );
+        }
+	});
+	$('#appTable').on('click','a.search',function(){
+		var row= appTable.row($(this).closest('tr')).data();
+		moduleTable.search(row.aAppname).draw();
+	});
+	$('#appModal').on('show.bs.modal', function (event) {
+		  var modal = $(this);
+		  var button = $(event.relatedTarget);
+		  var action = button.data('action') ;
+		  var fid = button.data('fid');
+		  modal.find('#formFucntion').val(fid);
+		  var title = 'title';
+		  if("edit"==action){
+			  title = '编辑';
+			  var target = button.data('target');
+			  var  row = appTable.row($(button).closest('tr')).data();
+			  modal.find('.model-form').form('load',row);
+		  }else if('create'==action){
+			  title = '添加';
+			  modal.find('.model-form').form('reset');//先重置
+		  }
+		  modal.find('.modal-title').text(title);
+		  modal.find('#formAction').val(action);
+	});
+	$('#moduleModal').on('show.bs.modal', function (event) {
+		  var modal = $(this);
+		  var button = $(event.relatedTarget);
+		  var action = button.data('action') ;
+		  var fid = button.data('fid');
+		  var title = 'title';
+		  modal.find('.model-form input[name=mModulecode]').removeAttr("readonly");
+		  if("edit"==action){
+			  modal.find('.model-form input[name=mModulecode]').attr("readonly","readonly");
+			  title = '编辑';
+			  var target = button.data('target');
+			  var row = moduleTable.row($(button).closest('tr')).data();
+			  modal.find('.model-form').form('load',row);
+			  $('#cc').combobox('readonly', row.mParentid!=0);
+		  }else if('create'==action){
+			  title = '添加顶级模块';
+			  modal.find('.model-form').form('reset');//先重置
+			  modal.find('.model-form input[name=mParentid]').val(0);
+			  $('#cc').combobox('reload');
+			  $('#cc').combobox('readonly', false);
+		  }else if('create_sub_module'==action){
+			  action = 'create';
+			  title = '添加子模块';
+			  modal.find('.model-form').form('reset');//先重置
+			  $('#cc').combobox('setValue', button.data('mappid'));
+			  modal.find('.model-form input[name=mParentname]').val(button.data('mcname'));
+			  modal.find('.model-form input[name=mParentid]').val(button.data('moduleid'));
+			  $('#cc').combobox('readonly', true);
+		  }
+		  modal.find('#formFucntion').val(fid);
+		  modal.find('.modal-title').text(title);
+		  modal.find('#formAction').val(action);
+	});
+	// Delete a record
+	$('#appTable,#moduleTable').on('click', 'a.editor_remove', function (e) {
+	    e.preventDefault();
+	    var target = $(this).data('target');
+	    if(confirm("确定要删除该条记录吗？"))
+	    {
+	    	var row ;
+	    	var params = {};
+	    	params.fid = $(this).data('fid');
+	    	params.action = 'remove';
+	    	if('#appModal'==target){
+	    		row= appTable.row($(this).closest('tr')).data();
+	    		var rowIdx = appTable.row($(this).closest('tr')).index();
+	    		params.appid = row.appid;
+	    		$.post('FrmMgr/module_appAccess.do',params,function(data){
+		    		//console.log(data);
+		    		var data = eval('(' + data + ')');
+		    		if(data.success){
+		    			appTable.row(rowIdx).remove().draw(false);
+		    			new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+			        }else{
+			        	new $.Zebra_Dialog(data.info,{modal: false});
+			        }
+		    	});
+	    	}else if('#moduleModal'==target){
+	    		row= moduleTable.row($(this).closest('tr')).data();
+	    		var rowIdx = moduleTable.row($(this).closest('tr')).index();
+	    		params.moduleid = row.moduleid;
+	    		$.post('FrmMgr/module_moduleAccess.do',params,function(data){
+		    		//console.log(data);
+		    		var data = eval('(' + data + ')');
+		    		if(data.success){
+		    			moduleTable.row(rowIdx).remove().draw(false);
+		    			new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+			        }else{
+			        	//alert(data.info);
+			        	new $.Zebra_Dialog(data.info,{modal: false});
+			        }
+		    	});
+	    	}
+	    }
+	} );
+});	
+/* 功能 */
+function saveApp(){
+	$('#appModal .model-form').form('submit', {
+	    success: function(data){
+	    	//console.log(data);
+	        var data = eval('(' + data + ')');  // change the JSON string to javascript object
+	        var action = $('#appModal #formAction').val();
+	        if(data.success){
+	        	$('#appModal').modal('hide');
+	        	if('edit'==action){
+	        		appTable.row('#'+data.data.appid).data(data.data).select().draw(false);
+	 	        }else if('create'==action){
+	 	        	appTable.row.add(data.data).select().draw(false);
+	 	        }
+	        	new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+	        }else{
+	        	//alert(data.info);
+	        	new $.Zebra_Dialog(data.info,{modal: false});
+	        }
+	    }
+	});
+}
+function saveModule(){
+	$('#moduleModal .model-form').form('submit', {
+		onSubmit: function(){
+			return  $(this).form('validate');
+		},
+	    success: function(data){
+	    	//console.log(data);
+	        var data = eval('(' + data + ')');  // change the JSON string to javascript object
+	        var action = $('#moduleModal #formAction').val();
+	        if(data.success){
+	        	$('#moduleModal').modal('hide');
+	        	if('edit'==action){
+	        		moduleTable.row('#'+data.data.moduleid).data(data.data).select().draw(false);
+	 	        }else if('create'==action){
+	 	        	moduleTable.row.add(data.data).select().draw(true);
+	 	        }
+	        	new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+	        }else{
+	        	new $.Zebra_Dialog(data.info,{modal: false});
+	        }
+	    }
+	});
+}
+</script>
+</body>
+</html>

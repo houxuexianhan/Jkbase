@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Bootstrap 3.3.6 -->
+<link rel="stylesheet"
+	href="/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="/documentation/docs.css">
+</head>
+<body >
+	<div class="content-wrapper">
+		<!-- Main content -->
+		<!-- <div class="bs-docs-header" id="content" tabindex="-1">
+			<div class="container">
+				<h1>JavaScript</h1>
+				<p>Bring Bootstrap's components to life with over a dozen custom
+					jQuery plugins. Easily include them all, or one by one.</p>
+				<div id="carbonads-container">
+				</div>
+			</div>
+		</div> -->
+		<section class="content">
+		<div class="bs-docs-container">
+			<div class="row">
+				<div class="col-md-9" role="main">
+					<div class="bs-docs-section">
+						<h1 class="" id="js-overview">
+						系统简介
+						</h1>
+						<h2 id="js-overview-gaishu">
+							<span>概述</span>
+						</h2>
+						<p><div class="bs-callout bs-callout-warning">广告系统 采用自定义Socket通讯协议，可以对车站的各个检票口显示屏发布广告。
+							</div></p>
+						<h2 id="js-overview-type">
+							<span>广告类型</span>
+						</h2>
+						<p><div class="bs-callout bs-callout-warning">
+							<p>广告按格式分为文本、图片、视频三种类型。按存储时长分为临时、长期类型。
+							<p><b>临时通知</b>：具有一定的播放时长已经播放次数，播放次数为0时则自动被清除。
+							<p><b>长期通知</b>：它被存储在客户端的文件系统中，只有被清除命令删除后才会失效，否则永久存在。
+							</div></p>
+						
+					</div>
+					<!-- <div class="bs-docs-section">
+						<h1 class="page-header" id="doc_member_post">
+							滚动发班参营企业信息完善<small>（使用者：滚动发班参营企业）</small>
+						</h1>
+						<div class="bs-callout bs-callout-warning">
+							<p>
+							运输企业登录成功后，需要在<b>运输企业管理->企业注册信息</b> 界面提交运输企业基本信息。<br/>
+							填写完成后点击 提交信息，提交后等待 滚动发班管理机构管理人员 审核，审核通过后才可注册车辆等信息。
+							</p>
+						</div>
+					</div> -->
+				</div>
+				<div class="col-md-3" role="complementary">
+					<nav class="bs-docs-sidebar hidden-print hidden-sm hidden-xs">
+						<ul class="nav bs-docs-sidenav">
+							<li><a href="#js-overview">系统简介</a>
+								<ul class="nav">
+									<li class=""><a href="#js-overview-gaishu">概述</a></li>
+									<li class=""><a href="#js-overview-type">广告类型</a></li>
+								</ul></li>
+							<!-- <li><a href="#doc_member_register">会员注册</a></li>
+							<li><a href="#doc_member_post">滚动发班参营企业信息完善</a></li> -->
+						</ul>
+						<a href="#top" class="back-to-top">回到顶部</a>
+					</nav>
+				</div>
+			</div>
+		</div>
+		</section>
+	</div>
+	<!-- jQuery -->
+	<!-- <script src="${request.contextPath}/resources/plugins/jQuery/jquery-2.2.4.min.js"></script>
+<script src="${request.contextPath}/resources/bootstrap/js/bootstrap.min.js"></script> -->
+	<script type="text/javascript">
+		$(function() {
+			$('#scrollContent').scrollspy({
+				target : '.bs-docs-sidebar',
+				offset : 50
+			});
+			//$('.bs-docs-sidebar').affix('checkPosition');
+			$('.bs-docs-sidebar').affix({
+				offset : {
+					top : 0,
+					bottom : function() {
+						return (this.bottom = $('.footer').outerHeight(true))
+					}
+				}
+			});
+		});
+	</script>
+</body>
+
+</html>
