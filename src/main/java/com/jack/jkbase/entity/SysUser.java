@@ -53,6 +53,14 @@ public class SysUser {
 	@Column(name="U_ExtendField")
     private String uExtendfield;
 
+	@Column(name="U_Expired",nullable=false,columnDefinition="int default 0")
+    private int uExpired;
+	
+	@Column(name="U_Disabled",nullable=false,columnDefinition="int default 0")
+    private int uDisabled;
+	
+	
+	
     public int getUserid() {
         return userid;
     }
