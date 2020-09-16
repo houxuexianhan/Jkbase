@@ -9,7 +9,8 @@ import javax.persistence.Index;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="sys_Module",indexes = {@Index(name="sys_Module_idx1",columnList = "M_AppID,M_CName",unique = true)})
+@Table(name="sys_Module",indexes = {@Index(name="sys_Module_idx1",columnList = "M_AppID,M_CName",unique = true)
+			,@Index(name="sys_Module_idx2",columnList = "M_Code",unique = true)})
 public class SysModule {
 	@Id
 	@Column(name="ModuleID")//COMMENT '模块ID'
@@ -21,10 +22,13 @@ public class SysModule {
 
 	@Column(name="M_ParentID",nullable=false)
     private int mParentid;
-
+	//模板代码（唯一)，可以定义为模板文件名称
+	@Column(name="M_Code",nullable=false,columnDefinition = "varchar(50)")//COMMENT '模块名称,当ParentID为0,为模组名称'
+    private String mCode;
+	
 	@Column(name="M_CName",nullable=false,columnDefinition = "nvarchar(50)")//COMMENT '模块名称,当ParentID为0,为模组名称'
     private String mCname;
-
+	
 	@Column(name="M_URL",columnDefinition = "nvarchar(100)")//comment '模块路径URL'
     private String mUrl;
 
@@ -81,8 +85,16 @@ public class SysModule {
 	public int getmParentid() {
         return mParentid;
     }
+	
+    public String getmCode() {
+		return mCode;
+	}
 
-    public void setmParentid(int mParentid) {
+	public void setmCode(String mCode) {
+		this.mCode = mCode;
+	}
+
+	public void setmParentid(int mParentid) {
         this.mParentid = mParentid;
     }
 

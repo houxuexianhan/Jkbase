@@ -66,40 +66,7 @@ public class SysMgrController {
 	@Autowired SysCompanyService sysCompanyService;
 	@Autowired SysCompanyMapper companyMapper;
 	@Autowired SysEventService sysEventService;
-	//角色用户
-	@RequestMapping(value = "/RoleUserManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
-	public String page_roleUserManager() {
-		return "sys/RoleUserManager";
-	}
-	//角色权限  params = Helper.PARAM_MODULE_ID 这个可以忽略，但加上则强制需要带该参数，否则404错误
-	@RequestMapping(value = "/RoleManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
-	public String page_roleManager() {
-		return "sys/RoleManager";
-	}
 	//用户
-	@RequestMapping(value = "/UserManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
-	public String page_userManager(Model model) {	
-		model.addAttribute("roles",roleRepo.findAll());
-		return "sys/UserManager";
-	}
-	//行政区
-	@RequestMapping(value = "/AreaManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
-	public String page_areaManager() {		
-		return "sys/AreaManager";
-	}
-	//单位
-	@RequestMapping(value = "/CompanyManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
-	public String page_companyManager() {		
-		return "sys/CompanyManager";
-	}
-	@RequestMapping(value = "/FieldValueManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
-	public String page_fieldValueManager() {		
-		return "sys/FieldValueManager";
-	}
-	@RequestMapping(value = "/EventManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
-	public String page_eventManager() {		
-		return "sys/EventManager";
-	}
 	@RequestMapping(value = "/SystemParam.page", method = RequestMethod.GET, params = Helper.PARAM_MODULE_ID)
 	public String page_systemParam(Model model) {
 		try {
@@ -109,14 +76,6 @@ public class SysMgrController {
 			return null;
 		}
 		return "sys/SystemParam";
-	}
-	@RequestMapping(value = "/SystemState.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
-	public String page_systemState() {		
-		return "sys/SystemState";
-	}
-	@RequestMapping(value = "/OnlineUser.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
-	public String page_onlineUser() {		
-		return "sys/OnlineUser";
 	}
 	//---------------------event--------------------------------------
 	

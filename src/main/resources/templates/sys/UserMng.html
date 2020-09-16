@@ -75,11 +75,11 @@
 		   <div class="form-group" id="formRoles">
 	          <label class="control-label">所属角色</label>
 	          <div class="controls">
-	        	 <#list roles as role>
+	        	 <list roles as role>
 	              <label class="checkbox-inline">
-				  <input type="checkbox" name="roles" data-roleid="${role.roleid}"  value="${role.roleid}">${role.rRolename}
+				  <input type="checkbox" name="roles" data-roleid="{role.roleid}"  value="{role.roleid}">{role.rRolename}
 				</label>
-				</#list>
+				</list>
 	           </div>
 	        	</div>
 		     <div class="form-group">

@@ -1,8 +1,14 @@
+drop view if exists View_sys_Module;
 CREATE  VIEW View_sys_Module AS SELECT a.*,(SELECT   x.M_CName FROM sys_Module x WHERE   (x.ModuleID = a.M_ParentID)) AS M_ParentName FROM  sys_Module AS a INNER JOIN sys_App AS b  ON a.M_AppID = b.AppID;
+drop view if exists View_sys_Function;
 CREATE VIEW  View_sys_Function AS SELECT a.*,b.*,c.* FROM sys_Function AS a INNER JOIN sys_Module AS b ON a.F_ModuleId = b.ModuleID inner join sys_App AS c ON b.M_AppID = c.AppID;
+drop view if exists View_sys_Company;
 CREATE VIEW View_sys_Company AS SELECT   c.*,a.*,(SELECT   C_CName FROM      sys_Company WHERE   (CompanyID = c.C_ParentID)) AS C_ParentName FROM      sys_Company AS c INNER JOIN sys_Area AS a ON c.C_AreaId = a.AreaId;
+drop view if exists View_sys_RoleApp;
 CREATE VIEW View_sys_RoleApp AS SELECT   a.*,b.*,c.* FROM sys_RoleApp AS a INNER JOIN sys_Role AS b ON a.A_RoleID = b.RoleID INNER JOIN sys_App AS c ON a.A_AppID = c.AppID;
+drop view if exists View_sys_RoleUser;
 CREATE VIEW View_sys_RoleUser AS SELECT   a.*,b.*, (CASE U_Type WHEN 0 THEN '超级用户' WHEN 1 THEN '管理用户' WHEN 2 THEN '企业用户' ELSE '未定义' END) AS U_TypeText, (CASE U_Status WHEN 0 THEN '正常' WHEN 1 THEN '禁止' ELSE '未定义' END) AS U_StatusText,(SELECT   C_CName FROM      sys_Company WHERE   (CompanyID = b.U_CompanyID)) AS U_CompanyName FROM      sys_UserRole AS a INNER JOIN  sys_User b ON a.R_UserID = b.UserId;
+drop view if exists view_sys_User;
 CREATE VIEW view_sys_User AS SELECT     a.*,b.*,c.*, (CASE U_Type WHEN 0 THEN '超级用户' WHEN 1 THEN '管理用户' WHEN 2 THEN '企业用户' ELSE '未定义' END) AS U_TypeText, (CASE U_Status WHEN 0 THEN '正常' WHEN 1 THEN '禁止' ELSE '未定义' END) AS U_StatusText,b.C_CName AS U_CompanyName FROM         sys_User a INNER JOIN sys_Company AS b ON a.U_CompanyID = b.CompanyID INNER JOIN sys_Area c ON b.C_AreaId = c.AreaId ;
 
 
@@ -115,7 +121,7 @@ INSERT sys_App (AppID, A_AppName, A_AppDesc, A_AppUrl, A_IsSys, A_Version) VALUE
 INSERT sys_App (AppID, A_AppName, A_AppDesc, A_AppUrl, A_IsSys, A_Version) VALUES (3, N'广告系统', N'用于检票口的广告系统', N'', 0, N'1.0')
 
 INSERT sys_Event (EventID, E_UserName, E_UserID, E_DateTime, E_AppID, E_AppName, E_ModName, E_ModCode, E_From, E_Type, E_IP, E_Record) VALUES (325, N'超级管理员', 1, CAST(N'2018-04-28T13:05:15.353' AS DateTime), NULL, N'', N'', N'', N'', 1, N'0:0:0:0:0:0:0:1', N'超级管理员(admin)登录系统')
-INSERT sys_Event (EventID, E_UserName, E_UserID, E_DateTime, E_AppID, E_AppName, E_ModName, E_ModCode, E_From, E_Type, E_IP, E_Record) VALUES (324, N'超级管理员', 1, CAST(N'2018-04-28T10:09:42.263' AS DateTime), NULL, N'', N'', N'', N'', 2, N'0:0:0:0:0:0:0:1', N'更新模块(模块:{"mAppid":3,"mCname":"高级命令","mIcon":"glyphicon glyphicon-lock","mIsclose":0,"mIssys":0,"mModulecode":"S31M04","mOrderlevel":"3104","mParentName":"","mParentid":73,"mUrl":"CommandMgr/CmdSuper.page","moduleid":76},操作类型:Update) 成功')
+INSERT sys_Event (EventID, E_UserName, E_UserID, E_DateTime, E_AppID, E_AppName, E_ModName, E_ModCode, E_From, E_Type, E_IP, E_Record) VALUES (324, N'超级管理员', 1, CAST(N'2018-04-28T10:09:42.263' AS DateTime), NULL, N'', N'', N'', N'', 2, N'0:0:0:0:0:0:0:1', N'更新模块(模块:{"mAppid":3,"mCname":"高级命令","mIcon":"glyphicon glyphicon-lock","mIsclose":0,"mIssys":0,"mModulecode":"S31M04","mOrderlevel":"3104","mParentName":"","mParentid":73,"mUrl":"CommandMgr/CmdSuper/module/module.page","moduleid":76},操作类型:Update) 成功')
 
 INSERT sys_Function (FunctionId, F_ModuleId, F_Name, F_Value, F_Desc, F_Enable) VALUES (1, 2, N'查看模块', 1, N'查看', 1)
 INSERT sys_Function (FunctionId, F_ModuleId, F_Name, F_Value, F_Desc, F_Enable) VALUES (2, 2, N'查看应用', 32, N'查看', 1)
@@ -263,30 +269,6 @@ INSERT sys_Function (FunctionId, F_ModuleId, F_Name, F_Value, F_Desc, F_Enable) 
 INSERT sys_Function (FunctionId, F_ModuleId, F_Name, F_Value, F_Desc, F_Enable) VALUES (167, 82, N'xxx22', 32, N'zvxvzvz', 1)
 INSERT sys_Function (FunctionId, F_ModuleId, F_Name, F_Value, F_Desc, F_Enable) VALUES (168, 82, N'ccccxxx', 64, N'vzv', 1)
 
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (1, 1, 0, N'框架系统', N'', N'0000', 1, 0, N'fa fa-square-o')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (2, 1, 1, N'应用与模块管理', N'FrmMgr/ModuleManager.page', N'0001', 1, 0, N'fa fa-square')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (4, 1, 1, N'字段类型管理', N'FrmMgr/FieldManager.page', N'0004', 1, 0, N'fa fa-tag')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (5, 1, 1, N'系统异常日志', N'FrmMgr/SystemErrorLog.page', N'0005', 1, 1, N'fa fa-file')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (7, 2, 0, N'系统管理', N'', N'0000', 0, 0, N'fa fa-asterisk')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (8, 2, 7, N'行政区管理', N'SysMgr/AreaManager.page', N'0002', 0, 0, N'fa fa-map-o')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (9, 2, 7, N'组织机构管理', N'SysMgr/CompanyManager.page', N'0003', 0, 0, N'fa fa-tree')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (10, 2, 7, N'角色应用权限', N'SysMgr/RoleManager.page', N'0006', 0, 0, N'fa fa-key')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (11, 2, 7, N'用户管理', N'SysMgr/UserManager.page', N'0004', 0, 0, N'fa fa-user')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (12, 2, 7, N'数据字典', N'SysMgr/FieldValueManager.page', N'0001', 0, 0, N'fa fa-book')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (13, 2, 7, N'事件日志查询', N'SysMgr/EventManager.page', N'0007', 0, 0, N'fa fa-sticky-note-o')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (14, 2, 7, N'系统参数管理', N'SysMgr/SystemParam.page', N'0008', 0, 0, N'fa fa-cogs')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (16, 2, 7, N'在线用户列表', N'SysMgr/OnlineUser.page', N'0010', 0, 1, N'fa fa-street-view')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (48, 2, 7, N'角色(用户)管理', N'SysMgr/RoleUserManager.page', N'0005', 0, 0, N'fa fa-user-secret')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (61, 1, 1, N'功能管理', N'FrmMgr/FunctionManager.page', N'0002', 1, 0, N'fa fa-envira')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (64, 3, 0, N'广告管理', N'', N'2001', 0, 0, N'fa fa-bell')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (66, 3, 64, N'视频管理', N'Advertising/VideoManage.page', N'2003', 0, 0, N'fa fa-video-camera')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (67, 3, 0, N'广告发布', N'', N'2101', 0, 0, N'fa fa-television')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (68, 3, 67, N'发布文本通知', N'Advertising/TextPublish.page', N'2102', 0, 0, N'fa fa-file-text-o')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (69, 3, 67, N'发布图片通知', N'Advertising/ImagePublish.page', N'2103', 0, 0, N'fa fa-picture-o')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (70, 3, 67, N'发布视频通知', N'Advertising/VideoPublish.page', N'2104', 0, 0, N'fa fa-video-camera')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (71, 3, 67, N'清除通知', N'Advertising/Clear.page', N'2105', 0, 0, N'fa fa-eraser')
-INSERT sys_Module (ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, M_Icon) VALUES (72, 3, 67, N'发布检票班次', N'Advertising/CheckPublish.page', N'2106', 0, 0, N'fa fa-bus')
-
 INSERT sys_Role (RoleID, R_RoleName, R_Description) VALUES (1, N'框架管理组', N'框架管理，超级管理员权限')
 INSERT sys_Role (RoleID, R_RoleName, R_Description) VALUES (2, N'系统管理组', N'系统管理')
 INSERT sys_Role (RoleID, R_RoleName, R_Description) VALUES (3, N'广告发布组', N'只能发布广告，（不能上传视频）')
@@ -302,4 +284,5 @@ INSERT sys_UserRole (R_UserID, R_RoleID) VALUES (5, 3)
 INSERT sys_UserRole (R_UserID, R_RoleID) VALUES (5, 7)
 INSERT sys_UserRole (R_UserID, R_RoleID) VALUES (7, 2)
 INSERT sys_UserRole (R_UserID, R_RoleID) VALUES (9, 3)
-     
+
+INSERT INTO sys_module(ModuleID,M_AppID,M_CName,M_Icon,M_IsClose,M_IsSys,M_OrderLevel,M_ParentID,M_URL,M_Code) VALUES (1,1,'框架系统','fa fa-square-o',0,1,'0000',0,'','frm'),(2,1,'应用与模块管理','fa fa-square',0,1,'0001',1,'frm/ModuleMng/module.page','ModuleMng'),(4,1,'字段类型管理','fa fa-tag',0,1,'0004',1,'frm/FieldMng/module.page','FieldMng'),(5,1,'系统异常日志','fa fa-file',1,1,'0005',1,'frm/SystemErrorLog/module.page','SystemErrorLog'),(7,2,'系统管理','fa fa-asterisk',0,0,'0000',0,'','sys'),(8,2,'行政区管理','fa fa-map-o',0,0,'0002',7,'sys/AreaMng/module.page','AreaMng'),(9,2,'组织机构管理','fa fa-tree',0,0,'0003',7,'sys/CompanyMng/module.page','CompanyMng'),(10,2,'角色应用权限','fa fa-key',0,0,'0006',7,'sys/RoleMng/module.page','RoleMng'),(11,2,'用户管理','fa fa-user',0,0,'0004',7,'sys/UserMng/module.page','UserMng'),(12,2,'数据字典','fa fa-book',0,0,'0001',7,'sys/FieldValueMng/module.page','FieldValueMng'),(13,2,'事件日志查询','fa fa-sticky-note-o',0,0,'0007',7,'sys/EventMng/module.page','EventMng'),(14,2,'系统参数管理','fa fa-cogs',0,0,'0008',7,'sys/SystemParam/module.page','SystemParam'),(16,2,'在线用户列表','fa fa-street-view',1,0,'0010',7,'sys/OnlineUser/module.page','OnlineUser'),(48,2,'角色(用户)管理','fa fa-user-secret',0,0,'0005',7,'sys/RoleUserMng/module.page','RoleUserMng'),(61,1,'功能管理','fa fa-envira',0,1,'0002',1,'frm/FunctionMng/module.page','FunctionMng'),(64,3,'广告管理','fa fa-bell',0,0,'2001',0,'','advMng'),(66,3,'视频管理','fa fa-video-camera',0,0,'2003',64,'Advertising/VideoMng/module.page','VideoMng'),(67,3,'广告发布','fa fa-television',0,0,'2101',0,'',''),(68,3,'发布文本通知','fa fa-file-text-o',0,0,'2102',67,'Advertising/TextPublish/module.page','TextPublish'),(69,3,'发布图片通知','fa fa-picture-o',0,0,'2103',67,'Advertising/ImagePublish/module.page','ImagePublish'),(70,3,'发布视频通知','fa fa-video-camera',0,0,'2104',67,'Advertising/VideoPublish/module.page','VideoPublish'),(71,3,'清除通知','fa fa-eraser',0,0,'2105',67,'Advertising/Clear/module.page','Clear'),(72,3,'发布检票班次','fa fa-bus',0,0,'2106',67,'Advertising/CheckPublish/module.page','CheckPublish');     

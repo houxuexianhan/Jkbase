@@ -24,6 +24,7 @@ public class ShiroConfig {
         //除了以上的请求外，其它请求都需要登录
         chain.addPathDefinition("/", "authc");
         chain.addPathDefinition("/**/*.do", "authc");
+        chain.addPathDefinition("/**/*.page", "authc");
         return chain;
     }
 	@Bean(name="simpleMappingExceptionResolver")

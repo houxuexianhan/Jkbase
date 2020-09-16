@@ -36,31 +36,6 @@ public class FrmMgrController {
 	@Autowired SysModuleMapper moduleMapper ;
 	@Autowired SysFunctionMapper funcMapper ;
 	@Autowired SysFieldMapper fieldMapper ;
-	//模块功能
-	@RequestMapping(value = "/FunctionManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
-	public String page_FunctionManager() {		
-		return "frm/FunctionManager";
-	}
-	@RequestMapping(value = "/ModuleManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
-	public String page_moduleManager(Model model) {
-		return "frm/ModuleMgr";
-	}
-	@RequestMapping(value = "/ConfigManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
-	public String page_configManager(Model model) {
-		return "frm/ConfigManager";
-	}
-	@RequestMapping(value = "/FieldManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
-	public String page_fieldManager(Model model) {
-		return "frm/FieldManager";
-	}
-	@RequestMapping(value = "/SystemErrorLog.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
-	public String page_systemErrorLog(Model model) {
-		return "frm/SystemErrorLog";
-	}
-	@RequestMapping(value = "/EventManager.page", method = RequestMethod.GET,params = Helper.PARAM_MODULE_ID)
-	public String page_eventLog(Model model) {
-		return "frm/EventManager";
-	}
 	//--------------------------应用--------------------------------------------------
 	
 	@RequestMapping(value = "/getAppsCombo.do", produces="text/html;charset=utf-8")
