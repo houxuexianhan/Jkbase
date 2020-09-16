@@ -59,7 +59,8 @@ public class SysUser {
 	@Column(name="U_Disabled",nullable=false,columnDefinition="int default 0")
     private int uDisabled;
 	
-	
+	@Column(name="U_Salt",columnDefinition="varchar(64)")
+    private String uSalt;
 	
     public int getUserid() {
         return userid;
@@ -81,7 +82,31 @@ public class SysUser {
         return uCname;
     }
 
-    public void setuCname(String uCname) {
+    public int getuExpired() {
+		return uExpired;
+	}
+
+	public void setuExpired(int uExpired) {
+		this.uExpired = uExpired;
+	}
+
+	public int getuDisabled() {
+		return uDisabled;
+	}
+
+	public void setuDisabled(int uDisabled) {
+		this.uDisabled = uDisabled;
+	}
+
+	public String getuSalt() {
+		return uSalt;
+	}
+
+	public void setuSalt(String uSalt) {
+		this.uSalt = uSalt;
+	}
+
+	public void setuCname(String uCname) {
         this.uCname = uCname == null ? null : uCname.trim();
     }
 

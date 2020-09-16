@@ -24,9 +24,9 @@
   <div class="login-box-body">
     <p class="login-box-msg">登陆</p>
 
-    <form action="login.do" method="post">
+    <form action="/mylogin.do" method="post">
       <div class="form-group has-feedback">
-        <input type="text" class="form-control" placeholder="账号" name="code" id="code" value="${CODE!''}"
+        <input type="text" class="form-control" placeholder="账号" name="username" id="code" value="${CODE!''}"
         onkeydown="javascript:if(event.keyCode==13){ document.getElementById('password').focus();return false;}">
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
@@ -40,7 +40,7 @@
         </div>
         <!-- /.col -->
         <div class="col-xs-4">
-          <button type="submit" class="btn btn-primary btn-block btn-flat">登陆</button>
+          <button type="submit" class="btn btn-primary btn-block btn-flat">登录</button>
         </div>
         <!-- /.col -->
       </div>

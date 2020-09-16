@@ -27,12 +27,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
 		//registry.addViewController("/").setViewName("forward:/index.html");
-		registry.addViewController("/a").setViewName("a");
+		registry.addViewController("/login.html").setViewName("login");
 	}
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(securityInterceptor).addPathPatterns("/**/*.do"
-				,"/**/*.page").excludePathPatterns("/","/login.do","/**/*.html");
+		//registry.addInterceptor(securityInterceptor).addPathPatterns("/**/*.do"
+		//		,"/**/*.page").excludePathPatterns("/","/login.do","/**/*.html");
 	}
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {

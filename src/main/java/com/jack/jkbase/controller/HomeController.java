@@ -16,6 +16,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.ExcessiveAttemptsException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +53,43 @@ public class HomeController {
 	@Autowired SysUserService sysUserService;
 	@Autowired SysEventService sysEventService;
 	@Autowired SysModuleService moduleService;
-
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	@RequestMapping({"/"})
+    public String home(Model model){
+		Subject s = SecurityUtils.getSubject();
+		SysUser user = s.getPrincipals().oneByType(SysUser.class);
+		JSONArray ja = moduleService.getTreeMenuByUser(user.getUserid());
+		//JSONArray ja = moduleService.getTreeMenuByUser(1);
+		model.addAttribute("treeMenu", ja);
+		return "index";
+    }
+	@RequestMapping(value = "/mylogin.do")
+	public String mylogin(HttpServletRequest request,String username,String password,Model model) {
+		logger.info(username+","+password);
+		model.addAttribute("CODE", username);
+		Subject subject = SecurityUtils.getSubject();
+		if(subject.isAuthenticated()||subject.isRemembered()) return "redirect:/";
+		String errinfo = "";
+		try {
+            subject.login(new UsernamePasswordToken(username, password));
+            return "redirect:/";
+		} catch (UnknownAccountException uae) {
+			errinfo= "账号不存在";
+		} catch (IncorrectCredentialsException ice) {
+			errinfo= "密码不正确";
+		} catch (LockedAccountException lae) {
+			errinfo= "账号被锁定";
+		} catch (ExcessiveAttemptsException eae) {
+			errinfo= "尝试密码错误次数过多";
+        } catch (AuthenticationException e) {
+        	errinfo= "认证失败！";
+        }
+		model.addAttribute("errorInfo",errinfo);
+		return "login";
+	}
 	//登陆界面
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@RequestMapping(value = "/aadfsfss", method = RequestMethod.GET)
 	public String page_home(Locale locale, Model model) {
 		logger.info("Welcome home! The client locale is {}.", locale);
 		Date date = new Date();
@@ -98,12 +138,13 @@ public class HomeController {
 	public String page_sysDashboard(Model model) {
 		return "dashboard";
 	}
+	
 	@RequestMapping(value = "/login.do", method = RequestMethod.POST)
-	public String oper_login(HttpServletRequest request,String code,String password, Model model) {
-		model.addAttribute("CODE", code);
+	public String oper_login(HttpServletRequest request,String username,String password, Model model) {
+		model.addAttribute("CODE", username);
 		try {
 			// 登录校验
-			SysUser user = sysUserService.selectByUsername(code);
+			SysUser user = sysUserService.selectByUsername(username);
 			if(user==null) {
 				model.addAttribute("errorInfo","该用户名不存在！");
 				return "login";
@@ -119,7 +160,7 @@ public class HomeController {
 			}
 			// 登录成功，移除验证码
 			session.setAttribute(Helper.SESSION_USER, user);
-			sysEventService.insertEventLog(Helper.logTypeSecurity, user.getuCname()+"("+code+")登录系统");
+			sysEventService.insertEventLog(Helper.logTypeSecurity, user.getuCname()+"("+username+")登录系统");
 			return "redirect:/index.do";
 			
 		} catch (Exception e) {
