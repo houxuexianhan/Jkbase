@@ -11,6 +11,7 @@
     <result column="M_IsSys" property="mIssys" jdbcType="INTEGER" />
     <result column="M_IsClose" property="mIsclose" jdbcType="INTEGER" />
     <result column="M_Icon" property="mIcon" jdbcType="VARCHAR" />
+    <result column="M_Code" property="mCode"  />
     <!-- 视图 -->
     <result column="A_AppName" property="aAppname"/>
     <result column="M_ParentName" property="mParentname"/>

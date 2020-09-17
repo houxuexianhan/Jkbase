@@ -8,6 +8,7 @@ import com.jack.jkbase.entity.ViewSysFunction;
 public interface SysFunctionMapper {
     List<ViewSysFunction> selectByApp(int appId);
     List<ViewSysFunction> selectByModule(int moduleId);
+    List<ViewSysFunction> selectByModuleCode(String code);
     List<ViewSysFunction> selectAll();
     int selectMaxValue(int moduleid);//返回某个模块的下一个功能值
     //
