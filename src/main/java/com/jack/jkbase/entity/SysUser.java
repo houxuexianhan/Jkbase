@@ -23,19 +23,19 @@ public class SysUser {
 	@Column(name="U_CName",columnDefinition = "nvarchar(20)",nullable=false)
     private String uCname;
 
-	@Column(name="U_Pwd",length = 32,nullable=false)
+	@Column(name="U_Pwd",length = 64,nullable=false)
     private String uPwd;
 
 	@Column(name="U_CompanyID",nullable=false)
     private int uCompanyid;
-
+  
 	@Column(name="U_MobileNo",length = 15)		//md5
     private String uMobileno;
 
 	@Column(name="U_PhotoUrl",columnDefinition = "nvarchar(150)")	//头像
     private String uPhotourl;
 
-	@Column(name="U_JoinTime",columnDefinition = "datetime default CURRENT_TIMESTAMP",nullable=false)//加入时间
+	@Column(name="U_JoinTime",insertable=false,columnDefinition = "datetime default CURRENT_TIMESTAMP",nullable=false)//加入时间
     private Date uJointime;
 
 	@Column(name="U_Type",nullable=false)

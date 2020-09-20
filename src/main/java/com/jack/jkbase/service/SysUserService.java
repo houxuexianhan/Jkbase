@@ -52,7 +52,7 @@ public class SysUserService{
 	}
 	@Operation(type=Helper.logTypeOperation,desc="用户更改个人密码",arguDesc={"用户ID",""})
 	public int updatePassword(int userid,String password){
-		return mapper.updatePassword(userid,DigestUtils.md5Hex(password).toUpperCase());
+		return mapper.updatePassword(userid,password);
 	}
 	@Operation(type=Helper.logTypeOperation,desc="用户修改头像",arguDesc={"用户ID",""})
 	public int updatePhoto(int userid,String photo){

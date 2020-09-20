@@ -15,6 +15,7 @@
     <result column="U_LastTime" property="uLasttime" jdbcType="TIMESTAMP" />
     <result column="U_LastIp" property="uLastip" jdbcType="VARCHAR" />
     <result column="U_ExtendField" property="uExtendfield" jdbcType="LONGNVARCHAR" />
+     <result column="U_Salt" property="uSalt"  />
         <!--  -->
     <result column="U_TypeText" property="U_TypeText" />
     <result column="U_StatusText" property="U_StatusText" />

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jack.jkbase.config.ShiroConfig;
 import com.jack.jkbase.entity.SysArea;
 import com.jack.jkbase.entity.SysCompany;
 import com.jack.jkbase.entity.SysEvent;
@@ -38,6 +40,7 @@ import com.jack.jkbase.mapper.SysRoleAppMapper;
 import com.jack.jkbase.mapper.SysRoleMapper;
 import com.jack.jkbase.mapper.SysUserMapper;
 import com.jack.jkbase.mapper.SysUserRoleMapper;
+import com.jack.jkbase.repo.SysUserRepo;
 import com.jack.jkbase.service.SysAreaService;
 import com.jack.jkbase.service.SysCompanyService;
 import com.jack.jkbase.service.SysEventService;
@@ -56,7 +59,8 @@ public class SysMgrController {
 	
 	@Autowired SysRoleMapper roleRepo ;
 	@Autowired SysUserRoleMapper userRoleMapper ;
-	@Autowired SysUserMapper sysUserRepo;
+	@Autowired SysUserMapper sysUserMapper;
+	@Autowired SysUserRepo sysUserRepo;
 	@Autowired SysRoleAppMapper sysRoleAppMapper ;
 	@Autowired SysFunctionService sysFunctionService ;
 	@Autowired SysRolePermissionService sysRolePermissionService;
@@ -218,12 +222,12 @@ public class SysMgrController {
 	@RequestMapping(value = "/user_selectByRoleExcludeCombo.do", produces="text/html;charset=utf-8")
 	@ResponseBody
 	public String user_selectByRoleExcludeCombo(int roleId) {
-		return JSON.toJSONString(sysUserRepo.selectByRoleExclude(roleId));
+		return JSON.toJSONString(sysUserMapper.selectByRoleExclude(roleId));
 	}
 	@RequestMapping(value = "/user_combo.do", produces="text/html;charset=utf-8")
 	@ResponseBody
 	public String user_combo() {
-		List<ViewSysUser> list = sysUserRepo.selectAll();
+		List<ViewSysUser> list = sysUserMapper.selectAll();
 		for(SysUser u:list) {
 			if(u.getuType()==0) {
 				list.remove(u);
@@ -237,7 +241,7 @@ public class SysMgrController {
 	@ResponseBody
 	public String user_getAll() {
 		JSONObject jo = new JSONObject();
-		List<ViewSysUser> list = sysUserRepo.selectAll();
+		List<ViewSysUser> list = sysUserMapper.selectAll();
 		JSONArray ja = new JSONArray();
 		ja.addAll(list);
 		jo.put("data", ja);
@@ -252,26 +256,31 @@ public class SysMgrController {
 				if(StringUtils.isEmpty(model.getuLoginname())) 
 					return JSON.toJSONString(new Result(false,"操作失败：登录名不能为空！"));
 				//添加默认密码
-				model.setuPwd(DigestUtils.md5Hex(ConfigInfo.default_password));
-				sysUserRepo.insert(model);
+				//model.setuPwd(DigestUtils.md5Hex(ConfigInfo.default_password));
+				String salt = UUID.randomUUID().toString();
+				model.setuSalt(salt);
+				model.setuPwd(ShiroConfig.hashUserPwd(ConfigInfo.default_password
+						,salt));
+				SysUser su =  sysUserRepo.save(model);
 				//成功生成用户后，再添加角色
 				if(roles.length>0){
-					userRoleMapper.insertbatchForUser(roles,model.getUserid());
+					userRoleMapper.insertbatchForUser(roles,su.getUserid());
 				}
-				return  JSON.toJSONString(new Result(true,"添加成功！",sysUserRepo.selectByPrimaryKey(model.getUserid())));
+				return  JSON.toJSONString(new Result(true,"添加成功！",sysUserMapper.selectByPrimaryKey(su.getUserid())));
 			}else if(Helper.F_ACTION_EDIT.equals(action)){
 				if(StringUtils.isEmpty(model.getuLoginname())) 
 					return JSON.toJSONString(new Result(false,"操作失败：登录名不能为空！"));
-				sysUserRepo.updateByPrimaryKeySelective(model);
+				sysUserMapper.updateByPrimaryKeySelective(model);
 				//编辑用户权限
 				userRoleMapper.insertbatchForUser(roles,model.getUserid());
-				return JSON.toJSONString(new Result(true,"修改成功！",sysUserRepo.selectByPrimaryKey(model.getUserid())));
+				return JSON.toJSONString(new Result(true,"修改成功！",sysUserMapper.selectByPrimaryKey(model.getUserid())));
 			}else if(Helper.F_ACTION_REMOVE.equals(action)){
-				sysUserRepo.deleteByPrimaryKey(model.getUserid());
+				sysUserMapper.deleteByPrimaryKey(model.getUserid());
 				return  JSON.toJSONString(new Result(true,"删除成功！",model));
 			}else if("reset".equals(action)){
-				String pwd = ConfigInfo.default_password;
-				int rs = sysUserRepo.updatePassword(model.getUserid(),DigestUtils.md5Hex(pwd).toUpperCase());
+				int rs = sysUserMapper.updatePassword(model.getUserid()
+							,ShiroConfig.hashUserPwd(ConfigInfo.default_password,null)
+						);
 				return JSON.toJSONString(new Result(rs>0,rs>0?"重置密码成功!":"重置密码失败:"+rs));
 			}else{
 				return JSON.toJSONString(new Result(false,"请求参数action错误："+action));

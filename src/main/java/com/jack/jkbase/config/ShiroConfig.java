@@ -1,11 +1,17 @@
 package com.jack.jkbase.config;
 
 import java.util.Properties;
+import java.util.UUID;
 
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.crypto.hash.Md5Hash;
+import org.apache.shiro.crypto.hash.Sha1Hash;
+import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
+import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +19,8 @@ import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
 @Configuration
 public class ShiroConfig {
+	private static String ALGORITHM_NAME=Sha256Hash.ALGORITHM_NAME;
+	private static int HashIterations = 16;
 	@Bean
     public ShiroFilterChainDefinition shiroFilterChainDefinition() {
         DefaultShiroFilterChainDefinition chain = new DefaultShiroFilterChainDefinition();
@@ -41,8 +49,9 @@ public class ShiroConfig {
 	}
 	@Bean
 	public HashedCredentialsMatcher hashedCredentialsMatcher(){
-		HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher(Md5Hash.ALGORITHM_NAME);
-		hashedCredentialsMatcher.setHashIterations(1);//散列的次数，比如散列两次，相当于 md5(md5(""));
+		HashedCredentialsMatcher hashedCredentialsMatcher = 
+				new HashedCredentialsMatcher(ALGORITHM_NAME);
+		hashedCredentialsMatcher.setHashIterations(HashIterations);
 		return hashedCredentialsMatcher;
 	}
 	@Bean
@@ -57,4 +66,20 @@ public class ShiroConfig {
 		r.setCredentialsMatcher(hashedCredentialsMatcher());
 		return r;
 	}
+	/**
+	 * 
+	 * @param pwd	
+	 * @param salt
+	 * @return
+	 */
+	public static String hashUserPwd(String pwd,String salt){
+		return new SimpleHash(ALGORITHM_NAME,pwd,salt,HashIterations).toHex();
+	}
+	/*
+	public static void main(String[] args) {
+		String salt = "9e77501e-725f-4d69-812e-56b0c2186f11";
+		System.out.println(ByteSource.Util.bytes(salt));
+		System.out.println(hashUserPwd("654321888",salt));
+		//b4f92a719c98cd13a50a117092f04250809a303ce0d63d5861b37e59d02d4b90
+	}*/
 }

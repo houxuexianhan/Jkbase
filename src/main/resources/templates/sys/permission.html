@@ -16,7 +16,7 @@
 			<#list p.modules as m>
 		  <tr role="module" data-modulecode="${m.moduleid}">
 		  <td width="15%"  class="tdModule">
-		    <div class="checkbox">
+		    <div class="checkbox" style="margin:0;">
 		    <label>
 		      <input type="checkbox">${m.mCname}
 		    </label>
@@ -25,8 +25,8 @@
 		  
 		   <td class="tdPerm">
 		   <#list m.funcs as f>
-		  <div style="min-width: 200px;display: inline;margin-right: 20px;" class="checkbox">
-		    <label>
+		  <div style="min-width: 200px;display: inline;margin-right: 20px;" >
+		    <label style="font-weight: 400;">
 		    	<#if f.access >
 		    	<input type="checkbox" checked="checked" data-fvalue="${f.fValue}">
 				<#else>	

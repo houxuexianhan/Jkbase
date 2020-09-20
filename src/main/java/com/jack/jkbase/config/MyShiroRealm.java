@@ -15,6 +15,7 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
+import com.alibaba.fastjson.JSON;
 import com.jack.jkbase.entity.SysUser;
 import com.jack.jkbase.service.SysUserService;
 
@@ -55,9 +56,10 @@ public class MyShiroRealm extends AuthorizingRealm{
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
                 userInfo, //用户名
                 userInfo.getuPwd(), //密码
-                //ByteSource.Util.bytes(userInfo.getuSalt()),//salt=username+salt
+                ByteSource.Util.bytes(userInfo.getuSalt()),
                 getName()  //realm name
         );
+        System.out.println(JSON.toJSONString(authenticationInfo));
         return authenticationInfo;
     }
 }

@@ -26,7 +26,10 @@
   <select id="selectAll" resultMap="BaseResultMap">
   	select * from View_sys_Module order by M_AppID,M_OrderLevel
   </select>
-  
+  <select id="selectByUserId" resultMap="BaseResultMap">
+  	select m.* from sys_userrole r inner join sys_rolepermission p on r.R_RoleID=p.P_RoleID and p.P_Value>0 
+	inner join view_sys_module m on m.ModuleId=p.P_ModuleID order by M_AppID,M_OrderLevel;
+  </select>
   <!-- 自动生成  -->
   <sql id="Base_Column_List" >
     ModuleID, M_AppID, M_ParentID, M_CName, M_URL, M_OrderLevel, M_IsSys, M_IsClose, 

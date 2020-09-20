@@ -33,7 +33,7 @@ public class ConfigInfo {
         	InputStream in = ConfigInfo.class.getClassLoader().getResourceAsStream(PROPERTIES_CONFIG);
             p.load(in);
             in.close();
-            default_password = p.getProperty("default_password","654321");
+            default_password = p.getProperty("default_password","654321888");
             mail_host = p.getProperty("mail_host","smtp.163.com");
             mail_port = Integer.parseInt(p.getProperty("mail_port","25"));
             mail_from = p.getProperty("mail_from");

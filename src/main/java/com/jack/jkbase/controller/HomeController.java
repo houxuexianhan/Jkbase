@@ -36,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.jack.jkbase.config.ShiroConfig;
 import com.jack.jkbase.entity.SysUser;
 import com.jack.jkbase.service.SysEventService;
 import com.jack.jkbase.service.SysModuleService;
@@ -64,6 +65,12 @@ public class HomeController {
 		model.addAttribute("treeMenu", ja);
 		return "index";
     }
+	@RequestMapping(value = "/login.html", method = RequestMethod.GET)
+	public String loginPage() {
+		Subject s = SecurityUtils.getSubject();
+		if(s.isAuthenticated()||s.isRemembered()) return "redirect:/";
+		return "login";
+	}
 	@RequestMapping(value = "/mylogin.do")
 	public String mylogin(HttpServletRequest request,String username,String password,Model model) {
 		logger.info(username+","+password);
@@ -201,16 +208,17 @@ public class HomeController {
 			e.printStackTrace();
 			return JSON.toJSONString(new Result(false, "页面已经失效，请刷新！", "timeout"));// 客户端需要刷新页面
 		}
-		SysUser loginUser = (SysUser)session.getAttribute(Helper.SESSION_USER);
-		if (!DigestUtils.md5Hex(pwdOld).equalsIgnoreCase(loginUser.getuPwd()))
+		//SysUser loginUser = (SysUser)session.getAttribute(Helper.SESSION_USER);
+		SysUser loginUser =SecurityUtils.getSubject().getPrincipals().oneByType(SysUser.class); 
+		if (!ShiroConfig.hashUserPwd(pwdOld, loginUser.getuSalt())
+				.equalsIgnoreCase(loginUser.getuPwd()))
 			return JSON.toJSONString(new Result(false, "您输入的原始密码不正确，请重新输入！", ""));
 		// 修改密码
 		String key = RandomUtil.generateString(16);// 重新生成令牌
 		try {
-			int rs = sysUserService.updatePassword(loginUser.getUserid(), pwdNew);
+			int rs = sysUserService.updatePassword(loginUser.getUserid(), 
+					ShiroConfig.hashUserPwd(pwdNew, loginUser.getuSalt()));
 			if (rs > 0) {
-				loginUser.setuPwd(DigestUtils.md5Hex(pwdNew).toUpperCase());
-				session.setAttribute(Helper.SESSION_USER, loginUser);
 				session.setAttribute(Helper.SESSION_PROFILE_TOKEN, key);
 				return JSON.toJSONString(new Result(true, "密码修改成功", key));
 			} else
