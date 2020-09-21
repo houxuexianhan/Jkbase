@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.CreationTimestamp;
 @Entity
 @Table(name="sys_User",uniqueConstraints = @UniqueConstraint(columnNames = "U_LoginName",name = "sys_User_ix1"))
 public class SysUser {
@@ -35,7 +37,8 @@ public class SysUser {
 	@Column(name="U_PhotoUrl",columnDefinition = "nvarchar(150)")	//头像
     private String uPhotourl;
 
-	@Column(name="U_JoinTime",insertable=false,columnDefinition = "datetime default CURRENT_TIMESTAMP",nullable=false)//加入时间
+    @CreationTimestamp
+	@Column(name="U_JoinTime",updatable = false)//加入时间
     private Date uJointime;
 
 	@Column(name="U_Type",nullable=false)
