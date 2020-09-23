@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
@@ -41,6 +40,7 @@ import com.jack.jkbase.entity.SysUser;
 import com.jack.jkbase.service.SysEventService;
 import com.jack.jkbase.service.SysModuleService;
 import com.jack.jkbase.service.SysUserService;
+import com.jack.jkbase.service.impl.SysUserServiceImpl;
 import com.jack.jkbase.util.ConfigInfo;
 import com.jack.jkbase.util.EncryptUtil;
 import com.jack.jkbase.util.Helper;
@@ -51,7 +51,7 @@ import com.jack.jkbase.util.Result;
 @Controller
 public class HomeController {
 	@Autowired HttpSession session;
-	@Autowired SysUserService sysUserService;
+	@Autowired SysUserServiceImpl sysUserServiceImpl;
 	@Autowired SysEventService sysEventService;
 	@Autowired SysModuleService moduleService;
 	
@@ -145,7 +145,7 @@ public class HomeController {
 	public String page_sysDashboard(Model model) {
 		return "dashboard";
 	}
-	
+	/*
 	@RequestMapping(value = "/login.do", method = RequestMethod.POST)
 	public String oper_login(HttpServletRequest request,String username,String password, Model model) {
 		model.addAttribute("CODE", username);
@@ -176,6 +176,7 @@ public class HomeController {
 			return "error";
 		}
 	}
+	*/
 	@RequestMapping(value = "/signOut.do")
 	public String oper_signOut(HttpServletRequest request){
 		Object o =  session.getAttribute(Helper.SESSION_USER);
@@ -216,19 +217,17 @@ public class HomeController {
 		// 修改密码
 		String key = RandomUtil.generateString(16);// 重新生成令牌
 		try {
-			int rs = sysUserService.updatePassword(loginUser.getUserid(), 
-					ShiroConfig.hashUserPwd(pwdNew, loginUser.getuSalt()));
-			if (rs > 0) {
+			if (sysUserServiceImpl.updatePassword(loginUser.getUserid(), pwdNew,loginUser.getuSalt())) {
 				session.setAttribute(Helper.SESSION_PROFILE_TOKEN, key);
 				return JSON.toJSONString(new Result(true, "密码修改成功", key));
 			} else
-				return JSON.toJSONString(new Result(false, "密码修改失败！错误码：" + rs, key));
+				return JSON.toJSONString(new Result(false, "密码修改失败！" , key));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return JSON.toJSONString(new Result(false, "操作失败出现异常，请联系管理员！", key));
 		}
 	}
-
+	/*
 	@RequestMapping(value = "/profile_updateInfo.do", method = RequestMethod.POST, produces = "text/html;charset=utf-8")
 	@ResponseBody
 	public String profile_updateInfo(SysUser user) {
@@ -250,7 +249,7 @@ public class HomeController {
 			return JSON.toJSONString(new Result(false, "资料修改失败，出现异常,请联系管理员或重新登录试试！!"));
 		}
 	}
-
+	*/
 	// 上传用户头衔
 	@RequestMapping(value = "/profile_uploadUserImg.do", method = RequestMethod.POST, produces = "text/html;charset=utf-8")
 	@ResponseBody
@@ -264,9 +263,9 @@ public class HomeController {
 		System.out.println("文件路径：" + value + ":" + fileName);
 		String url = dir + fileName;
 		try {
-			int rs = sysUserService.updatePhoto(loginUser.getUserid(), url);
-			if (rs <= 0)
-				return JSON.toJSONString(new Result(false, "上传失败!错误码：" + rs));
+			
+			if (!sysUserServiceImpl.updatePhoto(loginUser.getUserid(), url))
+			  return JSON.toJSONString(new Result(false, "上传失败!"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return JSON.toJSONString(new Result(false, "上传失败!出现异常！"));

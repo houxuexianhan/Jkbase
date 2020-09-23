@@ -1,10 +1,22 @@
 package com.jack.jkbase.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+@TableName("view_sys_user")
 public class ViewSysUser extends SysUser {
-	private String U_TypeText;
-	private String U_StatusText;
-	private String U_CompanyName;
-	private SysCompany sysCompany;
+    @TableField("U_TypeText")
+    private String uTypetext;
+
+    @TableField("U_StatusText")
+    private String uStatustext;
+
+    @TableField("U_CompanyName")
+    private String uCompanyname;
+    
+	@TableField(exist = false) 
 	private String comboText;
 
 	public String getComboText() {
@@ -12,35 +24,32 @@ public class ViewSysUser extends SysUser {
 		return comboText;
 	}
 
-	public String getU_TypeText() {
-		return U_TypeText;
+	public String getuTypetext() {
+		return uTypetext;
 	}
 
-	public void setU_TypeText(String u_TypeText) {
-		U_TypeText = u_TypeText;
+	public void setuTypetext(String uTypetext) {
+		this.uTypetext = uTypetext;
 	}
 
-	public String getU_StatusText() {
-		return U_StatusText;
+	public String getuStatustext() {
+		return uStatustext;
 	}
 
-	public void setU_StatusText(String u_StatusText) {
-		U_StatusText = u_StatusText;
+	public void setuStatustext(String uStatustext) {
+		this.uStatustext = uStatustext;
 	}
 
-	public String getU_CompanyName() {
-		return U_CompanyName;
+	public String getuCompanyname() {
+		return uCompanyname;
 	}
 
-	public void setU_CompanyName(String u_CompanyName) {
-		U_CompanyName = u_CompanyName;
+	public void setuCompanyname(String uCompanyname) {
+		this.uCompanyname = uCompanyname;
 	}
 
-	public SysCompany getSysCompany() {
-		return sysCompany;
+	public void setComboText(String comboText) {
+		this.comboText = comboText;
 	}
-
-	public void setSysCompany(SysCompany sysCompany) {
-		this.sysCompany = sysCompany;
-	}
+	
 }

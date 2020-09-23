@@ -134,8 +134,6 @@
               <table id="roleuserTable" class="display">
                 <thead>
                 <tr>
-                  <th></th>
-                  <th>用户ID</th>
                   <th>用户名</th>
                   <th>登录名</th>
                   <th>单位名</th>
@@ -214,13 +212,11 @@ $(document).ready(function() {
 		},
 		//ajax: 'SysMgr/roleuser_getUsersByRoleid.do?roleid='+roleid,
 		columns: [
-            { data: "rRoleid" ,visible:false},
-            { data: "rUserid" ,visible:true},
-            { data: "user.uCname"},
-            { data: "user.uLoginname"},
-            { data: "user.u_CompanyName"},
-            { data: "user.u_StatusText"},
-            { data: "user.u_TypeText"},
+            { data: "uCname"},
+            { data: "uLoginname"},
+            { data: "uCompanyname"},
+            { data: "uStatustext"},
+            { data: "uTypetext"},
             {
           	  data:null,
           	  className:"center",
@@ -307,8 +303,8 @@ $(document).ready(function() {
 	    	}else if('#roleuserModal'==target){
 	    		row = roleuserTable.row($(this).closest('tr')).data();
 	    		idx = roleuserTable.row($(this).closest('tr')).index();
-	    		params.userId = row.rUserid;
-	    		params.roleId = row.rRoleid;
+	    		params.userId = row.userid;
+	    		params.roleId = $('#roleuser_box #roleid').val();
 	    		$.post('SysMgr/roleuser_delete.do',params,function(data){
 		    		var data = eval('(' + data + ')');
 		    		if(data.success){

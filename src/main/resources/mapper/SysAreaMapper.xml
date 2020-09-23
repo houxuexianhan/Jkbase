@@ -14,7 +14,7 @@
   </resultMap>
 <!-- 查询全部  ,(select A_AreaName from sys_Area where AreaId = a.A_ParentId) A_ParentName -->
   <select id="selectAll" resultMap="BaseResultMap">
-  	 select *from sys_Area a
+  	 select * from sys_Area a
   	 order by A_Level,A_ShowOrder
   </select>
   <!-- 删除本身以及子节点 -->

@@ -8,19 +8,18 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
+import com.jack.jkbase.entity.SysModule;
 import com.jack.jkbase.entity.SysUser;
 import com.jack.jkbase.entity.ViewSysFunction;
-import com.jack.jkbase.entity.ViewSysModule;
 import com.jack.jkbase.service.SysFunctionService;
-import com.jack.jkbase.service.SysModuleService;
 import com.jack.jkbase.service.SysUserRolePermService;
+import com.jack.jkbase.service.impl.SysModuleServiceImpl;
 import com.jack.jkbase.util.Helper;
 import com.jack.jkbase.util.Result;
 
@@ -29,14 +28,14 @@ import com.jack.jkbase.util.Result;
  * 2.拦截 带 moduleId 参数的请求，在渲染视图之前返回 模块权限值
  *  请参考路径拦截规则：WebMvcConfig.java
  */
-@Component
+//@Component
 public class SecurityInterceptor implements HandlerInterceptor{
 	@Autowired
 	SysUserRolePermService sysUserRolePermService;
 	@Autowired 
 	SysFunctionService sysFunctionService;
 	@Autowired
-	SysModuleService moduleService ;
+	SysModuleServiceImpl moduleService ;
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
@@ -62,7 +61,7 @@ public class SecurityInterceptor implements HandlerInterceptor{
 	    	try{
 		    	if(mObj!=null){
 		    		int moduleId = Integer.parseInt(mObj.toString());
-			    	ViewSysModule m =  moduleService.selectByPrimaryKey(moduleId);
+			    	SysModule m =  moduleService.getById(moduleId);
 			    	if(m==null || m.getmIsclose()!=Helper.MODULE_NOT_CLOSE){
 			    		response.sendRedirect(request.getContextPath()+"/moduleClosed.page"); 
 			    		return false;

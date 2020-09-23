@@ -69,7 +69,7 @@
 		          <a href="#" id="selectCompany" class="dt-button" onclick="$('#UserManager_userDialog').dialog('open');">请选择<i class="fa fa-caret-down" aria-hidden="true"></i></a>
 		          </label>
 		          <div class="controls">
-		            <input name="u_CompanyName" type="text" placeholder="请选择单位部门" class="form-control" readonly="readonly">
+		            <input name="uCompanyname" type="text" placeholder="请选择单位部门" class="form-control" readonly="readonly">
 		          </div>
 		        </div>
 		   <div class="form-group" id="formRoles">
@@ -201,10 +201,10 @@ $(document).ready(function() {
             { data: "uLoginname"},
             { data: "uCname"},
             { data: "uMobileno"},
-            { data: "u_CompanyName"},
-            { data: "u_TypeText"},
+            { data: "uCompanyname"},
+            { data: "uTypetext"},
             { data: "uExtendfield"},
-            { data: "u_StatusText"},
+            { data: "uStatustext"},
             { data: "uJointime",render:function(data,type,row){
             	return moment(data).format("YYYY-MM-DD HH:mm:ss");
             }},
@@ -229,7 +229,7 @@ $(document).ready(function() {
             this.api().columns().every( function () {
                 var column = this;
                 var prop = column.dataSrc();
-                if(prop=='u_CompanyName'||prop=='u_TypeText'){
+                if(prop=='uCompanyname'||prop=='u_TypeText'){
                 	var select = $('<select><option value=""></option></select>')
                      .appendTo( $(column.footer()).empty() )
                      .on( 'change', function () {
@@ -331,7 +331,7 @@ $(document).ready(function() {
 				onNodeSelected: function(event, data) {
 					var tags = data.tags;
 					$('#userModal .model-form input[name=uCompanyid]').val(tags[0]);
-					$('#userModal .model-form input[name=u_CompanyName]').val(data.text);
+					$('#userModal .model-form input[name=uCompanyname]').val(data.text);
 					$('#UserManager_userDialog').dialog('close');
 				}
 			});
@@ -346,7 +346,7 @@ function saveUser(){
 		onSubmit: function(){
 			var uLoginname = $(this).find('input[name=uLoginname]').val();
 			var uCname = $(this).find('input[name=uCname]').val();
-			var uCompany= $(this).find('input[name=u_CompanyName]').val();
+			var uCompany= $(this).find('input[name=uCompanyname]').val();
 			if($.trim(uLoginname)==''){
 				alert('登录名不允许为空！');
 				return false;
@@ -371,8 +371,9 @@ function saveUser(){
 	 	        }else if('create'==action){
 	 	        	userTable.row.add(data.data).select().draw(false);
 	 	        }
+	        	new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
 	        }else{
-	        	alert(data.info);
+	        	new $.Zebra_Dialog(data.info,{modal: false});
 	        }
 	    }
 	});

@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,7 +37,6 @@ import com.jack.jkbase.mapper.SysCompanyMapper;
 import com.jack.jkbase.mapper.SysFieldValueMapper;
 import com.jack.jkbase.mapper.SysRoleAppMapper;
 import com.jack.jkbase.mapper.SysRoleMapper;
-import com.jack.jkbase.mapper.SysUserMapper;
 import com.jack.jkbase.mapper.SysUserRoleMapper;
 import com.jack.jkbase.repo.SysUserRepo;
 import com.jack.jkbase.service.SysAreaService;
@@ -46,6 +44,10 @@ import com.jack.jkbase.service.SysCompanyService;
 import com.jack.jkbase.service.SysEventService;
 import com.jack.jkbase.service.SysFunctionService;
 import com.jack.jkbase.service.SysRolePermissionService;
+import com.jack.jkbase.service.impl.SysAreaServiceImpl;
+import com.jack.jkbase.service.impl.SysRoleServiceImpl;
+import com.jack.jkbase.service.impl.SysUserServiceImpl;
+import com.jack.jkbase.service.impl.SysUserroleServiceImpl;
 import com.jack.jkbase.util.ConfigInfo;
 import com.jack.jkbase.util.ConfigUtil;
 import com.jack.jkbase.util.ExcelUtil;
@@ -57,16 +59,15 @@ import com.jack.jkbase.util.Result;
 @RequestMapping("/SysMgr")
 public class SysMgrController {
 	
-	@Autowired SysRoleMapper roleRepo ;
-	@Autowired SysUserRoleMapper userRoleMapper ;
-	@Autowired SysUserMapper sysUserMapper;
-	@Autowired SysUserRepo sysUserRepo;
+	@Autowired SysUserServiceImpl sysUserService;
+	@Autowired SysRoleServiceImpl sysRoleService;
+	@Autowired SysUserroleServiceImpl sysUserroleService ;
 	@Autowired SysRoleAppMapper sysRoleAppMapper ;
 	@Autowired SysFunctionService sysFunctionService ;
 	@Autowired SysRolePermissionService sysRolePermissionService;
 	@Autowired SysFieldValueMapper fieldValueMapper;
-	@Autowired SysAreaService sysAreaService;
-	@Autowired SysAreaMapper areaMapper;
+	@Autowired SysAreaServiceImpl sysAreaService;
+	//@Autowired SysAreaMapper areaMapper;
 	@Autowired SysCompanyService sysCompanyService;
 	@Autowired SysCompanyMapper companyMapper;
 	@Autowired SysEventService sysEventService;
@@ -110,7 +111,7 @@ public class SysMgrController {
 	@ResponseBody
 	public String role_getAll() {
 		JSONObject jo = new JSONObject();
-		List<SysRole> list = roleRepo.findAll();
+		List<SysRole> list =sysRoleService.list();// roleRepo.findAll();
 		JSONArray ja = new JSONArray();
 		ja.addAll(list);
 		jo.put("data", ja);
@@ -120,7 +121,7 @@ public class SysMgrController {
 	@RequestMapping(value = "/role_combo.do", produces="text/html;charset=utf-8")
 	@ResponseBody
 	public String role_combo() {
-		return  JSON.toJSONString(roleRepo.findAll());
+		return  JSON.toJSONString(sysRoleService.list());
 	}
 	@RequestMapping(value = "/role_access.do",params=Helper.PARAM_FUNCTION_ID, method = RequestMethod.POST, produces="text/html;charset=utf-8")
 	@ResponseBody
@@ -129,14 +130,15 @@ public class SysMgrController {
 			return JSON.toJSONString(new Result(false,"操作失败：角色名称不能为空！"));
 		try{
 			if(Helper.F_ACTION_CREATE.equals(action)){
-				roleRepo.insert(model);
-				return JSON.toJSONString(new Result(true,"添加成功！",roleRepo.selectByPrimaryKey(model.getRoleid())));
+				if(sysRoleService.save(model))
+					return JSON.toJSONString(new Result(true,"添加成功！",model));
+				else  return JSON.toJSONString(new Result(false,"添加失败！"));
 			}else if(Helper.F_ACTION_EDIT.equals(action)){
-				roleRepo.updateByPrimaryKey(model);
-				return JSON.toJSONString(new Result(true,"修改成功！",roleRepo.selectByPrimaryKey(model.getRoleid())));
+				if(sysRoleService.updateById(model))return JSON.toJSONString(new Result(true,"修改成功！",model));
+				else return JSON.toJSONString(new Result(false,"修改失败！"));
 			}else if(Helper.F_ACTION_REMOVE.equals(action)){
-				roleRepo.deleteByPrimaryKey(model.getRoleid());
-				return  JSON.toJSONString(new Result(true,"删除成功！",model));
+				if(sysRoleService.removeById(model.getRoleid())) return  JSON.toJSONString(new Result(true,"删除成功！",model));
+				else return JSON.toJSONString(new Result(false,"删除失败！"));
 			}else{
 				return JSON.toJSONString(new Result(false,"请求参数action错误："+action));
 			}
@@ -150,7 +152,7 @@ public class SysMgrController {
 	@ResponseBody
 	public String roleuser_getUsersByRoleid(int roleid) {
 		JSONObject jo = new JSONObject();
-		List<ViewUserRole> list = userRoleMapper.selectByRoleId(roleid);
+		List<ViewSysUser> list = sysUserService.selectByRoleid(roleid);//.selectByRoleId(roleid);
 		JSONArray ja = new JSONArray();
 		ja.addAll(list);
 		jo.put("data", ja);
@@ -160,7 +162,7 @@ public class SysMgrController {
 	@RequestMapping(value = "/roleuser_getByUser.do", produces="text/html;charset=utf-8")
 	@ResponseBody
 	public String roleuser_getByUser(int userId) {
-		return  JSON.toJSONString(userRoleMapper.selectByUser(userId));
+		return  JSON.toJSONString(sysUserroleService.selectByUserid(userId));
 	}
 	@RequestMapping(value = "/roleuser_adduser.do",params=Helper.PARAM_FUNCTION_ID, method = RequestMethod.POST, produces="text/html;charset=utf-8")
 	@ResponseBody
@@ -169,10 +171,8 @@ public class SysMgrController {
 			return JSON.toJSONString(new Result(false,"用户不能为空!"));
 		}
 		try{
-			int rs = userRoleMapper.insertbatchForRole(users,roleid);
-			String ms = "该角色成功添加了"+rs+"个用户";
-			if(rs!=users.length) ms+=",但是有"+(users.length-rs)+"个用户添加失败！";
-			return JSON.toJSONString(new Result(true,ms));
+			if( sysUserroleService.insertbatchForRole(users,roleid))return JSON.toJSONString(new Result(true,"该角色批量添加用户成功！"));
+			else return JSON.toJSONString(new Result(false,"该角色添加用户失败！"));
 		}catch(Exception e){
 			e.printStackTrace();
 			return JSON.toJSONString(new Result(false,"操作出现异常："+e.getMessage()));
@@ -181,11 +181,9 @@ public class SysMgrController {
 	@RequestMapping(value = "/roleuser_delete.do",params=Helper.PARAM_FUNCTION_ID, method = RequestMethod.POST, produces="text/html;charset=utf-8")
 	@ResponseBody
 	public String roleuser_delete(int userId,int roleId){
-		SysUserRole key = new SysUserRole();
-		key.setrRoleid(roleId);
-		key.setrUserid(userId);
+		SysUserRole key = new SysUserRole(userId,roleId);
 		try{
-			userRoleMapper.deleteByPrimaryKey(key);
+			sysUserroleService.removeByKey(key);
 			return  JSON.toJSONString(new Result(true,"删除成功！"));
 		}catch(Exception e){
 			e.printStackTrace();
@@ -195,11 +193,9 @@ public class SysMgrController {
 	@RequestMapping(value = "/roleuser_deleteByUser.do",params=Helper.PARAM_FUNCTION_ID, method = RequestMethod.POST, produces="text/html;charset=utf-8")
 	@ResponseBody
 	public String roleuser_deleteByUser(int userId){
-		int rs = 0;
 		try{
-			rs = userRoleMapper.deleteByUser(userId);
-			if(rs<=0) return JSON.toJSONString(new Result(false,"操作失败，操作结果："+rs));
-			return  JSON.toJSONString(new Result(true,"删除成功！"));
+			if(sysUserroleService.deleteByUserid(userId))return  JSON.toJSONString(new Result(true,"删除成功！"));
+			else return JSON.toJSONString(new Result(false,"删除失败！"));
 		}catch(Exception e){
 			e.printStackTrace();
 			return JSON.toJSONString(new Result(false,"操作出现异常："+e.getMessage()));
@@ -208,11 +204,10 @@ public class SysMgrController {
 	@RequestMapping(value = "/roleuser_deleteByRole.do",params=Helper.PARAM_FUNCTION_ID, method = RequestMethod.POST, produces="text/html;charset=utf-8")
 	@ResponseBody
 	public String roleuser_deleteByRole(int roleId){
-		int rs = 0;
 		try{
-			rs = userRoleMapper.deleteByRole(roleId);
-			if(rs<=0) return JSON.toJSONString(new Result(false,"操作失败，操作结果："+rs));
-			return  JSON.toJSONString(new Result(true));
+			if(sysUserroleService.deleteByRoleid(roleId))return  JSON.toJSONString(new Result(true,"删除成功！"));
+			else return JSON.toJSONString(new Result(false,"删除失败！"));
+			
 		}catch(Exception e){
 			e.printStackTrace();
 			return JSON.toJSONString(new Result(false,"操作出现异常："+e.getMessage()));
@@ -222,12 +217,12 @@ public class SysMgrController {
 	@RequestMapping(value = "/user_selectByRoleExcludeCombo.do", produces="text/html;charset=utf-8")
 	@ResponseBody
 	public String user_selectByRoleExcludeCombo(int roleId) {
-		return JSON.toJSONString(sysUserMapper.selectByRoleExclude(roleId));
+		return JSON.toJSONString(sysUserService.selectByRoleExclude(roleId));
 	}
 	@RequestMapping(value = "/user_combo.do", produces="text/html;charset=utf-8")
 	@ResponseBody
 	public String user_combo() {
-		List<ViewSysUser> list = sysUserMapper.selectAll();
+		List<ViewSysUser> list = sysUserService.selectAll();//sysUserMapper.selectAll();
 		for(SysUser u:list) {
 			if(u.getuType()==0) {
 				list.remove(u);
@@ -241,7 +236,7 @@ public class SysMgrController {
 	@ResponseBody
 	public String user_getAll() {
 		JSONObject jo = new JSONObject();
-		List<ViewSysUser> list = sysUserMapper.selectAll();
+		List<ViewSysUser> list = sysUserService.selectAll();//sysUserMapper.selectAll();
 		JSONArray ja = new JSONArray();
 		ja.addAll(list);
 		jo.put("data", ja);
@@ -261,27 +256,31 @@ public class SysMgrController {
 				model.setuSalt(salt);
 				model.setuPwd(ShiroConfig.hashUserPwd(ConfigInfo.default_password
 						,salt));
-				SysUser su =  sysUserRepo.save(model);
-				//成功生成用户后，再添加角色
-				if(roles.length>0){
-					userRoleMapper.insertbatchForUser(roles,su.getUserid());
+				boolean b = sysUserService.save(model);
+				if(b) {
+					ViewSysUser su = sysUserService.selectByUsername(model.getuLoginname());
+					//成功生成用户后，再添加角色
+					if(roles.length>0){
+						sysUserroleService.insertbatchForUser(su.getUserid(),roles);
+					}
+					return  JSON.toJSONString(new Result(true,"添加成功！",su));
+				}else {
+					return JSON.toJSONString(new Result(false,"添加失败！"));
 				}
-				return  JSON.toJSONString(new Result(true,"添加成功！",sysUserMapper.selectByPrimaryKey(su.getUserid())));
 			}else if(Helper.F_ACTION_EDIT.equals(action)){
 				if(StringUtils.isEmpty(model.getuLoginname())) 
 					return JSON.toJSONString(new Result(false,"操作失败：登录名不能为空！"));
-				sysUserMapper.updateByPrimaryKeySelective(model);
+				sysUserService.updateById(model);
+				//sysUserMapper.updateById(model);// .updateByPrimaryKeySelective(model);
 				//编辑用户权限
-				userRoleMapper.insertbatchForUser(roles,model.getUserid());
-				return JSON.toJSONString(new Result(true,"修改成功！",sysUserMapper.selectByPrimaryKey(model.getUserid())));
+				if(roles.length>0)sysUserroleService.insertbatchForUser(model.getUserid(),roles);
+				return JSON.toJSONString(new Result(true,"修改成功！",sysUserService.selecById(model.getUserid())));
 			}else if(Helper.F_ACTION_REMOVE.equals(action)){
-				sysUserMapper.deleteByPrimaryKey(model.getUserid());
+				sysUserService.removeById(model.getUserid());
 				return  JSON.toJSONString(new Result(true,"删除成功！",model));
 			}else if("reset".equals(action)){
-				int rs = sysUserMapper.updatePassword(model.getUserid()
-							,ShiroConfig.hashUserPwd(ConfigInfo.default_password,null)
-						);
-				return JSON.toJSONString(new Result(rs>0,rs>0?"重置密码成功!":"重置密码失败:"+rs));
+				boolean b= sysUserService.updatePassword(model.getUserid(), ConfigInfo.default_password,null);
+				return JSON.toJSONString(new Result(b,b?"重置密码成功!":"重置密码失败:"));
 			}else{
 				return JSON.toJSONString(new Result(false,"请求参数action错误："+action));
 			}
@@ -391,7 +390,7 @@ public class SysMgrController {
 	@ResponseBody
 	public void area_export(HttpServletResponse response){
 		JSONArray ja = new JSONArray();
-		ja.addAll(sysAreaService.selectAll());//获取业务数据集
+		ja.addAll(sysAreaService.list());//获取业务数据集
         Map<String,String> headMap = SysArea.getHeadMap();//获取属性-列头
         String title = "行政区列表";
         ExcelUtil.downloadExcelFile(title,headMap,ja,response);
@@ -409,13 +408,13 @@ public class SysMgrController {
 			return JSON.toJSONString(new Result(false,"操作失败：行政区名称、自定义编码、标准代码都不能为空！"));
 		try{
 			if(Helper.F_ACTION_CREATE.equals(action) || "addTop".equals(action)){//添加顶级或子级行政区
-				areaMapper.insert(model);
-				return JSON.toJSONString(new Result(true,"添加成功！",areaMapper.selectByPrimaryKey(model.getAreaid())));
+				sysAreaService.save(model);
+				return JSON.toJSONString(new Result(true,"添加成功！",model));
 			}else if(Helper.F_ACTION_EDIT.equals(action)){
-				areaMapper.updateByPrimaryKey(model);
-				return JSON.toJSONString(new Result(true,"修改成功！",areaMapper.selectByPrimaryKey(model.getAreaid())));
+				sysAreaService.updateById(model);
+				return JSON.toJSONString(new Result(true,"修改成功！",model));
 			}else if(Helper.F_ACTION_REMOVE.equals(action)){
-				areaMapper.deleteByPrimaryKey(model.getAreaid());
+				sysAreaService.removeById(model.getAreaid());
 				return  JSON.toJSONString(new Result(true,"删除成功！",model));
 			}else{
 				return JSON.toJSONString(new Result(false,"请求参数action错误："+action));

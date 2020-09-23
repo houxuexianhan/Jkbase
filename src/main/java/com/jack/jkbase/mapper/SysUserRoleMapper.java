@@ -4,10 +4,11 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jack.jkbase.entity.SysUserRole;
 import com.jack.jkbase.entity.ViewUserRole;
 
-public interface SysUserRoleMapper {
+public interface SysUserRoleMapper extends BaseMapper<SysUserRole>{
 	List<ViewUserRole> selectByRoleId(int roleId);
     
     int insertbatchForRole(@Param("users")int[] users,@Param("roleId")int roleId);

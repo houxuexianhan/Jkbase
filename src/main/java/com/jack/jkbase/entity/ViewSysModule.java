@@ -1,7 +1,18 @@
 package com.jack.jkbase.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+@Data
+@EqualsAndHashCode(callSuper = false)
+@TableName("view_sys_module")
 public class ViewSysModule extends SysModule{
+	@TableField("A_AppName")
 	private String aAppname="";
+	
+	@TableField("M_ParentName")
 	private String mParentname="";
 	
 	public String getmParentname() {

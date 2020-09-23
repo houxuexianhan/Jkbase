@@ -13,7 +13,7 @@
   <select id="selectAll" resultMap="ViewRoleApp">
   	select * from View_sys_RoleApp
   </select>
-	<select id="selectByPK" resultMap="ViewRoleApp" parameterType="SysRoleApp">
+	<select id="selectByPK" resultMap="ViewRoleApp" >
 		select * from View_sys_RoleApp
 		where A_RoleID = #{aRoleid,jdbcType=INTEGER}
       and A_AppID = #{aAppid,jdbcType=INTEGER}

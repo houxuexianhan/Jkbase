@@ -6,7 +6,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.jack.jkbase.annotation.Operation;
+import com.jack.jkbase.config.ShiroConfig;
 import com.jack.jkbase.entity.SysUser;
 import com.jack.jkbase.entity.ViewSysUser;
 import com.jack.jkbase.mapper.SysUserMapper;
@@ -14,10 +16,12 @@ import com.jack.jkbase.mapper.SysUserRoleMapper;
 import com.jack.jkbase.util.ConfigInfo;
 import com.jack.jkbase.util.Helper;
 
-@Service
+//@Service
 public class SysUserService{
-	@Autowired SysUserMapper mapper;
-	@Autowired SysUserRoleMapper userRolemapper;
+	//@Autowired 
+	SysUserMapper mapper;
+	//@Autowired 
+	SysUserRoleMapper userRolemapper;
 	//access
 	@Operation(type=Helper.logTypeOperation,desc="更新用户表",arguDesc={"用户","操作类型"})
 	public int access(SysUser model,String action) throws Exception{
@@ -36,27 +40,26 @@ public class SysUserService{
 		 */
 		return 1;
 	}
-	public SysUser selectUserPwd(String username,String pwd){
-		return mapper.selectUserPwd(username,DigestUtils.md5Hex(pwd).toUpperCase());
-	}
-	public SysUser selectByUsername(String username){
-		return mapper.selectUsername(username);
-	}
-	public List<ViewSysUser> selectByRoleExclude(int roleId){
-		return mapper.selectByRoleExclude(roleId);
-	}
-	@Operation(type=Helper.logTypeOperation,desc="重置密码",arguDesc={"用户ID",""})
-	public int resetPassword(int userid){
-		String defalutPwd = ConfigInfo.default_password;
-		return mapper.updatePassword(userid,DigestUtils.md5Hex(defalutPwd).toUpperCase());
-	}
+	/*
+	 * public SysUser selectByUsername(String username){ return
+	 * mapper.selectUsername(username); }
+	 */
+
+	/*
+	 * public List<ViewSysUser> selectByRoleExclude(int roleId){ return
+	 * mapper.selectByRoleExclude(roleId); }
+	 */
 	@Operation(type=Helper.logTypeOperation,desc="用户更改个人密码",arguDesc={"用户ID",""})
-	public int updatePassword(int userid,String password){
-		return mapper.updatePassword(userid,password);
+	public int updatePassword(int userid,String password,String salt){
+		return mapper.update(null,new LambdaUpdateWrapper<SysUser>().eq(SysUser::getUserid, userid)
+				.set(SysUser::getuPwd, ShiroConfig.hashUserPwd(password,salt))
+			);
 	}
 	@Operation(type=Helper.logTypeOperation,desc="用户修改头像",arguDesc={"用户ID",""})
 	public int updatePhoto(int userid,String photo){
-		return mapper.updatePhoto(userid,photo);
+		return mapper.update(null,new LambdaUpdateWrapper<SysUser>().eq(SysUser::getUserid, userid)
+				.set(SysUser::getuPhotourl, photo)
+			);
 	}
 	//校验输入,返回null表示成功
 	public String validate(SysUser model){
@@ -64,10 +67,9 @@ public class SysUserService{
 		if(model.getuCname()==null||model.getuCname().trim().isEmpty()) return "用户姓名不能为空！";
 		return null;
 	}
-	public SysUser selectByPrimaryKey(int id) {
-		return mapper.selectByPrimaryKey(id);
-	}
-	public List<ViewSysUser> selectAll() {
-		return mapper.selectAll();
-	}
+	/*
+	 * public SysUser selectByPrimaryKey(int id) { return
+	 * mapper.selectByPrimaryKey(id); } public List<ViewSysUser> selectAll() {
+	 * return mapper.selectAll(); }
+	 */
 }

@@ -1,5 +1,6 @@
 package com.jack.jkbase.entity;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -11,38 +12,44 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-@Entity
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+/*@Entity
 @Table(name="sys_Area",uniqueConstraints = {@UniqueConstraint(columnNames = "A_AreaNo",name = "sys_Area_ix1")
-						,@UniqueConstraint(columnNames = "A_AreaCode",name = "sys_Area_ix2")})
-public class SysArea {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "AreaId")
+						,@UniqueConstraint(columnNames = "A_AreaCode",name = "sys_Area_ix2")})*/
+@TableName("sys_area")
+public class SysArea implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
+	@TableId(value = "AreaId", type = IdType.AUTO)
     private int areaid;
 
-	@Column(name="A_AreaNo",nullable = false,columnDefinition = "varchar(10)")//行政区域代码(国家标准)
-    private String aAreano;
-
-	@Column(name="A_AreaCode",nullable = false,columnDefinition = "varchar(10)")//行政区自编码(字母缩写)
+    @TableField("A_AreaCode")
     private String aAreacode;
 
-	@Column(name="A_AreaName",nullable=false,columnDefinition = "nvarchar(30)")//行政区名称(地名)
+    @TableField("A_AreaName")
     private String aAreaname;
 
-	@Column(name="A_ParentId",nullable=false)
-    private int aParentid;
+    @TableField("A_AreaNo")
+    private String aAreano;
 
-	@Column(name="A_Level",nullable=false)	//层级
+    @TableField("A_Level")
     private int aLevel;
 
-	@Column(name="A_LevelName",nullable=false,columnDefinition = "nvarchar(10)")//行政级别(省(直辖市)/市/县/市辖区/乡镇)
+    @TableField("A_LevelName")
     private String aLevelname;
 
-	@Column(name="A_Zoning",nullable=false,columnDefinition = "nvarchar(50)")//行政区划(中国行政区划：如华北、东北、华东、华中、华南、西北、西南、港澳台等)
-    private String aZoning;
+    @TableField("A_ParentId")
+    private int aParentid;
 
-	@Column(name="A_ShowOrder",nullable = false)//显示顺序
+    @TableField("A_ShowOrder")
     private int aShoworder;
+
+    @TableField("A_Zoning")
+    private String aZoning;
 
 	
 	public static Map<String,String> getHeadMap(){

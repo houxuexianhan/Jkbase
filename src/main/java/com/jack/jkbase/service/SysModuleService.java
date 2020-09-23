@@ -18,9 +18,10 @@ import com.jack.jkbase.util.Helper;
 public class SysModuleService{
 	@Autowired SysModuleMapper mapper;
 	
-	public ViewSysModule selectByPrimaryKey(int moduleid) {
-		return mapper.selectByPrimaryKey(moduleid);
-	}
+	/*
+	 * public ViewSysModule selectByPrimaryKey(int moduleid) { return
+	 * mapper.selectByPrimaryKey(moduleid); }
+	 */
 	//返回List
 	public List<ViewSysModule> getModules(){
 		return mapper.selectAll();
@@ -91,6 +92,9 @@ public class SysModuleService{
 		}
 		return null;
 	}
+	/**
+	 * 排除不包含功能的父级模块
+	 */
 	public List<ViewSysModule> selectComboExcludeParent(){
 		return mapper.selectComboExcludeParent();
 	}

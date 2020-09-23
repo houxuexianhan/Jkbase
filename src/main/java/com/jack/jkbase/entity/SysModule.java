@@ -1,48 +1,54 @@
 package com.jack.jkbase.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Table;
+import java.io.Serializable;
 
-@Entity
-@Table(name="sys_Module",indexes = {@Index(name="sys_Module_idx1",columnList = "M_AppID,M_CName",unique = true)
-			,@Index(name="sys_Module_idx2",columnList = "M_Code",unique = true)})
-public class SysModule {
-	@Id
-	@Column(name="ModuleID")//COMMENT '模块ID'
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+//@Entity
+//@Table(name="sys_Module",indexes = {@Index(name="sys_Module_idx1",columnList = "M_AppID,M_CName",unique = true)
+//			,@Index(name="sys_Module_idx2",columnList = "M_Code",unique = true)})
+@Data
+@EqualsAndHashCode(callSuper = false)
+@TableName("sys_module")
+public class SysModule implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @TableId(value = "ModuleID", type = IdType.AUTO)
     private int moduleid;
-	
-	@Column(name="M_AppID",nullable = false)//,columnDefinition = "comment '应用ID'")
+
+    @TableField("M_AppID")
     private int mAppid;
 
-	@Column(name="M_ParentID",nullable=false)
-    private int mParentid;
-	//模板代码（唯一)，可以定义为模板文件名称
-	@Column(name="M_Code",nullable=false,columnDefinition = "varchar(50)")//COMMENT '模块名称,当ParentID为0,为模组名称'
-    private String mCode;
-	
-	@Column(name="M_CName",nullable=false,columnDefinition = "nvarchar(50)")//COMMENT '模块名称,当ParentID为0,为模组名称'
+    @TableField("M_CName")
     private String mCname;
-	
-	@Column(name="M_URL",columnDefinition = "nvarchar(100)")//comment '模块路径URL'
-    private String mUrl;
 
-	@Column(name="M_OrderLevel",length=4)//comment '当前所在排序级别支持双层99级菜单'
-    private String mOrderlevel;
+    @TableField("M_Code")
+    private String mCode;
 
-	@Column(name="M_IsSys",nullable=false)//comment '是否系统模块(1-是,0-否),如为系统则不允许修改'
-    private int mIssys;
+    @TableField("M_Icon")
+    private String mIcon;
 
-	@Column(name="M_IsClose",nullable=false)//comment '是否关闭(1-是,0-否)'
+    @TableField("M_IsClose")
     private int mIsclose;
 
-	@Column(name="M_Icon",length=50)//
-    private String mIcon;
+    @TableField("M_IsSys")
+    private int mIssys;
+
+    @TableField("M_OrderLevel")
+    private String mOrderlevel;
+
+    @TableField("M_ParentID")
+    private int mParentid;
+
+    @TableField("M_URL")
+    private String mUrl;
 
     @Override
 	public int hashCode() {

@@ -10,7 +10,8 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import com.jack.jkbase.entity.SysApp;
 import com.jack.jkbase.entity.SysRole;
 //@RepositoryRestResource(path = "roles")
-public interface SysRoleRepo extends JpaRepository<SysRole, Integer>{
+public interface SysRoleRepo //extends JpaRepository<SysRole, Integer>
+{
 	//localhost:8080/rest/apps/search/nsw?name=系统
 	
 }

@@ -1,23 +1,7 @@
 package com.jack.jkbase.mapper;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jack.jkbase.entity.SysApp;
 
-public interface SysAppMapper {
-	List<SysApp> findAll();
-	List<SysApp> findByRole(int roleid);
-	List<SysApp> findByaIssys(int isSys);
-	//
-    int deleteByPrimaryKey(Integer appid);
-
-    int insert(SysApp record);
-
-    int insertSelective(SysApp record);
-
-    SysApp selectByPrimaryKey(Integer appid);
-
-    int updateByPrimaryKeySelective(SysApp record);
-
-    int updateByPrimaryKey(SysApp record);
+public interface SysAppMapper extends BaseMapper<SysApp>{
 }

@@ -8,41 +8,52 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-@Entity
-@Table(name="sys_Role",uniqueConstraints = {@UniqueConstraint(columnNames = "R_RoleName",name = "sys_Role_ix")})
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Data
+@EqualsAndHashCode(callSuper = false)
+@TableName("sys_role")
 public class SysRole {
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="RoleID")
-    private int roleid;
+	private static final long serialVersionUID = 1L;
 
-	@Column(name="R_RoleName",columnDefinition = "nvarchar(50)",nullable=false)
-    private String rRolename;
+	@TableId(value = "RoleID", type = IdType.AUTO)
+	private int roleid;
 
-	@Column(name="R_Description",columnDefinition = "nvarchar(100)")
-    private String rDescription;
+	@TableField("R_Description")
+	private String rDescription;
 
-    public int getRoleid() {
-        return roleid;
-    }
+	@TableField("R_RoleName")
+	private String rRolename;
 
-    public void setRoleid(int roleid) {
-        this.roleid = roleid;
-    }
+	
+	public int getRoleid() {
+		return roleid;
+	}
 
-    public String getrRolename() {
-        return rRolename;
-    }
+	public void setRoleid(int roleid) {
+		this.roleid = roleid;
+	}
 
-    public void setrRolename(String rRolename) {
-        this.rRolename = rRolename == null ? null : rRolename.trim();
-    }
+	public String getrDescription() {
+		return rDescription;
+	}
 
-    public String getrDescription() {
-        return rDescription;
-    }
+	public void setrDescription(String rDescription) {
+		this.rDescription = rDescription;
+	}
 
-    public void setrDescription(String rDescription) {
-        this.rDescription = rDescription == null ? null : rDescription.trim();
-    }
+	public String getrRolename() {
+		return rRolename;
+	}
+
+	public void setrRolename(String rRolename) {
+		this.rRolename = rRolename;
+	}
+	
 }

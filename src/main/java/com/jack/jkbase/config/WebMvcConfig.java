@@ -5,7 +5,6 @@ import java.util.Properties;
 
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -19,11 +18,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import com.jack.jkbase.filter.SecurityInterceptor;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
-	@Autowired SecurityInterceptor securityInterceptor;
+	//@Autowired SecurityInterceptor securityInterceptor;
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
 		//registry.addViewController("/").setViewName("forward:/index.html");

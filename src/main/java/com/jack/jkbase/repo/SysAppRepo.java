@@ -8,8 +8,9 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import com.jack.jkbase.entity.SysApp;
-@RepositoryRestResource(path = "apps")
-public interface SysAppRepo extends JpaRepository<SysApp, Integer>{
+//@RepositoryRestResource(path = "apps")
+public interface SysAppRepo //extends JpaRepository<SysApp, Integer>
+{
 	//localhost:8080/rest/apps/search/nsw?name=系统
 	
 	@RestResource(path="nsw")

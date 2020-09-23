@@ -1,34 +1,40 @@
 package com.jack.jkbase.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import java.io.Serializable;
 
-@Entity
-@Table(name="sys_App",uniqueConstraints = @UniqueConstraint(columnNames = "A_AppName",name = "sys_App_ix"))
-public class SysApp {
-	@Id
-	@Column(name = "AppID")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+//@Entity
+//@Table(name="sys_App",uniqueConstraints = @UniqueConstraint(columnNames = "A_AppName",name = "sys_App_ix"))
+@Data
+@EqualsAndHashCode(callSuper = false)
+@TableName("sys_app")
+public class SysApp implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @TableId(value = "AppID", type = IdType.AUTO)
     private int appid;
 
-	@Column(name = "A_AppName",columnDefinition = "nvarchar(50) ",nullable = false)//COMMENT '应用系统名称'
-    private String aAppname;
-
-	@Column(name = "A_AppDesc",columnDefinition = "nvarchar(100) ")//COMMENT' 应用系统描述'
+    @TableField("A_AppDesc")
     private String aAppdesc;
 
-	@Column(name = "A_AppUrl",columnDefinition = "nvarchar(100) ")// COMMENT' 应用系统URL'
+    @TableField("A_AppName")
+    private String aAppname;
+
+    @TableField("A_AppUrl")
     private String aAppurl;
-	
-	@Column(name = "A_IsSys",nullable = false,columnDefinition = "int default 0")//comment' 是否框架应用，框架应用不允许非超级用户访问'
+
+    @TableField("A_IsSys")
     private int aIssys;
 
-	@Column(name = "A_Version",columnDefinition = "nvarchar(50) ")//"COMMENT' 版本号'
+    @TableField("A_Version")
     private String aVersion;
 
     public int getAppid() {
