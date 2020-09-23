@@ -22,8 +22,8 @@ import com.jack.jkbase.entity.SysUser;
 import com.jack.jkbase.entity.ViewSysFunction;
 import com.jack.jkbase.entity.ViewSysModule;
 import com.jack.jkbase.mapper.SysFieldMapper;
-import com.jack.jkbase.mapper.SysFunctionMapper;
 import com.jack.jkbase.service.impl.SysAppServiceImpl;
+import com.jack.jkbase.service.impl.SysFunctionServiceImpl;
 import com.jack.jkbase.service.impl.SysModuleServiceImpl;
 import com.jack.jkbase.util.Helper;
 import com.jack.jkbase.util.Result;
@@ -33,7 +33,7 @@ public class FrmMgrController {
 	@Autowired HttpSession session ;
 	@Autowired SysAppServiceImpl sysAppService;
 	@Autowired SysModuleServiceImpl sysModuleService ;
-	@Autowired SysFunctionMapper funcMapper ;
+	@Autowired SysFunctionServiceImpl sysFunctionService ;
 	@Autowired SysFieldMapper fieldMapper ;
 	//--------------------------应用--------------------------------------------------
 	
@@ -135,14 +135,13 @@ public class FrmMgrController {
 			return JSON.toJSONString(new Result(false,"操作失败：功能名称不能为空！")); 
 		try{
 			if(Helper.F_ACTION_CREATE.equals(action)){
-				model.setfValue(funcMapper.selectMaxValue(model.getfModuleid()));
-				funcMapper.insertSelective(model);
-				return JSON.toJSONString(new Result(true,"添加成功！",funcMapper.selectByPrimaryKey(model.getFunctionid())));
+				sysFunctionService.save(model);
+				return JSON.toJSONString(new Result(true,"添加成功！",sysFunctionService.selectById(model.getFunctionid())));
 			}else if(Helper.F_ACTION_EDIT.equals(action)){
-				funcMapper.updateByPrimaryKey(model);
-				return JSON.toJSONString(new Result(true,"修改成功！",funcMapper.selectByPrimaryKey(model.getFunctionid())));
+				sysFunctionService.updateById(model);
+				return JSON.toJSONString(new Result(true,"修改成功！",sysFunctionService.selectById(model.getFunctionid())));
 			}else if(Helper.F_ACTION_REMOVE.equals(action)){
-				funcMapper.deleteByPrimaryKey(model.getFunctionid());
+				sysFunctionService.removeById(model.getFunctionid());
 				return  JSON.toJSONString(new Result(true,"删除成功！",model));
 			}else{
 				return JSON.toJSONString(new Result(false,"请求参数action错误："+action));
@@ -156,7 +155,7 @@ public class FrmMgrController {
 	@ResponseBody
 	public String function_getAll() {
 		JSONObject jo = new JSONObject();
-		List<ViewSysFunction> list = funcMapper.selectAll();
+		List<ViewSysFunction> list = sysFunctionService.selectAll();
 		JSONArray ja = new JSONArray();
 		ja.addAll(list);
 		jo.put("data", ja);

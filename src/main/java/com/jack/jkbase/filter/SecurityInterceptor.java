@@ -17,7 +17,6 @@ import com.alibaba.fastjson.JSON;
 import com.jack.jkbase.entity.SysModule;
 import com.jack.jkbase.entity.SysUser;
 import com.jack.jkbase.entity.ViewSysFunction;
-import com.jack.jkbase.service.SysFunctionService;
 import com.jack.jkbase.service.SysUserRolePermService;
 import com.jack.jkbase.service.impl.SysModuleServiceImpl;
 import com.jack.jkbase.util.Helper;
@@ -32,8 +31,7 @@ import com.jack.jkbase.util.Result;
 public class SecurityInterceptor implements HandlerInterceptor{
 	@Autowired
 	SysUserRolePermService sysUserRolePermService;
-	@Autowired 
-	SysFunctionService sysFunctionService;
+	//@Autowired SysFunctionService sysFunctionService;
 	@Autowired
 	SysModuleServiceImpl moduleService ;
 	@Override
@@ -105,7 +103,7 @@ public class SecurityInterceptor implements HandlerInterceptor{
 		int pValue = sysUserRolePermService.getModulePerm(loginUser.getUserid(),moduleId);
 		modelAndView.addObject(Helper.MVALUE,pValue);
 		//以及 功能 列表
-		List<ViewSysFunction> funcs =  sysFunctionService.selectByModule(moduleId);
+		List<ViewSysFunction> funcs =null;//  sysFunctionService.selectByModule(moduleId);
 		for(ViewSysFunction f : funcs){
 			//超级用户无限制, 然后对于普通用户在按钮本身可用 的前提下，pValue小于0或者等于与模块权限值相与后的值 都有权限
 			int fValue = f.getfValue();

@@ -31,20 +31,14 @@ import com.jack.jkbase.entity.SysUser;
 import com.jack.jkbase.entity.SysUserRole;
 import com.jack.jkbase.entity.ViewRoleApp;
 import com.jack.jkbase.entity.ViewSysUser;
-import com.jack.jkbase.entity.ViewUserRole;
-import com.jack.jkbase.mapper.SysAreaMapper;
-import com.jack.jkbase.mapper.SysCompanyMapper;
 import com.jack.jkbase.mapper.SysFieldValueMapper;
 import com.jack.jkbase.mapper.SysRoleAppMapper;
-import com.jack.jkbase.mapper.SysRoleMapper;
-import com.jack.jkbase.mapper.SysUserRoleMapper;
-import com.jack.jkbase.repo.SysUserRepo;
-import com.jack.jkbase.service.SysAreaService;
-import com.jack.jkbase.service.SysCompanyService;
 import com.jack.jkbase.service.SysEventService;
 import com.jack.jkbase.service.SysFunctionService;
 import com.jack.jkbase.service.SysRolePermissionService;
 import com.jack.jkbase.service.impl.SysAreaServiceImpl;
+import com.jack.jkbase.service.impl.SysCompanyServiceImpl;
+import com.jack.jkbase.service.impl.SysFunctionServiceImpl;
 import com.jack.jkbase.service.impl.SysRoleServiceImpl;
 import com.jack.jkbase.service.impl.SysUserServiceImpl;
 import com.jack.jkbase.service.impl.SysUserroleServiceImpl;
@@ -63,13 +57,13 @@ public class SysMgrController {
 	@Autowired SysRoleServiceImpl sysRoleService;
 	@Autowired SysUserroleServiceImpl sysUserroleService ;
 	@Autowired SysRoleAppMapper sysRoleAppMapper ;
-	@Autowired SysFunctionService sysFunctionService ;
+	@Autowired SysFunctionServiceImpl sysFunctionService ;
 	@Autowired SysRolePermissionService sysRolePermissionService;
 	@Autowired SysFieldValueMapper fieldValueMapper;
 	@Autowired SysAreaServiceImpl sysAreaService;
 	//@Autowired SysAreaMapper areaMapper;
-	@Autowired SysCompanyService sysCompanyService;
-	@Autowired SysCompanyMapper companyMapper;
+	@Autowired SysCompanyServiceImpl sysCompanyService;
+	//@Autowired SyssysCompanyService sysCompanyService;
 	@Autowired SysEventService sysEventService;
 	//用户
 	@RequestMapping(value = "/SystemParam.page", method = RequestMethod.GET, params = Helper.PARAM_MODULE_ID)
@@ -432,13 +426,13 @@ public class SysMgrController {
 			return JSON.toJSONString(new Result(false,"操作失败：单位名称不能为空！"));
 		try{
 			if(Helper.F_ACTION_CREATE.equals(action) || "addTop".equals(action)){//添加顶级或子级
-				companyMapper.insert(model);
-				return JSON.toJSONString(new Result(true,"添加成功！",companyMapper.selectByPrimaryKey(model.getCompanyid())));
+				sysCompanyService.save(model);
+				return JSON.toJSONString(new Result(true,"添加成功！",sysCompanyService.selectById(model.getCompanyid())));
 			}else if(Helper.F_ACTION_EDIT.equals(action)){
-				companyMapper.updateByPrimaryKey(model);
-				return JSON.toJSONString(new Result(true,"添加成功！",companyMapper.selectByPrimaryKey(model.getCompanyid())));
+				sysCompanyService.updateById(model); 
+				return JSON.toJSONString(new Result(true,"添加成功！",sysCompanyService.selectById(model.getCompanyid())));
 			}else if(Helper.F_ACTION_REMOVE.equals(action)){
-				companyMapper.deleteByPrimaryKey(model.getCompanyid());
+				sysCompanyService.removeById(model.getCompanyid());
 				return  JSON.toJSONString(new Result(true,"删除成功！",model));
 			}else{
 				return JSON.toJSONString(new Result(false,"请求参数action错误："+action));
@@ -457,7 +451,7 @@ public class SysMgrController {
 	@ResponseBody
 	public void company_export(HttpServletResponse response){
 		JSONArray ja = new JSONArray();
-		ja.addAll(sysCompanyService.getCompanys());//获取业务数据集
+		ja.addAll(sysCompanyService.selectAll());//获取业务数据集
         Map<String,String> headMap = SysCompany.getHeadMap();//获取属性-列头
         String title = "单位部门列表";
         ExcelUtil.downloadExcelFile(title,headMap,ja,response);

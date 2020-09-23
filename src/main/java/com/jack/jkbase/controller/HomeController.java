@@ -38,13 +38,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.jack.jkbase.config.ShiroConfig;
 import com.jack.jkbase.entity.SysUser;
 import com.jack.jkbase.service.SysEventService;
-import com.jack.jkbase.service.SysModuleService;
-import com.jack.jkbase.service.SysUserService;
+import com.jack.jkbase.service.impl.SysModuleServiceImpl;
 import com.jack.jkbase.service.impl.SysUserServiceImpl;
 import com.jack.jkbase.util.ConfigInfo;
 import com.jack.jkbase.util.EncryptUtil;
 import com.jack.jkbase.util.Helper;
-import com.jack.jkbase.util.Helper.DBAction;
 import com.jack.jkbase.util.RandomUtil;
 import com.jack.jkbase.util.Result;
 
@@ -53,7 +51,7 @@ public class HomeController {
 	@Autowired HttpSession session;
 	@Autowired SysUserServiceImpl sysUserServiceImpl;
 	@Autowired SysEventService sysEventService;
-	@Autowired SysModuleService moduleService;
+	@Autowired SysModuleServiceImpl moduleService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	@RequestMapping({"/"})

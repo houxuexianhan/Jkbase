@@ -29,7 +29,8 @@ import org.springframework.stereotype.Service;
 public class SysAreaServiceImpl extends ServiceImpl<SysAreaMapper, SysArea> implements ISysAreaService {
 	@Override
 	public List<SysArea> list() {
-		return list(Wrappers.lambdaQuery(SysArea.class).orderByAsc(SysArea::getaLevel,SysArea::getaShoworder));
+		return list(Wrappers.lambdaQuery(SysArea.class).
+				orderByAsc(SysArea::getaLevel,SysArea::getaShoworder));
 	}
 	// 生成 树形的 easyui-treegrid 接受的数据格式 需要指定 _parentId ,可选字段 iconCls
 	public JSONObject getTreeArea() {

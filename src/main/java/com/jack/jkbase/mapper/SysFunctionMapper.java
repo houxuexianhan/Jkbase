@@ -1,26 +1,12 @@
 package com.jack.jkbase.mapper;
 
-import java.util.List;
+import org.apache.ibatis.annotations.Select;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jack.jkbase.entity.SysFunction;
-import com.jack.jkbase.entity.ViewSysFunction;
 
-public interface SysFunctionMapper {
-    List<ViewSysFunction> selectByApp(int appId);
-    List<ViewSysFunction> selectByModule(int moduleId);
-    List<ViewSysFunction> selectByModuleCode(String code);
-    List<ViewSysFunction> selectAll();
-    int selectMaxValue(int moduleid);//返回某个模块的下一个功能值
-    //
-    int deleteByPrimaryKey(Integer functionid);
-
-    int insert(SysFunction record);
-
-    int insertSelective(SysFunction record);
-
-    ViewSysFunction selectByPrimaryKey(int functionid);
-
-    int updateByPrimaryKeySelective(SysFunction record);
-
-    int updateByPrimaryKey(SysFunction record);
+public interface SysFunctionMapper extends BaseMapper<SysFunction>{
+	//返回空值或者最大值
+	@Select("select max(F_Value) from sys_Function where F_ModuleId=#{value}")
+	Integer selectMaxValue(int moduleid);
 }

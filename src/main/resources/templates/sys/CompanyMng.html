@@ -40,7 +40,7 @@
 		          <a href="#" id="selectCompany" class="dt-button" onclick="$('#dd').dialog('open');">请选择<i class="fa fa-caret-down" aria-hidden="true"></i></a>
 		          </label>
 		          <div class="controls">
-		            <input name="cAreaName" type="text"  class="form-control" placeholder="请选择行政区" readonly="readonly">
+		            <input name="aAreaname" type="text"  class="form-control" placeholder="请选择行政区" readonly="readonly">
 		          </div>
 		        </div>
 	        <div class="form-group">
@@ -97,7 +97,7 @@
 			    <thead>
 			        <tr>
 			            <th data-options="field:'cCname',width:500">单位(部门)名称</th>
-			            <th data-options="field:'cAreaname',width:300">所属行政区</th>
+			            <th data-options="field:'aAreaname',width:300">所属行政区</th>
 			            <!-- <th data-options="field:'cChildcount',width:300">子部门数</th> -->
 			            <th data-options="field:'companyid',width:80">ID</th>
 			            <th data-options="field:'cShoworder',width:100">排序</th>
@@ -152,7 +152,7 @@ $(function() {
 			  modal.find('.model-form input[name=cParentCname]').val(row.cCname);
 			  modal.find('.model-form input[name=cParentid]').val(row.companyid);
 			  modal.find('.model-form input[name=cLevel]').val(++level);
-			  modal.find('.model-form input[name=cAreaName]').val(row.cAreaName);
+			  modal.find('.model-form input[name=aAreaname]').val(row.aAreaname);
 			  modal.find('.model-form input[name=cAreaid]').val(row.cAreaid);
 		  }else if('addTop'==action){
 			  title = '添加顶级部门';
@@ -175,7 +175,7 @@ $(function() {
 				onNodeSelected: function(event, data) {
 					var tags = data.tags;
 					$('#CompanyModal .model-form input[name=cAreaid]').val(tags[0]);
-					$('#CompanyModal .model-form input[name=cAreaName]').val(data.text);
+					$('#CompanyModal .model-form input[name=aAreaname]').val(data.text);
 					$('#dd').dialog('close');
 				}
 			});
@@ -207,10 +207,10 @@ $(function() {
 function saveCompany(){
 	$('#CompanyModal .model-form').form('submit', {
 		onSubmit: function(){
-			var cAreaName = $(this).find('input[name=cAreaName]').val();	
+			var aAreaname = $(this).find('input[name=aAreaname]').val();	
 			var cCname = $(this).find('input[name=cCname]').val();
 			var cShoworder = $(this).find('input[name=cShoworder]').val();
-			if($.trim(cAreaName)==''){
+			if($.trim(aAreaname)==''){
 				alert('所属行政区不允许为空！');
 				return false;
 			}

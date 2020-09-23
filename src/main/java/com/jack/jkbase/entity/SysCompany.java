@@ -1,45 +1,50 @@
 package com.jack.jkbase.entity;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "sys_Company",indexes = {@Index(name="sys_Company_idx1",columnList = "C_CName",unique = true)})
-public class SysCompany {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "CompanyID")
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+//@Entity
+//@Table(name = "sys_Company",indexes = {@Index(name="sys_Company_idx1",columnList = "C_CName",unique = true)})
+@Data
+@EqualsAndHashCode(callSuper = false)
+@TableName("sys_company")
+public class SysCompany implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @TableId(value = "CompanyID", type = IdType.AUTO)
     private int companyid;
-	
-	@Column(name="C_CName",nullable = false,columnDefinition ="nvarchar(50)" )//单位部门名称
+
+    @TableField("C_AreaId")
+    private int cAreaid;
+
+    @TableField("C_ChildCount")
+    private int cChildcount;
+
+    @TableField("C_CName")
     private String cCname;
 
-	@Column(name = "C_ParentID",nullable = false,columnDefinition = "int default 0")//上级单位部门ID,0:为最高级
-    private int cParentid;
-
-	@Column(name="C_ShowOrder",nullable=false,columnDefinition = "int default 0")//显示顺序
-    private int cShoworder;
-
-	@Column(name="C_Level",nullable=false,columnDefinition = "int default 1")//所在层数
+    @TableField("C_Level")
     private int cLevel;
 
-	@Column(name="C_ChildCount",nullable=false,columnDefinition = "int default 0")//子部门数
-    private int cChildcount;
-	
-	@Column(name="C_AreaId",nullable = false)//所属行政区ID(一个单位必属于某个行政区)
-	private int cAreaid;
+    @TableField("C_ParentID")
+    private int cParentid;
 
-	
+    @TableField("C_ShowOrder")
+    private int cShoworder;
 	public static Map<String,String> getHeadMap(){
     	Map<String,String> map = new LinkedHashMap<String,String>();
     	map.put("cCname","部门名称");

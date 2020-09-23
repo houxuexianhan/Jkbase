@@ -1,4 +1,4 @@
-package com.jack.jkbase.service;
+package com.jack.jkbase.service.impl;
 
 import java.util.List;
 
@@ -8,23 +8,40 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.jack.jkbase.annotation.Operation;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jack.jkbase.entity.SysCompany;
 import com.jack.jkbase.entity.ViewSysCompany;
 import com.jack.jkbase.mapper.SysCompanyMapper;
-import com.jack.jkbase.util.Helper;
+import com.jack.jkbase.mapper.ViewSysCompanyMapper;
+import com.jack.jkbase.service.ISysCompanyService;
 
+/**
+ * <p>
+ *  服务实现类
+ * </p>
+ *
+ * @author LIBO
+ * @since 2020-09-23
+ */
 @Service
-public class SysCompanyService {
-	@Autowired
-	SysCompanyMapper mapper;
+public class SysCompanyServiceImpl extends ServiceImpl<SysCompanyMapper, SysCompany> implements ISysCompanyService {
+	@Autowired ViewSysCompanyMapper viewMapper;
 	
-	//返回List
-	public List<ViewSysCompany> getCompanys(){
-		return mapper.selectAll();
+	public ViewSysCompanyMapper getViewMapper() {
+		return viewMapper;
+	}
+	
+	public ViewSysCompany selectById(int id) {
+		return viewMapper.selectById(id);
+	}
+	//返回List order by C_Level,C_ShowOrder
+	public List<ViewSysCompany> selectAll(){
+		return viewMapper.selectList(Wrappers.lambdaQuery(ViewSysCompany.class).
+				orderByAsc(ViewSysCompany::getcLevel,ViewSysCompany::getcShoworder));
 	}
 	public JSONArray getTreeSelect(){
-		return tree(getCompanys(), 0);
+		return tree(selectAll(), 0);
 	}
 	// 菜单树形结构
 	private JSONArray tree(List<ViewSysCompany> menuList, int parentId) {
@@ -44,7 +61,7 @@ public class SysCompanyService {
 	//生成 树形的 easyui-treegrid 接受的数据格式  需要指定 _parentId  ,可选字段 iconCls   
 	public JSONObject getTreeCompany(){
 		JSONObject jo = new JSONObject();
-		List<ViewSysCompany> list = mapper.selectAll();
+		List<ViewSysCompany> list = selectAll();
 		JSONArray ja = new JSONArray();
 		for(SysCompany item: list){
 			JSONObject joItem = (JSONObject) JSON.toJSON(item);
@@ -61,19 +78,5 @@ public class SysCompanyService {
 		}
 		jo.put("rows", ja);
 		return jo;
-	}
-
-	/*
-	 * @Operation(type=Helper.logTypeOperation,desc="更新单位部门表",arguDesc={"单位部门",
-	 * "操作类型"}) public int access(SysCompany model,String action) throws Exception{
-	 * if(DBAction.Delete.name.equals(action)) return
-	 * deleteAllByParent(model.getCompanyid()); int rs =
-	 * mapper.access(model,action); if(rs == -2) throw new
-	 * Exception("操作失败，单位部门名称不能重复！"); return rs; }
-	 */
-	//连同子节点一起删除
-	@Operation(type=Helper.logTypeOperation,desc="删除单位部门表（连同其子部门）",arguDesc={"单位部门ID"})
-	public int deleteAllByParent(int parentId){
-		return mapper.deleteAllByParent(parentId);
 	}
 }

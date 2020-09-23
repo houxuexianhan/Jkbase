@@ -1,36 +1,42 @@
 package com.jack.jkbase.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import java.io.Serializable;
 
-@Entity
-@Table(name="sys_Function",uniqueConstraints = {@UniqueConstraint(columnNames = {"F_ModuleId","F_Value"},name="sys_Function_ix1")
-				,@UniqueConstraint(columnNames = {"F_ModuleId","F_Name"},name="sys_Function_ix2")})
-public class SysFunction {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="FunctionId")
-	private int functionid;
-	
-	@Column(name="F_ModuleId",nullable=false)
-	private int fModuleid;
-	
-	@Column(name="F_Value",nullable=false)
-	private int fValue;
-	
-	@Column(name="F_Name",nullable=false,columnDefinition = "nvarchar(20)")
-    private String fName;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 
-	@Column(name="F_Desc",columnDefinition = "nvarchar(50)")
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+//@Entity
+//@Table(name="sys_Function",uniqueConstraints = {@UniqueConstraint(columnNames = {"F_ModuleId","F_Value"},name="sys_Function_ix1")
+	//s			,@UniqueConstraint(columnNames = {"F_ModuleId","F_Name"},name="sys_Function_ix2")})
+@Data
+@EqualsAndHashCode(callSuper = false)
+@TableName("sys_function")
+public class SysFunction implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @TableId(value = "FunctionId", type = IdType.AUTO)
+    private int functionid;
+
+    @TableField("F_Desc")
     private String fDesc;
 
-	@Column(name="F_Enable",nullable=false)
+    @TableField("F_Enable")
     private int fEnable;
+
+    @TableField("F_ModuleId")
+    private int fModuleid;
+
+    @TableField("F_Name")
+    private String fName;
+
+    @TableField("F_Value")
+    private int fValue;
 
 	public int getFunctionid() {
 		return functionid;
