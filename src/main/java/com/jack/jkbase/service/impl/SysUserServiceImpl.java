@@ -45,16 +45,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 				.set(SysUser::getuPhotourl, photo)
 			);
 	}
-	//根据角色id查找用户列表
+	//根据角色id查找用户列表，不包含超级管理员
 	public List<ViewSysUser> selectByRoleExclude(int roleId){
-		String sql = String.format("select R_UserID from sys_UserRole where R_RoleID =%d ",roleId);
+		String sql = String.format("select R_UserID from sys_user_role where R_RoleID =%d ",roleId);
 		return viewMapper.selectList(Wrappers.lambdaQuery(ViewSysUser.class)
 				.select(SysUser::getUserid,SysUser::getuCname,ViewSysUser::getuCompanyname)
+				.ne(SysUser::getUserid, Helper.adminId)
 				.notInSql(ViewSysUser::getUserid, sql) );
 	}
 	//根据角色id查找用户列表
 	public List<ViewSysUser> selectByRoleid(int roleId){
-		String sql = String.format("select R_UserID from sys_UserRole where R_RoleID =%d ",roleId);
+		String sql = String.format("select R_UserID from sys_user_role where R_RoleID =%d ",roleId);
 		return viewMapper.selectList(Wrappers.lambdaQuery(ViewSysUser.class)
 				.inSql(ViewSysUser::getUserid, sql) );
 	}

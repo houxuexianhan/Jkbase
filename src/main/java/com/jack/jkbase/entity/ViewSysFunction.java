@@ -18,6 +18,9 @@ public class ViewSysFunction extends SysFunction{
 	@TableField("M_OrderLevel")
     private String mOrderlevel;
 	
+    @TableField("M_ParentName")
+    private String mParentname;
+    
     @TableField("A_AppName")
     private String aAppname;
 	 //某个角色下对本功能是否有权限，默认无权限
@@ -32,6 +35,14 @@ public class ViewSysFunction extends SysFunction{
 		this.access = access;
 	}
 
+	public String getmParentname() {
+		return mParentname;
+	}
+
+	public void setmParentname(String mParentname) {
+		this.mParentname = mParentname;
+	}
+
 	public String getmCname() {
 		return mCname;
 	}
@@ -39,7 +50,7 @@ public class ViewSysFunction extends SysFunction{
 	public void setmCname(String mCname) {
 		this.mCname = mCname;
 	}
-
+	
 	public int getmAppid() {
 		return mAppid;
 	}

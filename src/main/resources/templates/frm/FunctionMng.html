@@ -151,9 +151,9 @@ $(document).ready(function() {
 		columns: [
             { data: "functionid" ,visible:true},
             { data: "fName"},
-            { data: "module.mCname"},
-            { data: "module.mParentname"},  
-            { data: "module.aAppname"},
+            { data: "mCname"},
+            { data: "mParentname"},  
+            { data: "aAppname"},
             { data: "fValue"},
             { data: "fDesc"},
             { data: "fEnable",render:function(data,type,row){
@@ -176,7 +176,7 @@ $(document).ready(function() {
             this.api().columns().every( function () {
                 var column = this;
                 var prop = column.dataSrc();
-                if(prop=='module.mParentname'||prop=='module.aAppname'){	
+                if(prop=='mParentname'||prop=='aAppname'){	
                 	var select = $('<select><option value=""></option></select>')
                      .appendTo( $(column.footer()).empty() )
                      .on( 'change', function () {
