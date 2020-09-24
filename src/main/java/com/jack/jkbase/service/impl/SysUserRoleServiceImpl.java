@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jack.jkbase.entity.SysUserRole;
 import com.jack.jkbase.mapper.SysUserRoleMapper;
-import com.jack.jkbase.service.ISysUserroleService;
+import com.jack.jkbase.service.ISysUserRoleService;
 
 /**
  * <p>
@@ -21,7 +21,7 @@ import com.jack.jkbase.service.ISysUserroleService;
  * @since 2020-09-23
  */
 @Service
-public class SysUserroleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUserRole> implements ISysUserroleService {
+public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUserRole> implements ISysUserRoleService {
 	public boolean removeByKey(SysUserRole entity) {
 		return remove(Wrappers.lambdaQuery(entity));
 	}

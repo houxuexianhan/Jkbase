@@ -2,8 +2,6 @@ package com.jack.jkbase.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -18,11 +16,10 @@ import com.jack.jkbase.entity.SysApp;
 import com.jack.jkbase.entity.SysField;
 import com.jack.jkbase.entity.SysFunction;
 import com.jack.jkbase.entity.SysModule;
-import com.jack.jkbase.entity.SysUser;
 import com.jack.jkbase.entity.ViewSysFunction;
 import com.jack.jkbase.entity.ViewSysModule;
-import com.jack.jkbase.mapper.SysFieldMapper;
 import com.jack.jkbase.service.impl.SysAppServiceImpl;
+import com.jack.jkbase.service.impl.SysFieldServiceImpl;
 import com.jack.jkbase.service.impl.SysFunctionServiceImpl;
 import com.jack.jkbase.service.impl.SysModuleServiceImpl;
 import com.jack.jkbase.util.Helper;
@@ -30,11 +27,11 @@ import com.jack.jkbase.util.Result;
 @Controller
 @RequestMapping("/FrmMgr")
 public class FrmMgrController {
-	@Autowired HttpSession session ;
+	//@Autowired HttpSession session ;
 	@Autowired SysAppServiceImpl sysAppService;
 	@Autowired SysModuleServiceImpl sysModuleService ;
 	@Autowired SysFunctionServiceImpl sysFunctionService ;
-	@Autowired SysFieldMapper fieldMapper ;
+	@Autowired SysFieldServiceImpl sysFieldService ;
 	//--------------------------应用--------------------------------------------------
 	
 	@RequestMapping(value = "/getAppsCombo.do", produces="text/html;charset=utf-8")
@@ -50,9 +47,7 @@ public class FrmMgrController {
 	@RequestMapping(value = "/getAppsExcludeSysCombo.do", produces="text/html;charset=utf-8")
 	@ResponseBody
 	public String app_getAppsExcludeSysCombo(){
-		SysUser loginUser = (SysUser)session.getAttribute(Helper.SESSION_USER);
-		if(loginUser.getUserid()==Helper.adminId) return JSON.toJSONString(sysAppService.list());
-		else return JSON.toJSONString(sysAppService.findByaIssys(0));
+		return JSON.toJSONString(sysAppService.selectAppByNotSys());
 	}
 	//*************************************模块 应用*******************************
 	@RequestMapping(value = "/module_getApps.do",produces = "text/html;charset=UTF-8")
@@ -167,7 +162,7 @@ public class FrmMgrController {
 	@ResponseBody
 	public String field_getAll(){
 		JSONObject jo = new JSONObject();
-		List<SysField> list = fieldMapper.findAll();
+		List<SysField> list = sysFieldService.list();
 		JSONArray ja = new JSONArray();
 		ja.addAll(list);
 		jo.put("data", ja);
@@ -180,13 +175,13 @@ public class FrmMgrController {
 			return JSON.toJSONString(new Result(false,"操作失败：字段名称不能为空！"));
 		try{
 			if(Helper.F_ACTION_CREATE.equals(action)){
-				fieldMapper.insert(model);
-				return JSON.toJSONString(new Result(true,"添加成功！",fieldMapper.selectByPrimaryKey(model.getFieldid())));
+				sysFieldService.save(model);
+				return JSON.toJSONString(new Result(true,"添加成功！",model));
 			}else if(Helper.F_ACTION_EDIT.equals(action)){
-				fieldMapper.updateByPrimaryKey(model);
-				return JSON.toJSONString(new Result(true,"修改成功！",fieldMapper.selectByPrimaryKey(model.getFieldid())));
+				sysFieldService.updateById(model);
+				return JSON.toJSONString(new Result(true,"修改成功！",model));
 			}else if(Helper.F_ACTION_REMOVE.equals(action)){
-				fieldMapper.deleteByPrimaryKey(model.getFieldid());
+				sysFieldService.removeById(model.getFieldid());
 				return  JSON.toJSONString(new Result(true,"删除成功！",model));
 			}else{
 				return JSON.toJSONString(new Result(false,"请求参数action错误："+action));
@@ -199,7 +194,7 @@ public class FrmMgrController {
 	@RequestMapping(value = "/field_combo.do",produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String field_combo(){
-		return  JSON.toJSONString(fieldMapper.findAll());
+		return  JSON.toJSONString(sysFieldService.list());
 	}
 	
 }

@@ -2,12 +2,6 @@ package com.jack.jkbase.entity;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
-
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -19,7 +13,7 @@ import lombok.EqualsAndHashCode;
 //@IdClass(SysUserRole.class)
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("sys_UserRole")
+@TableName("sys_user_role")
 public class SysUserRole implements Serializable{
 	private static final long serialVersionUID = 1L;
 	public SysUserRole() {}

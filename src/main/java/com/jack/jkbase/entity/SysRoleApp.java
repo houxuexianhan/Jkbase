@@ -2,22 +2,27 @@ package com.jack.jkbase.entity;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 
-@Entity
-@Table(name="sys_RoleApp")
-@IdClass(SysRoleApp.class)
-public class SysRoleApp implements Serializable{
-	@Id
-    @Column(name="A_RoleID")
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+//@Entity
+//@Table(name="sys_RoleApp")
+//@IdClass(SysRoleApp.class)
+@Data
+@EqualsAndHashCode(callSuper = false)
+@TableName("sys_role_app")
+public class SysRoleApp implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @TableField("A_RoleID")
     private int aRoleid;
-	
-	@Id
-	@Column(name="A_AppID")
+
+    @TableField("A_AppID")
     private int aAppid;
 
     public int getaRoleid() {

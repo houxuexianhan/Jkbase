@@ -2,36 +2,30 @@ package com.jack.jkbase.entity;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-@Entity
-@Table(name="sys_Online")
+//@Entity
+//@Table(name="sys_Online")
 public class SysOnline {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="OnlineID")
+    //@Id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@Column(name="OnlineID")
     private int onlineid;
     
-    @Column(name="O_SessionID",length = 24,nullable=false)
+    //@Column(name="O_SessionID",length = 24,nullable=false)
     private String oSessionid;
     
-    @Column(name="O_UserName",columnDefinition = "nvarchar(20)",nullable=false)
+    //@Column(name="O_UserName",columnDefinition = "nvarchar(20)",nullable=false)
     private String oUsername;
 
-    @Column(name="O_Ip",columnDefinition = "varchar(20)",nullable=false)
+    //@Column(name="O_Ip",columnDefinition = "varchar(20)",nullable=false)
     private String oIp;
 
-    @Column(name="O_LoginTime",nullable=false,columnDefinition = "datetime")
+    //@Column(name="O_LoginTime",nullable=false,columnDefinition = "datetime")
     private Date oLogintime;
 
-    @Column(name="O_LastTime",nullable=false,columnDefinition = "datetime")
+    //@Column(name="O_LastTime",nullable=false,columnDefinition = "datetime")
     private Date oLasttime;
 
-    @Column(name="O_LastUrl",nullable=false,columnDefinition = "nvarchar(200)")
+    //@Column(name="O_LastUrl",nullable=false,columnDefinition = "nvarchar(200)")
     private String oLasturl;
 
     public String getoSessionid() {

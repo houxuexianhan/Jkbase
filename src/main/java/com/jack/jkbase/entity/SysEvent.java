@@ -1,54 +1,59 @@
 package com.jack.jkbase.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-@Entity
-@Table(name = "sys_Event")
-public class SysEvent {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="EventID")
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+//@Entity
+//@Table(name = "sys_Event")
+@Data
+@EqualsAndHashCode(callSuper = false)
+@TableName("sys_event")
+public class SysEvent implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @TableId(value = "EventID", type = IdType.AUTO)
     private long eventid;
 
-	@Column(name="E_UserName",columnDefinition = "nvarchar(20) ")//操作员名称
-    private String eUsername;
-
-	@Column(name="E_UserID")
-    private int eUserid;
-
-	@Column(name="E_DateTime",nullable = false,insertable = false,updatable = false,
-			columnDefinition ="datetime default CURRENT_TIMESTAMP" )//日志时间
-    private Date eDatetime;
-
-	@Column(name="E_AppID")
+    @TableField("E_AppID")
     private int eAppid;
 
-	@Column(name="E_AppName",columnDefinition = "nvarchar(50)")//应用系统名
+    @TableField("E_AppName")
     private String eAppname;
 
-	@Column(name="E_ModName",columnDefinition = "nvarchar(50)")//模块名称
-    private String eModname;
+    @TableField("E_DateTime")
+    private Date eDatetime;
 
-	@Column(name="E_ModCode",length = 6)
-    private String eModcode;
-
-	@Column(name="E_From",columnDefinition = "nvarchar(100)")//来源页面
+    @TableField("E_From")
     private String eFrom;
 
-	@Column(name="E_Type",nullable=false)
-    private int eType;//日志类型(1-安全日志，2-操作日志)
-
-	@Column(name="E_IP",length = 50)	//来源IP
+    @TableField("E_IP")
     private String eIp;
 
-	@Column(name="E_Record",columnDefinition = "nvarchar(500)")	//日志内容
+    @TableField("E_ModCode")
+    private String eModcode;
+
+    @TableField("E_ModName")
+    private String eModname;
+
+    @TableField("E_Record")
     private String eRecord;
+
+    @TableField("E_Type")
+    private int eType;
+
+    @TableField("E_UserID")
+    private int eUserid;
+
+    @TableField("E_UserName")
+    private String eUsername;
 
     public long getEventid() {
         return eventid;

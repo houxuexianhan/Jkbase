@@ -12,14 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.jack.jkbase.entity.SysModule;
 import com.jack.jkbase.entity.SysUser;
 import com.jack.jkbase.entity.ViewSysFunction;
-import com.jack.jkbase.service.SysUserRolePermService;
 import com.jack.jkbase.service.impl.SysFunctionServiceImpl;
 import com.jack.jkbase.service.impl.SysModuleServiceImpl;
 import com.jack.jkbase.service.impl.SysRoleServiceImpl;
 @Controller
 public class PageController {
 	@Autowired SysRoleServiceImpl sysRoleService ;
-	@Autowired SysUserRolePermService sysUserRolePermService;
 	@Autowired SysFunctionServiceImpl sysFunctionService;
 	@Autowired SysModuleServiceImpl moduleService ;
 	/**
@@ -38,7 +36,7 @@ public class PageController {
 		//if(optMod.isEmpty()||optMod.get().getmIsclose())
 		SysUser loginUser = SecurityUtils.getSubject().getPrincipals().oneByType(SysUser.class);
 		List<ViewSysFunction> funcs =  sysFunctionService.selectByModuleid(moduleId);
-		int pValue = sysUserRolePermService.getModulePerm(loginUser.getUserid(),moduleId);
+		int pValue = moduleService.getModulePerm(loginUser.getUserid(),moduleId);
 		for(ViewSysFunction f : funcs){
 			//超级用户无限制, 然后对于普通用户在按钮本身可用 的前提下，pValue小于0或者等于与模块权限值相与后的值 都有权限
 			int fValue = f.getfValue();

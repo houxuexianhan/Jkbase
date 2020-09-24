@@ -6,9 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.DateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,28 +35,23 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.jack.jkbase.config.ShiroConfig;
 import com.jack.jkbase.entity.SysUser;
-import com.jack.jkbase.service.SysEventService;
 import com.jack.jkbase.service.impl.SysModuleServiceImpl;
 import com.jack.jkbase.service.impl.SysUserServiceImpl;
 import com.jack.jkbase.util.ConfigInfo;
-import com.jack.jkbase.util.EncryptUtil;
-import com.jack.jkbase.util.Helper;
 import com.jack.jkbase.util.RandomUtil;
 import com.jack.jkbase.util.Result;
 
 @Controller
 public class HomeController {
-	@Autowired HttpSession session;
+	//@Autowired HttpSession session;
 	@Autowired SysUserServiceImpl sysUserServiceImpl;
-	@Autowired SysEventService sysEventService;
 	@Autowired SysModuleServiceImpl moduleService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	@RequestMapping({"/"})
     public String home(Model model){
-		Subject s = SecurityUtils.getSubject();
-		SysUser user = s.getPrincipals().oneByType(SysUser.class);
-		JSONArray ja = moduleService.getTreeMenuByUser(user.getUserid());
+		SysUser loginUser = SecurityUtils.getSubject().getPrincipals().oneByType(SysUser.class);
+		JSONArray ja = moduleService.getTreeMenuByUser(loginUser.getUserid());
 		//JSONArray ja = moduleService.getTreeMenuByUser(1);
 		model.addAttribute("treeMenu", ja);
 		return "index";
@@ -93,27 +86,6 @@ public class HomeController {
 		model.addAttribute("errorInfo",errinfo);
 		return "login";
 	}
-	//登陆界面
-	@RequestMapping(value = "/aadfsfss", method = RequestMethod.GET)
-	public String page_home(Locale locale, Model model) {
-		logger.info("Welcome home! The client locale is {}.", locale);
-		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-		String formattedDate = dateFormat.format(date);
-		model.addAttribute("serverTime", formattedDate );
-		if (session.getAttribute(Helper.SESSION_USER) == null) { return "login"; }
-		else return "redirect:/index.do";
-		 
-	}
-	//主界面
-	@RequestMapping(value = "/index.do", method = RequestMethod.GET)
-	public String page_index(Model model) {
-		Object loginUser =  session.getAttribute(Helper.SESSION_USER);
-		JSONArray ja = moduleService.getTreeMenuByUser(((SysUser)loginUser).getUserid());
-		//JSONArray ja = moduleService.getTreeMenuByUser(1);
-		model.addAttribute("treeMenu", ja);
-		return "index";
-	}
 	@RequestMapping(value = "/moduleClosed.page", method = RequestMethod.GET)
 	public String page_moduleClosed() {
 		return "moduleClosed";
@@ -131,7 +103,7 @@ public class HomeController {
 
 	@RequestMapping(value = "/profile.do", method = RequestMethod.GET)
 	public String page_profile() {
-		session.setAttribute(Helper.SESSION_PROFILE_TOKEN, RandomUtil.generateString(16));// 令牌，用于密码加密传输的key，16位长度
+		//session.setAttribute(Helper.SESSION_PROFILE_TOKEN, RandomUtil.generateString(16));// 令牌，用于密码加密传输的key，16位长度
 		return "profile";
 	}
 
@@ -175,18 +147,6 @@ public class HomeController {
 		}
 	}
 	*/
-	@RequestMapping(value = "/signOut.do")
-	public String oper_signOut(HttpServletRequest request){
-		Object o =  session.getAttribute(Helper.SESSION_USER);
-		SysUser loginUser = (SysUser)o;
-		//sysEventService.insertEventLog(Helper.logTypeSecurity, loginUser.getuCname()+"("+loginUser.getuLoginname() + ")退出系统");
-		session.removeAttribute(Helper.SESSION_USER);
-		//删除本用户缓存的图片文件
-		String dir =Helper.CACHE_PATH+loginUser.getuLoginname()+"/";//缓存的文件路径
-		String path = request.getSession().getServletContext().getRealPath(dir);
-		Helper.deleteFile(new File(path));
-		return "redirect:/";
-	}
 	@RequestMapping(value = "/profile_changePwd.do", method = RequestMethod.POST, produces = "text/html;charset=utf-8")
 	@ResponseBody
 	public String profile_changePwd(String pwdOld, String pwdNew, String pwdRenew) {
@@ -196,9 +156,10 @@ public class HomeController {
 		}
 		if (!pwdNew.equals(pwdRenew))
 			return JSON.toJSONString(new Result(false, "两次输入密码不一致！", ""));
-		Object token = session.getAttribute(Helper.SESSION_PROFILE_TOKEN);// 原始令牌
-		if (token == null)
-			return JSON.toJSONString(new Result(false, "页面已经失效，请刷新", "timeout"));// 成功后token失效，则页面失效，客户端需要重定向到主界面
+		//Object token = session.getAttribute(Helper.SESSION_PROFILE_TOKEN);// 原始令牌
+		//if (token == null)
+		//	return JSON.toJSONString(new Result(false, "页面已经失效，请刷新", "timeout"));// 成功后token失效，则页面失效，客户端需要重定向到主界面
+		/*
 		try {
 			pwdOld = EncryptUtil.aesDecrypt(pwdOld, token.toString());
 			pwdNew = EncryptUtil.aesDecrypt(pwdNew, token.toString());
@@ -206,7 +167,7 @@ public class HomeController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return JSON.toJSONString(new Result(false, "页面已经失效，请刷新！", "timeout"));// 客户端需要刷新页面
-		}
+		}*/
 		//SysUser loginUser = (SysUser)session.getAttribute(Helper.SESSION_USER);
 		SysUser loginUser =SecurityUtils.getSubject().getPrincipals().oneByType(SysUser.class); 
 		if (!ShiroConfig.hashUserPwd(pwdOld, loginUser.getuSalt())
@@ -216,7 +177,7 @@ public class HomeController {
 		String key = RandomUtil.generateString(16);// 重新生成令牌
 		try {
 			if (sysUserServiceImpl.updatePassword(loginUser.getUserid(), pwdNew,loginUser.getuSalt())) {
-				session.setAttribute(Helper.SESSION_PROFILE_TOKEN, key);
+				//session.setAttribute(Helper.SESSION_PROFILE_TOKEN, key);
 				return JSON.toJSONString(new Result(true, "密码修改成功", key));
 			} else
 				return JSON.toJSONString(new Result(false, "密码修改失败！" , key));
@@ -252,7 +213,7 @@ public class HomeController {
 	@RequestMapping(value = "/profile_uploadUserImg.do", method = RequestMethod.POST, produces = "text/html;charset=utf-8")
 	@ResponseBody
 	public String profile_uploadImg(MultipartFile file, HttpServletRequest request, Model model) {
-		SysUser loginUser = (SysUser)session.getAttribute(Helper.SESSION_USER);
+		SysUser loginUser = SecurityUtils.getSubject().getPrincipals().oneByType(SysUser.class);
 		String dir = ConfigInfo.resources_upload_user_image;
 		String value = request.getSession().getServletContext().getRealPath(dir);
 		String name = file.getOriginalFilename();
@@ -281,7 +242,7 @@ public class HomeController {
 			return JSON.toJSONString(new Result(false, "上传失败!"));
 		}
 		loginUser.setuPhotourl(url);
-		session.setAttribute(Helper.SESSION_USER, loginUser);
+		//session.setAttribute(Helper.SESSION_USER, loginUser);
 		return JSON.toJSONString(new Result(true, "上传成功", url));
 	}
 	/*

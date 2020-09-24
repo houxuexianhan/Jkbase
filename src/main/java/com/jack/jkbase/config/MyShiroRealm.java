@@ -1,12 +1,9 @@
 package com.jack.jkbase.config;
 
-import javax.annotation.Resource;
-
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -18,7 +15,6 @@ import org.springframework.context.annotation.Lazy;
 import com.alibaba.fastjson.JSON;
 import com.jack.jkbase.entity.SysUser;
 import com.jack.jkbase.entity.ViewSysUser;
-import com.jack.jkbase.service.SysUserService;
 import com.jack.jkbase.service.impl.SysUserServiceImpl;
 
 public class MyShiroRealm extends AuthorizingRealm{

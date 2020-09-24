@@ -1,25 +1,31 @@
 package com.jack.jkbase.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import java.io.Serializable;
 
-@Entity
-@Table(name="sys_Field",uniqueConstraints = {@UniqueConstraint(columnNames = "F_CName",name = "sys_Field_ix1")})
-public class SysField {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="FieldID")
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+//@Entity
+//@Table(name="sys_Field",uniqueConstraints = {@UniqueConstraint(columnNames = "F_CName",name = "sys_Field_ix1")})
+@Data
+@EqualsAndHashCode(callSuper = false)
+@TableName("sys_field")
+public class SysField implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @TableId(value = "FieldID", type = IdType.AUTO)
     private int fieldid;
 
-	@Column(name="F_CName",nullable=false,columnDefinition = "nvarchar(50)")//应用字段名
+    @TableField("F_CName")
     private String fCname;
 
-	@Column(name="F_Remark",columnDefinition = "nvarchar(200)")//应用字段描述
+    @TableField("F_Remark")
     private String fRemark;
 
     public int getFieldid() {

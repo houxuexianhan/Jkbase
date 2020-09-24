@@ -19,7 +19,12 @@ import lombok.EqualsAndHashCode;
 public class SysModule implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    public SysModule() {}
+    public SysModule(int moduleid,String name) {
+    	this.moduleid = moduleid;
+    	this.mCname = name;
+    }
+    
     @TableId(value = "ModuleID", type = IdType.AUTO)
     private int moduleid;
 

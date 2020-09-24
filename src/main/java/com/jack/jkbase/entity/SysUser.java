@@ -2,93 +2,80 @@ package com.jack.jkbase.entity;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.CreationTimestamp;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 //@Data
 //@EqualsAndHashCode(callSuper = false)
 //@Entity
 //@Table(name="sys_User",uniqueConstraints = @UniqueConstraint(columnNames = "U_LoginName",name = "sys_User_ix1"))
 @TableName("sys_user")
 public class SysUser {
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="UserId")
+	//@Id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@Column(name="UserId")
 	@TableId(value = "UserId", type = IdType.AUTO)
     private int userid;
 
-	@Column(name="U_LoginName",columnDefinition = "nvarchar(20)",nullable=false)
+	//@Column(name="U_LoginName",columnDefinition = "nvarchar(20)",nullable=false)
 	@TableField("U_LoginName")
     private String uLoginname;
 
-	@Column(name="U_CName",columnDefinition = "nvarchar(20)",nullable=false)
+	//@Column(name="U_CName",columnDefinition = "nvarchar(20)",nullable=false)
 	@TableField("U_CName")
     private String uCname;
 
-	@Column(name="U_Pwd",length = 64,nullable=false)
+	//@Column(name="U_Pwd",length = 64,nullable=false)
 	 @TableField("U_Pwd")
     private String uPwd;
 
-	@Column(name="U_CompanyID",nullable=false)
+	 //@Column(name="U_CompanyID",nullable=false)
 	@TableField("U_CompanyID")
     private int uCompanyid;
   
-	@Column(name="U_MobileNo",length = 15)		//md5
+	//@Column(name="U_MobileNo",length = 15)		//md5
 	@TableField("U_MobileNo")
     private String uMobileno;
 
-	@Column(name="U_PhotoUrl",columnDefinition = "nvarchar(150)")	//头像
+	//@Column(name="U_PhotoUrl",columnDefinition = "nvarchar(150)")	//头像
 	@TableField("U_PhotoUrl")
     private String uPhotourl;
 
-    @CreationTimestamp
-	@Column(name="U_JoinTime",updatable = false)//加入时间
+	//@CreationTimestamp
+	//@Column(name="U_JoinTime",updatable = false)//加入时间
     @TableField("U_JoinTime")
     private Date uJointime;
 
-	@Column(name="U_Type",nullable=false)
+    //@Column(name="U_Type",nullable=false)
 	 @TableField("U_Type")
     private int uType;	//用户类型	0:超级用户	1:管理用户2:企业用户(注：超级用户只有一个)
 
-	@Column(name="U_Status",nullable=false)
+	//@Column(name="U_Status",nullable=false)
 	@TableField("U_Status")
     private int uStatus;	//当前状态0:正常 1:禁止
 
-	@Column(name="U_LastTime",columnDefinition = "datetime")
+	//@Column(name="U_LastTime",columnDefinition = "datetime")
 	 @TableField("U_LastTime")
     private Date uLasttime;
 
-	@Column(name="U_LastIp",length = 50)
+	//@Column(name="U_LastIp",length = 50)
 	 @TableField("U_LastIp")
     private String uLastip;
 
-	@Column(name="U_ExtendField")
+	//@Column(name="U_ExtendField")
 	@TableField("U_ExtendField")
     private String uExtendfield;
 
-	@Column(name="U_Expired",nullable=false,columnDefinition="int default 0")
+	//@Column(name="U_Expired",nullable=false,columnDefinition="int default 0")
 	@TableField("U_Expired")
     private int uExpired;
 	
-	@Column(name="U_Disabled",nullable=false,columnDefinition="int default 0")
+	//@Column(name="U_Disabled",nullable=false,columnDefinition="int default 0")
 	@TableField("U_Disabled")
     private int uDisabled;
 	
-	@Column(name="U_Salt",columnDefinition="varchar(64)")
+	//@Column(name="U_Salt",columnDefinition="varchar(64)")
 	@TableField("U_Salt")
     private String uSalt;
 	

@@ -20,7 +20,7 @@
 		          <label class="control-label" for="input01">选择角色</label>
 		          <div class="controls">
 		          	<input id="cc" class="easyui-combobox" name="aRoleid" 
-		          	data-options="valueField:'roleid',editable:false,required:true,textField:'rRolename',url:'SysMgr/role_combo.do' ">
+		          	data-options="valueField:'roleid',editable:false,required:true,textField:'rrRolename',url:'SysMgr/role_combo.do' ">
 		          </div>
 		       	 </div>
 		    <div class="form-group">
@@ -78,8 +78,6 @@
                   <th>应用ID</th>
                   <th>角色名称</th>
                   <th>应用名称</th>
-                  <th>应用描述</th>
-                  <th>是否系统</th>
                   <th>操作</th>
                 </tr>
                 </thead>
@@ -135,12 +133,8 @@ $(document).ready(function() {
 		columns: [
             { data: "aRoleid" ,visible:false},
             { data: "aAppid" ,visible:false},
-            { data: "roleName" },
-            { data: "app.aAppname" },
-            { data: "app.aAppdesc" },
-            { data: "app.aIssys" , "render": function ( data, type, row ) {
-                return data===1?"是":"否" ;
-            }},
+            { data: "rRolename" },
+            { data: "aAppname" },
             {
           	  data:null,
           	  className:"center",
@@ -214,7 +208,7 @@ $(document).ready(function() {
 	    var params = {};
 	    params.appId = row.aAppid;
 	    params.roleId = row.aRoleid;
-	    $('#permSpanHeader').html(row.roleName+"-"+row.app.aAppname);
+	    $('#permSpanHeader').html(row.rRolename+"-"+row.aAppname);
 	    $('#permTable').load('SysMgr/roleapp_getFuncs.do',params);
 	} );
 });

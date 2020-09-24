@@ -1,7 +1,7 @@
 package com.jack.jkbase.service;
 
+import com.jack.jkbase.entity.SysRoleApp;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.jack.jkbase.entity.SysUserRole;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.jack.jkbase.entity.SysUserRole;
  * @author LIBO
  * @since 2020-09-23
  */
-public interface ISysUserroleService extends IService<SysUserRole> {
+public interface ISysRoleAppService extends IService<SysRoleApp> {
 
 }

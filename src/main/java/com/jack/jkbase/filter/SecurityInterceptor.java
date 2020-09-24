@@ -1,26 +1,6 @@
 package com.jack.jkbase.filter;
 
-import java.io.PrintWriter;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
-
-import com.alibaba.fastjson.JSON;
-import com.jack.jkbase.entity.SysModule;
-import com.jack.jkbase.entity.SysUser;
-import com.jack.jkbase.entity.ViewSysFunction;
-import com.jack.jkbase.service.SysUserRolePermService;
-import com.jack.jkbase.service.impl.SysModuleServiceImpl;
-import com.jack.jkbase.util.Helper;
-import com.jack.jkbase.util.Result;
 
 /**
  * 1.此拦截器用于拦截所有请求，用于登录权限验证
@@ -29,8 +9,7 @@ import com.jack.jkbase.util.Result;
  */
 //@Component
 public class SecurityInterceptor implements HandlerInterceptor{
-	@Autowired
-	SysUserRolePermService sysUserRolePermService;
+	/*@Autowired SysUserRolePermService sysUserRolePermService;
 	//@Autowired SysFunctionService sysFunctionService;
 	@Autowired
 	SysModuleServiceImpl moduleService ;
@@ -117,5 +96,5 @@ public class SecurityInterceptor implements HandlerInterceptor{
 			throws Exception {
 		
 	}
-
+	*/
 }

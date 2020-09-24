@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jack.jkbase.config.ShiroConfig;
 import com.jack.jkbase.entity.SysArea;
 import com.jack.jkbase.entity.SysCompany;
@@ -29,19 +30,18 @@ import com.jack.jkbase.entity.SysRole;
 import com.jack.jkbase.entity.SysRoleApp;
 import com.jack.jkbase.entity.SysUser;
 import com.jack.jkbase.entity.SysUserRole;
-import com.jack.jkbase.entity.ViewRoleApp;
+import com.jack.jkbase.entity.ViewSysRoleApp;
 import com.jack.jkbase.entity.ViewSysUser;
-import com.jack.jkbase.mapper.SysFieldValueMapper;
-import com.jack.jkbase.mapper.SysRoleAppMapper;
-import com.jack.jkbase.service.SysEventService;
-import com.jack.jkbase.service.SysFunctionService;
-import com.jack.jkbase.service.SysRolePermissionService;
 import com.jack.jkbase.service.impl.SysAreaServiceImpl;
 import com.jack.jkbase.service.impl.SysCompanyServiceImpl;
+import com.jack.jkbase.service.impl.SysEventServiceImpl;
+import com.jack.jkbase.service.impl.SysFieldValueServiceImpl;
 import com.jack.jkbase.service.impl.SysFunctionServiceImpl;
+import com.jack.jkbase.service.impl.SysRoleAppServiceImpl;
+import com.jack.jkbase.service.impl.SysRoleModuleServiceImpl;
 import com.jack.jkbase.service.impl.SysRoleServiceImpl;
+import com.jack.jkbase.service.impl.SysUserRoleServiceImpl;
 import com.jack.jkbase.service.impl.SysUserServiceImpl;
-import com.jack.jkbase.service.impl.SysUserroleServiceImpl;
 import com.jack.jkbase.util.ConfigInfo;
 import com.jack.jkbase.util.ConfigUtil;
 import com.jack.jkbase.util.ExcelUtil;
@@ -55,16 +55,14 @@ public class SysMgrController {
 	
 	@Autowired SysUserServiceImpl sysUserService;
 	@Autowired SysRoleServiceImpl sysRoleService;
-	@Autowired SysUserroleServiceImpl sysUserroleService ;
-	@Autowired SysRoleAppMapper sysRoleAppMapper ;
+	@Autowired SysUserRoleServiceImpl sysUserroleService ;
+	@Autowired SysRoleAppServiceImpl sysRoleappService ;
 	@Autowired SysFunctionServiceImpl sysFunctionService ;
-	@Autowired SysRolePermissionService sysRolePermissionService;
-	@Autowired SysFieldValueMapper fieldValueMapper;
+	@Autowired SysRoleModuleServiceImpl sysRolePermissionService;
+	@Autowired SysFieldValueServiceImpl sysFieldValueService;
 	@Autowired SysAreaServiceImpl sysAreaService;
-	//@Autowired SysAreaMapper areaMapper;
 	@Autowired SysCompanyServiceImpl sysCompanyService;
-	//@Autowired SyssysCompanyService sysCompanyService;
-	@Autowired SysEventService sysEventService;
+	@Autowired SysEventServiceImpl sysEventService;
 	//用户
 	@RequestMapping(value = "/SystemParam.page", method = RequestMethod.GET, params = Helper.PARAM_MODULE_ID)
 	public String page_systemParam(Model model) {
@@ -88,13 +86,15 @@ public class SysMgrController {
 			beginDate = LocalDate.parse(beginDateStr);
 		if (endDateStr != null && !endDateStr.trim().isEmpty())
 			endDate = LocalDate.parse(endDateStr);
-		Page<SysEvent> page = sysEventService.selectByPage(length, start / length + 1, username, eventType, beginDate,
+		/*Page<SysEvent> page = sysEventService.selectByPage(length, start / length + 1, username, eventType, beginDate,
+				endDate);*/
+		IPage<SysEvent> page = sysEventService.selectByPage(length, start / length + 1, username, eventType, beginDate,
 				endDate);
-
-		JSONObject joPage = (JSONObject) JSONObject.toJSON(page);
+		JSONObject joPage =new JSONObject();// (JSONObject) JSONObject.toJSON(page);
 		joPage.put(Page.draw, draw);
 		joPage.put(Page.recordsFiltered, page.getTotal());
 		joPage.put(Page.recordsTotal, page.getTotal());
+		joPage.put("data", page.getRecords());
 
 		return joPage.toJSONString();
 
@@ -288,7 +288,7 @@ public class SysMgrController {
 	@ResponseBody
 	public String roleapp_getAll() {
 		JSONObject jo = new JSONObject();
-		List<ViewRoleApp> list = sysRoleAppMapper.selectAll();
+		List<ViewSysRoleApp> list = sysRoleappService.selectAll();
 		JSONArray ja = new JSONArray();
 		ja.addAll(list);
 		jo.put("data", ja);
@@ -300,10 +300,10 @@ public class SysMgrController {
 	public String roleapp_access(String action,SysRoleApp model) {
 		try{
 			if(Helper.F_ACTION_CREATE.equals(action)){
-				sysRoleAppMapper.insert(model);
-				return  JSON.toJSONString(new Result(true,"添加成功！",sysRoleAppMapper.selectByPK(model)));
+				sysRoleappService.save(model);
+				return  JSON.toJSONString(new Result(true,"添加成功！",sysRoleappService.selectByKey(model)));
 			}else if(Helper.F_ACTION_REMOVE.equals(action)){
-				sysRoleAppMapper.deleteByPrimaryKey(model);
+				sysRoleappService.removeByKey(model);
 				return  JSON.toJSONString(new Result(true,"删除成功！"));
 			}else{
 				return JSON.toJSONString(new Result(false,"请求参数action错误："+action));
@@ -324,11 +324,10 @@ public class SysMgrController {
 		//System.out.println(appId+","+roleId+","+values);
 		JSONArray ja = JSONArray.parseArray(values);
 		try{
-			int rs = sysRolePermissionService.insertBatch(roleId,appId,ja);
-			if(rs>0){
+			if(sysRolePermissionService.insertBatch(roleId,appId,ja)){
 				return JSON.toJSONString(new Result(true,"权限设置保存成功！"));
 			}else{
-				return JSON.toJSONString(new Result(false,"保存权限设置失败："+rs));
+				return JSON.toJSONString(new Result(false,"保存权限设置失败！"));
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -340,7 +339,7 @@ public class SysMgrController {
 	@ResponseBody
 	public String fieldvalue_getAll(){
 		JSONObject jo = new JSONObject();
-		List<SysFieldValue> list = fieldValueMapper.findAll();
+		List<SysFieldValue> list = sysFieldValueService.list();
 		JSONArray ja = new JSONArray();
 		ja.addAll(list);
 		jo.put("data", ja);
@@ -349,7 +348,7 @@ public class SysMgrController {
 	@RequestMapping(value = "/fieldvalue_combo.do",produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String fieldvalue_combo(int key){
-		return  JSON.toJSONString(fieldValueMapper.findByvFieldid(key));
+		return  JSON.toJSONString(sysFieldValueService.selectByFieldid(key));
 	}
 	@RequestMapping(value = "/fieldvalue_access.do", produces="text/html;charset=utf-8",params=Helper.PARAM_FUNCTION_ID,method=RequestMethod.POST)
 	@ResponseBody
@@ -358,13 +357,13 @@ public class SysMgrController {
 			return JSON.toJSONString(new Result(false,"操作失败：字段名称不能为空！"));
 		try{
 			if(Helper.F_ACTION_CREATE.equals(action)){
-				fieldValueMapper.insert(model);
-				return JSON.toJSONString(new Result(true,"添加成功！",fieldValueMapper.selectByPrimaryKey(model.getValueid())));
+				sysFieldValueService.save(model);
+				return JSON.toJSONString(new Result(true,"添加成功！",model));
 			}else if(Helper.F_ACTION_EDIT.equals(action)){
-				fieldValueMapper.updateByPrimaryKey(model);
-				return JSON.toJSONString(new Result(true,"修改成功！",fieldValueMapper.selectByPrimaryKey(model.getValueid())));
+				sysFieldValueService.updateById(model);
+				return JSON.toJSONString(new Result(true,"修改成功！",model));
 			}else if(Helper.F_ACTION_REMOVE.equals(action)){
-				fieldValueMapper.deleteByPrimaryKey(model.getValueid());
+				sysFieldValueService.removeById(model.getValueid());
 				return  JSON.toJSONString(new Result(true,"删除成功！"));
 			}else{
 				return JSON.toJSONString(new Result(false,"请求参数action错误："+action));

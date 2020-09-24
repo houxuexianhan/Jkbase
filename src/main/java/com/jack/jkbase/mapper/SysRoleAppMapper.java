@@ -1,15 +1,7 @@
 package com.jack.jkbase.mapper;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jack.jkbase.entity.SysRoleApp;
-import com.jack.jkbase.entity.ViewRoleApp;
 
-public interface SysRoleAppMapper {
-	List<ViewRoleApp> selectAll();
-	ViewRoleApp selectByPK(SysRoleApp key);
-	//
-	int deleteByPrimaryKey(SysRoleApp key);
-    int insert(SysRoleApp record);
-    int insertSelective(SysRoleApp record);
+public interface SysRoleAppMapper extends BaseMapper<SysRoleApp>{
 }

@@ -1,29 +1,35 @@
 package com.jack.jkbase.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import java.io.Serializable;
 
-@Entity
-@Table(name="sys_FieldValue",uniqueConstraints = {@UniqueConstraint(columnNames = {"V_FieldID","V_Text"},name="sys_FieldValue_ix1")})
-public class SysFieldValue {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ValueID")
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+//@Entity
+//@Table(name="sys_FieldValue",uniqueConstraints = {@UniqueConstraint(columnNames = {"V_FieldID","V_Text"},name="sys_FieldValue_ix1")})
+@Data
+@EqualsAndHashCode(callSuper = false)
+@TableName("sys_fieldvalue")
+public class SysFieldValue implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @TableId(value = "ValueID", type = IdType.AUTO)
     private int valueid;
 
-	@Column(name="V_Text",nullable=false,columnDefinition = "nvarchar(100)")//字段值
-    private String vText;	
+    @TableField("V_FieldID")
+    private int vFieldid;
 
-	@Column(name="V_ShowOrder",nullable = false)	//同级显示顺序
+    @TableField("V_ShowOrder")
     private int vShoworder;
 
-	@Column(name="V_FieldID",nullable=false)	//分类id
-	private int vFieldid;
+    @TableField("V_Text")
+    private String vText;
 	
     public int getValueid() {
         return valueid;

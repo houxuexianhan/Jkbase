@@ -26,7 +26,7 @@ public class SysAppServiceImpl extends ServiceImpl<SysAppMapper, SysApp> impleme
 		return list(Wrappers.lambdaQuery(SysApp.class).eq(SysApp::getaIssys, 0)
 				.notInSql(SysApp::getAppid, sql));
 	}
-	public List<SysApp> findByaIssys(int isSys){
-		return list(Wrappers.lambdaQuery(SysApp.class).eq(SysApp::getaIssys, isSys));
+	public List<SysApp> selectAppByNotSys(){
+		return list(Wrappers.lambdaQuery(SysApp.class).eq(SysApp::getaIssys, 0));
 	}
 }

@@ -1,21 +1,7 @@
 package com.jack.jkbase.mapper;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jack.jkbase.entity.SysField;
 
-public interface SysFieldMapper {
-	List<SysField> findAll();
-	//
-    int deleteByPrimaryKey(Integer fieldid);
-
-    int insert(SysField record);
-
-    int insertSelective(SysField record);
-
-    SysField selectByPrimaryKey(Integer fieldid);
-
-    int updateByPrimaryKeySelective(SysField record);
-
-    int updateByPrimaryKey(SysField record);
+public interface SysFieldMapper extends BaseMapper<SysField>{
 }
