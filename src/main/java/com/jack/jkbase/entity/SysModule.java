@@ -43,9 +43,6 @@ public class SysModule implements Serializable {
     @TableField("M_IsClose")
     private int mIsclose;
 
-    @TableField("M_IsSys")
-    private int mIssys;
-
     @TableField("M_OrderLevel")
     private String mOrderlevel;
 
@@ -131,14 +128,6 @@ public class SysModule implements Serializable {
 
     public void setmOrderlevel(String mOrderlevel) {
         this.mOrderlevel = mOrderlevel == null ? null : mOrderlevel.trim();
-    }
-
-    public int getmIssys() {
-        return mIssys;
-    }
-
-    public void setmIssys(int mIssys) {
-        this.mIssys = mIssys;
     }
 
     public int getmIsclose() {

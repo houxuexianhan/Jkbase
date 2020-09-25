@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jack.jkbase.entity.SysUser;
 import com.jack.jkbase.entity.SysUserRole;
+import com.jack.jkbase.entity.ViewSysUser;
 import com.jack.jkbase.mapper.SysUserRoleMapper;
 import com.jack.jkbase.service.ISysUserRoleService;
 

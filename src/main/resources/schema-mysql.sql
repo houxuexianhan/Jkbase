@@ -168,7 +168,6 @@ CREATE TABLE `sys_module` (
   `M_Code` varchar(50) NOT NULL,
   `M_Icon` varchar(50) DEFAULT NULL,
   `M_IsClose` int NOT NULL,
-  `M_IsSys` int NOT NULL,
   `M_OrderLevel` varchar(4) DEFAULT NULL,
   `M_ParentID` int NOT NULL,
   `M_URL` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
@@ -343,7 +342,6 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `M_Code`,
  1 AS `M_Icon`,
  1 AS `M_IsClose`,
- 1 AS `M_IsSys`,
  1 AS `M_OrderLevel`,
  1 AS `M_ParentID`,
  1 AS `M_URL`,
@@ -423,7 +421,6 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `M_Code`,
  1 AS `M_Icon`,
  1 AS `M_IsClose`,
- 1 AS `M_IsSys`,
  1 AS `M_OrderLevel`,
  1 AS `M_ParentID`,
  1 AS `M_URL`,
@@ -480,7 +477,7 @@ DROP VIEW IF EXISTS `view_sys_module`;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`cms_user`@`%` SQL SECURITY DEFINER */
-create VIEW `view_sys_module` AS select `a`.`ModuleID` AS `ModuleID`,`a`.`M_AppID` AS `M_AppID`,`a`.`M_CName` AS `M_CName`,`a`.`M_Code` AS `M_Code`,`a`.`M_Icon` AS `M_Icon`,`a`.`M_IsClose` AS `M_IsClose`,`a`.`M_IsSys` AS `M_IsSys`,`a`.`M_OrderLevel` AS `M_OrderLevel`,`a`.`M_ParentID` AS `M_ParentID`,`a`.`M_URL` AS `M_URL`,`b`.`A_AppName` AS `A_AppName`,(select `x`.`M_CName` from `sys_module` `x` where (`x`.`ModuleID` = `a`.`M_ParentID`)) AS `M_ParentName` from (`sys_module` `a` join `sys_app` `b` on((`a`.`M_AppID` = `b`.`AppID`))) ;
+create VIEW `view_sys_module` AS select `a`.`ModuleID` AS `ModuleID`,`a`.`M_AppID` AS `M_AppID`,`a`.`M_CName` AS `M_CName`,`a`.`M_Code` AS `M_Code`,`a`.`M_Icon` AS `M_Icon`,`a`.`M_IsClose` AS `M_IsClose`,`a`.`M_OrderLevel` AS `M_OrderLevel`,`a`.`M_ParentID` AS `M_ParentID`,`a`.`M_URL` AS `M_URL`,`b`.`A_AppName` AS `A_AppName`,(select `x`.`M_CName` from `sys_module` `x` where (`x`.`ModuleID` = `a`.`M_ParentID`)) AS `M_ParentName` from (`sys_module` `a` join `sys_app` `b` on((`a`.`M_AppID` = `b`.`AppID`))) ;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -526,7 +523,7 @@ Create VIEW `view_sys_user` AS select `a`.`UserId` AS `UserId`,`a`.`U_CName` AS 
 --
 
  DROP VIEW IF EXISTS `view_sys_user_role_module`;
- Create VIEW `view_sys_user_role_module` AS select `r`.`R_UserID` AS `R_UserID`,`r`.`R_RoleID` AS `R_RoleID`,`p`.`P_RoleID` AS `P_RoleID`,`p`.`P_ModuleID` AS `P_ModuleID`,`p`.`P_Value` AS `P_Value`,`m`.`ModuleID` AS `ModuleID`,`m`.`M_AppID` AS `M_AppID`,`m`.`M_CName` AS `M_CName`,`m`.`M_Code` AS `M_Code`,`m`.`M_Icon` AS `M_Icon`,`m`.`M_IsClose` AS `M_IsClose`,`m`.`M_IsSys` AS `M_IsSys`,`m`.`M_OrderLevel` AS `M_OrderLevel`,`m`.`M_ParentID` AS `M_ParentID`,`m`.`M_URL` AS `M_URL`,`m`.`A_AppName` AS `A_AppName`,`m`.`M_ParentName` AS `M_ParentName` from ((`sys_user_role` `r` join `sys_role_module` `p` on(((`r`.`R_RoleID` = `p`.`P_RoleID`) and (`p`.`P_Value` > 0)))) join `view_sys_module` `m` on((`m`.`ModuleID` = `p`.`P_ModuleID`))) order by `m`.`M_AppID`,`m`.`M_OrderLevel` ;
+ Create VIEW `view_sys_user_role_module` AS select `r`.`R_UserID` AS `R_UserID`,`r`.`R_RoleID` AS `R_RoleID`,`p`.`P_RoleID` AS `P_RoleID`,`p`.`P_ModuleID` AS `P_ModuleID`,`p`.`P_Value` AS `P_Value`,`m`.`ModuleID` AS `ModuleID`,`m`.`M_AppID` AS `M_AppID`,`m`.`M_CName` AS `M_CName`,`m`.`M_Code` AS `M_Code`,`m`.`M_Icon` AS `M_Icon`,`m`.`M_IsClose` AS `M_IsClose`,`m`.`M_OrderLevel` AS `M_OrderLevel`,`m`.`M_ParentID` AS `M_ParentID`,`m`.`M_URL` AS `M_URL`,`m`.`A_AppName` AS `A_AppName`,`m`.`M_ParentName` AS `M_ParentName` from ((`sys_user_role` `r` join `sys_role_module` `p` on(((`r`.`R_RoleID` = `p`.`P_RoleID`) and (`p`.`P_Value` > 0)))) join `view_sys_module` `m` on((`m`.`ModuleID` = `p`.`P_ModuleID`))) order by `m`.`M_AppID`,`m`.`M_OrderLevel` ;
 /*
 drop view if exists View_sys_Module;
 CREATE  VIEW View_sys_Module AS SELECT a.*,b.A_AppName,(SELECT   x.M_CName FROM sys_Module x WHERE   (x.ModuleID = a.M_ParentID)) AS M_ParentName FROM  sys_Module AS a INNER JOIN sys_App AS b  ON a.M_AppID = b.AppID;

@@ -115,19 +115,7 @@
 		            <input name="mIcon" type="text" placeholder="css的class例如:fa fa-book" class="form-control">
 		          </div>
 		        </div>
-		   
 	       
-		   <div class="form-group">
-	          <label class="control-label">是否系统模块</label>
-	          <div class="controls">
-	            <label class="radio-inline">
-				  <input type="radio" name="mIssys" id="inlineRadio1"  value="1"> 是
-				</label>
-				<label class="radio-inline">
-				  <input type="radio" name="mIssys" id="inlineRadio2" checked="checked"  value="0"> 否
-				</label>
-	         		 </div>
-	        	</div>
 	       <div class="form-group">
 	          <label class="control-label">是否关闭</label>
 	          <div class="controls">
@@ -217,7 +205,6 @@
                   <th>模块图标</th>
                   <th>父级模块</th>
                   <th>所属应用</th>
-                  <th>是否系统模块</th>
                   <th>是否关闭</th>
                   <th>操作</th>
                 </tr>
@@ -233,7 +220,6 @@
                   <th>模块图标</th>
                   <th>父级模块</th>
                   <th>所属应用</th>
-                  <th>是否系统模块</th>
                   <th>是否关闭</th>
                   <th>操作</th>
                 </tr>
@@ -330,9 +316,6 @@ $(document).ready(function() {
             { data: "mIcon" },
             { data: "mParentname"},
             { data: "aAppname"},
-            { data: "mIssys" , "render": function ( data, type, row ) {
-                return data===1?"是":"否" ;
-            }},
             { data: "mIsclose" , "render": function ( data, type, row ) {
                 return data===1?"是":"否" ;
             }},
