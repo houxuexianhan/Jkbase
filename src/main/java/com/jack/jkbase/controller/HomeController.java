@@ -35,6 +35,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.jack.jkbase.config.ShiroConfig;
 import com.jack.jkbase.entity.SysUser;
+import com.jack.jkbase.entity.ViewSysUser;
 import com.jack.jkbase.service.impl.SysModuleServiceImpl;
 import com.jack.jkbase.service.impl.SysUserServiceImpl;
 import com.jack.jkbase.util.ConfigInfo;
@@ -50,7 +51,7 @@ public class HomeController {
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	@RequestMapping({"/"})
     public String home(Model model){
-		SysUser loginUser = SecurityUtils.getSubject().getPrincipals().oneByType(SysUser.class);
+		ViewSysUser loginUser = SecurityUtils.getSubject().getPrincipals().oneByType(ViewSysUser.class);
 		JSONArray ja = moduleService.getTreeMenuByUser(loginUser.getUserid());
 		//JSONArray ja = moduleService.getTreeMenuByUser(1);
 		model.addAttribute("treeMenu", ja);
@@ -102,8 +103,8 @@ public class HomeController {
 	}
 
 	@RequestMapping(value = "/profile.do", method = RequestMethod.GET)
-	public String page_profile() {
-		//session.setAttribute(Helper.SESSION_PROFILE_TOKEN, RandomUtil.generateString(16));// 令牌，用于密码加密传输的key，16位长度
+	public String page_profile(Model model) {
+		model.addAttribute("user",SecurityUtils.getSubject().getPrincipals().oneByType(ViewSysUser.class));
 		return "profile";
 	}
 
@@ -156,18 +157,6 @@ public class HomeController {
 		}
 		if (!pwdNew.equals(pwdRenew))
 			return JSON.toJSONString(new Result(false, "两次输入密码不一致！", ""));
-		//Object token = session.getAttribute(Helper.SESSION_PROFILE_TOKEN);// 原始令牌
-		//if (token == null)
-		//	return JSON.toJSONString(new Result(false, "页面已经失效，请刷新", "timeout"));// 成功后token失效，则页面失效，客户端需要重定向到主界面
-		/*
-		try {
-			pwdOld = EncryptUtil.aesDecrypt(pwdOld, token.toString());
-			pwdNew = EncryptUtil.aesDecrypt(pwdNew, token.toString());
-			pwdRenew = EncryptUtil.aesDecrypt(pwdRenew, token.toString());
-		} catch (Exception e) {
-			e.printStackTrace();
-			return JSON.toJSONString(new Result(false, "页面已经失效，请刷新！", "timeout"));// 客户端需要刷新页面
-		}*/
 		//SysUser loginUser = (SysUser)session.getAttribute(Helper.SESSION_USER);
 		SysUser loginUser =SecurityUtils.getSubject().getPrincipals().oneByType(SysUser.class); 
 		if (!ShiroConfig.hashUserPwd(pwdOld, loginUser.getuSalt())
@@ -186,29 +175,27 @@ public class HomeController {
 			return JSON.toJSONString(new Result(false, "操作失败出现异常，请联系管理员！", key));
 		}
 	}
-	/*
 	@RequestMapping(value = "/profile_updateInfo.do", method = RequestMethod.POST, produces = "text/html;charset=utf-8")
 	@ResponseBody
 	public String profile_updateInfo(SysUser user) {
-		SysUser loginUser = (SysUser)session.getAttribute(Helper.SESSION_USER);
-		SysUser model = loginUser;
-		model.setuCompanyid(user.getuCompanyid());
-		model.setuMobileno(user.getuMobileno());
-		model.setuCname(user.getuCname());
+		ViewSysUser loginUser = (ViewSysUser)SecurityUtils.getSubject().getPrincipal();
 		try {
-			int rs = sysUserService.access(model, DBAction.Update.name);
-			if (rs > 0) {
-				session.setAttribute(Helper.SESSION_USER, model);
-				return JSON.toJSONString(new Result(true, "资料修改成功！", loginUser.getuCname()));
+			if(sysUserServiceImpl.updateUserInfo(loginUser.getUserid(), user.getuCompanyid(),
+					user.getuMobileno(), user.getuCname()) ) {
+				ViewSysUser su = sysUserServiceImpl.selecById(loginUser.getUserid());
+				loginUser.setuCname(user.getuCname());
+				loginUser.setuCompanyid(user.getuCompanyid());
+				loginUser.setuMobileno(user.getuMobileno());
+				loginUser.setuCompanyname(su.getuCompanyname());
+				return JSON.toJSONString(new Result(true, "资料修改成功！", user.getuCname()));
 			} else {
-				return JSON.toJSONString(new Result(false, "资料修改失败，错误code：" + rs));
+				return JSON.toJSONString(new Result(false, "资料修改失败！" ));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return JSON.toJSONString(new Result(false, "资料修改失败，出现异常,请联系管理员或重新登录试试！!"));
 		}
 	}
-	*/
 	// 上传用户头衔
 	@RequestMapping(value = "/profile_uploadUserImg.do", method = RequestMethod.POST, produces = "text/html;charset=utf-8")
 	@ResponseBody

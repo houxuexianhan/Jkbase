@@ -39,6 +39,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 				.set(SysUser::getuPwd, ShiroConfig.hashUserPwd(password,salt))
 			);
 	}
+	public boolean updateUserInfo(int userid,int companyid,String mobile,String nick){
+		return update(null,Wrappers.lambdaUpdate(SysUser.class).eq(SysUser::getUserid, userid)
+				.set(SysUser::getuCompanyid, companyid)
+				.set(SysUser::getuCname, nick)
+				.set(SysUser::getuMobileno, mobile)
+			);
+	}
 	//@Operation(type=Helper.logTypeOperation,desc="用户修改头像",arguDesc={"用户ID",""})
 	public boolean updatePhoto(int userid,String photo){
 		return update(null,Wrappers.lambdaUpdate(SysUser.class).eq(SysUser::getUserid, userid)
