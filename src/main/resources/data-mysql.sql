@@ -21,7 +21,7 @@
 
 LOCK TABLES `sys_app` WRITE;
 /*!40000 ALTER TABLE `sys_app` DISABLE KEYS */;
-INSERT INTO `sys_app` VALUES (1,'设置集成的应用及其功能模块23ab','框架应用系统','',1,'4.0'),(2,'应用系统管理及其功能模块','应用系统管理','',0,'1.0'),(3,'用于检票口的广告系统','广告系统','',0,'1.0');
+INSERT INTO `sys_app` VALUES (1,'设置集成的应用及其功能模块23ab','框架应用系统','',1,'1.0'),(2,'应用系统管理及其功能模块','应用系统管理','',1,'1.0'),(3,'海师财务系统','海师财务系统','',0,'1.0'),(5,'海师教务系统的权限控制管理','海师教务系统','http://www.xxx.xxx',0,'1.0'),(6,'海师新生报到系统','海师新生报到系统','http://www.xxx.xxx',0,'1.0');
 /*!40000 ALTER TABLE `sys_app` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -41,7 +41,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `sys_company` WRITE;
 /*!40000 ALTER TABLE `sys_company` DISABLE KEYS */;
-INSERT INTO `sys_company` VALUES (1,21,0,'信息中心',1,0,1),(3,35,0,'车站总部',1,0,1),(4,35,0,'海口汽车客运总站',2,3,2),(6,2,0,'车站2',2,5,32),(7,3,0,'琼海车站2',3,6,33),(8,2,0,'琼海汽车站',1,0,1);
+INSERT INTO `sys_company` VALUES (1,21,0,'教务部',1,0,1),(3,35,0,'信息学院',1,0,1),(4,35,0,'软件工程',2,3,2),(6,2,0,'车站2',2,5,32),(7,3,0,'琼海车站2',3,6,33),(8,35,0,'数统学院',1,0,1),(10,35,0,'10级',3,4,1),(11,35,0,'11级',3,4,2),(12,35,0,'12级',3,4,3);
 /*!40000 ALTER TABLE `sys_company` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -88,11 +88,11 @@ UNLOCK TABLES;
 -- Dumping data for table `sys_module`
 --
 
---LOCK TABLES `sys_module` WRITE;
+LOCK TABLES `sys_module` WRITE;
 /*!40000 ALTER TABLE `sys_module` DISABLE KEYS */;
-INSERT INTO `sys_module` VALUES (1,1,'框架系统','frm','fa fa-square-o',0,'0000',0,''),(2,1,'应用与模块管理','ModuleMng','fa fa-square',0,'0001',1,'frm/ModuleMng/module.page'),(4,1,'字段类型管理','FieldMng','fa fa-tag',0,'0004',1,'frm/FieldMng/module.page'),(5,1,'系统异常日志','SystemErrorLog','fa fa-file',0,'0005',1,'frm/SystemErrorLog/module.page'),(7,2,'系统管理','sys','fa fa-asterisk',0,'0000',0,''),(8,2,'行政区管理','AreaMng','fa fa-map-o',0,'0002',7,'sys/AreaMng/module.page'),(9,2,'组织机构管理','CompanyMng','fa fa-tree',0,'0003',7,'sys/CompanyMng/module.page'),(10,2,'角色应用权限','RoleMng','fa fa-key',0,'0006',7,'sys/RoleMng/module.page'),(11,2,'用户管理','UserMng','fa fa-user',0,'0004',7,'sys/UserMng/module.page'),(12,2,'数据字典','FieldValueMng','fa fa-book',0,'0001',7,'sys/FieldValueMng/module.page'),(13,2,'事件日志查询','EventMng','fa fa-sticky-note-o',0,'0007',7,'sys/EventMng/module.page'),(14,2,'系统参数管理','SystemParam','fa fa-cogs',0,'0008',7,'sys/SystemParam/module.page'),(16,2,'在线用户列表','OnlineUser','fa fa-street-view',1,'0010',7,'sys/OnlineUser/module.page'),(48,2,'角色(用户)管理','RoleUserMng','fa fa-user-secret',0,'0005',7,'sys/RoleUserMng/module.page'),(61,1,'功能管理','FunctionMng','fa fa-envira',0,'0002',1,'frm/FunctionMng/module.page'),(64,3,'广告管理','advMng','fa fa-bell',0,'2001',0,''),(66,3,'视频管理','VideoMng','fa fa-video-camera',0,'2003',64,'Advertising/VideoMng/module.page'),(67,3,'广告发布','','fa fa-television',0,'2101',0,''),(68,3,'发布文本通知','TextPublish','fa fa-file-text-o',0,'2102',67,'Advertising/TextPublish/module.page'),(69,3,'发布图片通知','ImagePublish','fa fa-picture-o',0,'2103',67,'Advertising/ImagePublish/module.page'),(70,3,'发布视频通知','VideoPublish','fa fa-video-camera',0,'2104',67,'Advertising/VideoPublish/module.page'),(71,3,'清除通知','Clear','fa fa-eraser',0,'2105',67,'Advertising/Clear/module.page'),(72,3,'发布检票班次','CheckPublish','fa fa-bus',0,'2106',67,'Advertising/CheckPublish/module.page');
+INSERT INTO `sys_module` VALUES (1,1,'框架系统','frm','fa fa-square-o',0,'0000',0,''),(2,1,'应用与模块管理','ModuleMng','fa fa-square',0,'0001',1,'frm/ModuleMng/module.page'),(4,1,'字段类型管理','FieldMng','fa fa-tag',0,'0004',1,'frm/FieldMng/module.page'),(5,1,'系统异常日志','SystemErrorLog','fa fa-file',1,'0005',1,'frm/SystemErrorLog/module.page'),(7,2,'系统管理','sys','fa fa-asterisk',0,'0000',0,''),(8,2,'行政区管理','AreaMng','fa fa-map-o',0,'0002',7,'sys/AreaMng/module.page'),(9,2,'组织机构管理','CompanyMng','fa fa-tree',0,'0003',7,'sys/CompanyMng/module.page'),(10,2,'角色应用权限','RoleMng','fa fa-key',0,'0006',7,'sys/RoleMng/module.page'),(11,2,'用户管理','UserMng','fa fa-user',0,'0004',7,'sys/UserMng/module.page'),(12,2,'数据字典','FieldValueMng','fa fa-book',0,'0001',7,'sys/FieldValueMng/module.page'),(13,2,'事件日志查询','EventMng','fa fa-sticky-note-o',0,'0007',7,'sys/EventMng/module.page'),(14,2,'系统参数管理','SystemParam','fa fa-cogs',0,'0008',7,'sys/SystemParam/module.page'),(16,2,'在线用户列表','OnlineUser','fa fa-street-view',1,'0010',7,'sys/OnlineUser/module.page'),(48,2,'角色用户管理','RoleUserMng','fa fa-user-secret',0,'0005',7,'sys/RoleUserMng/module.page'),(61,1,'功能管理','FunctionMng','fa fa-envira',0,'0002',1,'frm/FunctionMng/module.page'),(64,3,'海师子系统22','advMng','fa fa-bell',1,'2001',0,''),(66,3,'子系统管理22','VideoMng','fa fa-video-camera',1,'2003',64,'subsys/subsysMng/module.page'),(67,3,'广告系统','','fa fa-television',1,'2101',0,''),(68,3,'发布文本通知','TextPublish','fa fa-file-text-o',0,'2102',67,'subsys/subsysMng/module.page'),(69,3,'发布图片通知','ImagePublish','fa fa-picture-o',0,'2103',67,'Advertising/ImagePublish/module.page'),(70,3,'发布视频通知','VideoPublish','fa fa-video-camera',0,'2104',67,'Advertising/VideoPublish/module.page'),(71,3,'清除通知','Clear','fa fa-eraser',0,'2105',67,'Advertising/Clear/module.page'),(72,3,'发布检票班次','CheckPublish','fa fa-bus',0,'2106',67,'Advertising/CheckPublish/module.page');
 /*!40000 ALTER TABLE `sys_module` ENABLE KEYS */;
---UNLOCK TABLES;
+UNLOCK TABLES;
 
 --
 -- Dumping data for table `sys_online`
@@ -109,7 +109,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `sys_role` WRITE;
 /*!40000 ALTER TABLE `sys_role` DISABLE KEYS */;
-INSERT INTO `sys_role` VALUES (2,'系统管理','系统管理组'),(3,'只能发布广告，（不能上传视频）','广告发布组'),(4,'bbb','ccc'),(7,'dddxxx','ddd');
+INSERT INTO `sys_role` VALUES (2,'系统管理','系统管理组'),(3,'aaa','aaa'),(4,'bbb','ccc'),(7,'dddxxx','ddd');
 /*!40000 ALTER TABLE `sys_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,7 +119,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `sys_role_app` WRITE;
 /*!40000 ALTER TABLE `sys_role_app` DISABLE KEYS */;
-INSERT INTO `sys_role_app` VALUES (1,1),(2,2),(2,3),(3,3);
+INSERT INTO `sys_role_app` VALUES (1,1),(2,2),(2,3);
 /*!40000 ALTER TABLE `sys_role_app` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -139,7 +139,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `sys_user` WRITE;
 /*!40000 ALTER TABLE `sys_user` DISABLE KEYS */;
-INSERT INTO `sys_user` VALUES (1,'超级管理员',1,0,0,'0,10,blue','2015-06-10 10:26:15.000000','10.10.10.89','2016-06-15 11:07:19','admin','182xxxxxxxxx','/resources/upload/user/image/15209958046719763_.jpg','b4f92a719c98cd13a50a117092f04250809a303ce0d63d5861b37e59d02d4b90','9e77501e-725f-4d69-812e-56b0c2186f11',0,0),(2,'aa',1,0,0,'','2020-09-23 10:20:55.186000',NULL,NULL,'aa','',NULL,'2287871b650ccd0ff233ca02aca8d419caba207882de2029cf008950795a7378','f3366bc8-a353-4ef3-a0db-13848c1966ff',0,2),(3,'cc',4,0,0,'',NULL,NULL,NULL,'cc','',NULL,'2eeca72ac63014743a75d71c930d27c533902b0c39f8035cbe9d1986043c528c',NULL,0,2);
+INSERT INTO `sys_user` VALUES (1,'超级管理员',4,0,0,'0,10,blue','2015-06-10 10:26:15.000000','10.10.10.89','2016-06-15 11:07:19','admin','','/resources/upload/user/image/15209958046719763_.jpg','b4f92a719c98cd13a50a117092f04250809a303ce0d63d5861b37e59d02d4b90','9e77501e-725f-4d69-812e-56b0c2186f11',0,0),(2,'aa',1,0,0,'','2020-09-23 10:20:55.186000',NULL,NULL,'aa','',NULL,'2287871b650ccd0ff233ca02aca8d419caba207882de2029cf008950795a7378','f3366bc8-a353-4ef3-a0db-13848c1966ff',0,2),(3,'cc',4,0,0,'',NULL,NULL,NULL,'cc','',NULL,'2eeca72ac63014743a75d71c930d27c533902b0c39f8035cbe9d1986043c528c',NULL,0,2);
 /*!40000 ALTER TABLE `sys_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -162,4 +162,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-09-24 22:42:46
+-- Dump completed on 2020-10-11 21:48:25
