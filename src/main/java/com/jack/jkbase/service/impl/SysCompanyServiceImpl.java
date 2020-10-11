@@ -68,11 +68,9 @@ public class SysCompanyServiceImpl extends ServiceImpl<SysCompanyMapper, SysComp
 			if(item.getcParentid()!=0) joItem.put("_parentId",item.getcParentid());
 			//第一层(顶层
 			if(item.getcLevel()==1){
-				//joItem.put("iconCls","fa fa-circle-o");
-				joItem.put("iconCls","");
+				joItem.put("iconCls","fa fa-circle-o");
 			}else{
-				//joItem.put("iconCls","fa fa-circle");
-				joItem.put("iconCls","");
+				joItem.put("iconCls","fa fa-circle");
 			}
 			ja.add(joItem);
 		}
