@@ -55,6 +55,7 @@ public class HomeController {
 		JSONArray ja = moduleService.getTreeMenuByUser(loginUser.getUserid());
 		//JSONArray ja = moduleService.getTreeMenuByUser(1);
 		model.addAttribute("treeMenu", ja);
+		model.addAttribute("user",loginUser);
 		return "index";
     }
 	@RequestMapping(value = "/login.html", method = RequestMethod.GET)

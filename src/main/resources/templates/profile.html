@@ -245,7 +245,7 @@
                   </div>
                   <div class="form-group">
                   	<div class="controls" style="margin-left: 150px;">
-                      <button type="submit"  class="btn btn-danger">提交</button>
+                      <button type="button" onclick="submitPwdForm()"  class="btn btn-danger">提交</button>
                     </div>
                   </div>
                 </form>
@@ -304,32 +304,32 @@ function submitInfoForm(){
 function submitPwdForm(){
 	$('#form_updatePwd').form('submit',{
 		  onSubmit: function(param){
-			  var pwdOld = $('#form_updatePwd #pwdOld').val();
+			  var pwdOld = $('#form_updatePwd input[name=pwdOld]').val();
 			  if($.trim(pwdOld)==''){
 				  alert('原始密码不能为空！')
-				  $('#form_updatePwd #pwdOld').focus();
+				  $('#form_updatePwd input[name=pwdOld]').focus();
 				  return false;
 			  }
-			  var pwdNew = $('#form_updatePwd #pwdNew').val();
+			  var pwdNew = $('#form_updatePwd input[name=pwdNew]').val();
 			  if($.trim(pwdNew)==''){
 				  alert('新密码不能为空！')
-				  $('#form_updatePwd #pwdNew').focus();
+				  $('#form_updatePwd input[name=pwdNew]').focus();
 				  return false;
 			  }
-			  var pwdRenew =  $('#form_updatePwd #pwdRenew').val();
+			  var pwdRenew =  $('#form_updatePwd input[name=pwdRenew]').val();
 			  if($.trim(pwdRenew)==''){
 				  alert('重复密码不能为空！')
-				  $('#form_updatePwd #pwdRenew').focus();
+				  $('#form_updatePwd input[name=pwdRenew]').focus();
 				  return false;
 			  }
 			  if(pwdNew!=pwdRenew){
 				  alert('两次输入密码不一致！')
-				  $('#form_updatePwd #pwdRenew').focus();
+				  $('#form_updatePwd input[name=pwdRenew]').focus();
 				  return false;
 			  }
 			  if(pwdOld==pwdNew){
 				  alert('新密码不能和原始密码一致！')
-				  $('#form_updatePwd #pwdNew').focus();
+				  $('#form_updatePwd input[name=pwdNew]').focus();
 				  return false;
 			  }
 			  /*
