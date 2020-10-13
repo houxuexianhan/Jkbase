@@ -64,8 +64,8 @@ public class SysUser {
     private String uLastip;
 
 	//@Column(name="U_ExtendField")
-	@TableField("U_ExtendField")
-    private String uExtendfield;
+	@TableField("U_Email")
+    private String uEmail;
 
 	//@Column(name="U_Expired",nullable=false,columnDefinition="int default 0")
 	@TableField("U_Expired")
@@ -190,8 +190,16 @@ public class SysUser {
     public void setuLasttime(Date uLasttime) {
         this.uLasttime = uLasttime;
     }
+    
+    public String getuEmail() {
+		return uEmail;
+	}
 
-    public String getuLastip() {
+	public void setuEmail(String uEmail) {
+		this.uEmail = uEmail;
+	}
+
+	public String getuLastip() {
         return uLastip;
     }
 
@@ -199,11 +207,4 @@ public class SysUser {
         this.uLastip = uLastip == null ? null : uLastip.trim();
     }
 
-    public String getuExtendfield() {
-        return uExtendfield;
-    }
-
-    public void setuExtendfield(String uExtendfield) {
-        this.uExtendfield = uExtendfield == null ? null : uExtendfield.trim();
-    }
 }

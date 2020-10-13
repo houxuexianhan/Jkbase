@@ -254,7 +254,7 @@ CREATE TABLE `sys_user` (
   `U_CompanyID` int NOT NULL,
   `U_Disabled` int NOT NULL DEFAULT '0',
   `U_Expired` int NOT NULL DEFAULT '0',
-  `U_ExtendField` varchar(255) DEFAULT NULL,
+  `U_Email` varchar(255) DEFAULT NULL,
   `U_JoinTime` datetime(6) DEFAULT NULL,
   `U_LastIp` varchar(50) DEFAULT NULL,
   `U_LastTime` datetime DEFAULT NULL,
@@ -385,7 +385,7 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `U_CompanyID`,
  1 AS `U_Disabled`,
  1 AS `U_Expired`,
- 1 AS `U_ExtendField`,
+ 1 AS `U_Email`,
  1 AS `U_JoinTime`,
  1 AS `U_LastIp`,
  1 AS `U_LastTime`,
@@ -513,7 +513,7 @@ DROP VIEW IF EXISTS `view_sys_user`;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`cms_user`@`%` SQL SECURITY DEFINER */
-Create VIEW `view_sys_user` AS select `a`.`UserId` AS `UserId`,`a`.`U_CName` AS `U_CName`,`a`.`U_CompanyID` AS `U_CompanyID`,`a`.`U_Disabled` AS `U_Disabled`,`a`.`U_Expired` AS `U_Expired`,`a`.`U_ExtendField` AS `U_ExtendField`,`a`.`U_JoinTime` AS `U_JoinTime`,`a`.`U_LastIp` AS `U_LastIp`,`a`.`U_LastTime` AS `U_LastTime`,`a`.`U_LoginName` AS `U_LoginName`,`a`.`U_MobileNo` AS `U_MobileNo`,`a`.`U_PhotoUrl` AS `U_PhotoUrl`,`a`.`U_Pwd` AS `U_Pwd`,`a`.`U_Salt` AS `U_Salt`,`a`.`U_Status` AS `U_Status`,`a`.`U_Type` AS `U_Type`,(case `a`.`U_Type` when 0 then '超级用户' when 1 then '管理用户' when 2 then '企业用户' else '未定义' end) AS `U_TypeText`,(case `a`.`U_Status` when 0 then '正常' when 1 then '禁止' else '未定义' end) AS `U_StatusText`,`b`.`C_CName` AS `U_CompanyName` from (`sys_user` `a` join `sys_company` `b` on((`a`.`U_CompanyID` = `b`.`CompanyID`))) ;
+Create VIEW `view_sys_user` AS select `a`.`UserId` AS `UserId`,`a`.`U_CName` AS `U_CName`,`a`.`U_CompanyID` AS `U_CompanyID`,`a`.`U_Disabled` AS `U_Disabled`,`a`.`U_Expired` AS `U_Expired`,`a`.`U_Email` AS `U_Email`,`a`.`U_JoinTime` AS `U_JoinTime`,`a`.`U_LastIp` AS `U_LastIp`,`a`.`U_LastTime` AS `U_LastTime`,`a`.`U_LoginName` AS `U_LoginName`,`a`.`U_MobileNo` AS `U_MobileNo`,`a`.`U_PhotoUrl` AS `U_PhotoUrl`,`a`.`U_Pwd` AS `U_Pwd`,`a`.`U_Salt` AS `U_Salt`,`a`.`U_Status` AS `U_Status`,`a`.`U_Type` AS `U_Type`,(case `a`.`U_Type` when 0 then '超级用户' when 1 then '管理用户' when 2 then '企业用户' else '未定义' end) AS `U_TypeText`,(case `a`.`U_Status` when 0 then '正常' when 1 then '禁止' else '未定义' end) AS `U_StatusText`,`b`.`C_CName` AS `U_CompanyName` from (`sys_user` `a` join `sys_company` `b` on((`a`.`U_CompanyID` = `b`.`CompanyID`))) ;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
