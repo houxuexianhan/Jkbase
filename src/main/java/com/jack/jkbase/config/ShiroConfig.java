@@ -1,17 +1,12 @@
 package com.jack.jkbase.config;
 
 import java.util.Properties;
-import java.util.UUID;
 
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.crypto.hash.Md5Hash;
-import org.apache.shiro.crypto.hash.Sha1Hash;
-import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
-import org.apache.shiro.util.ByteSource;
-import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,8 +14,8 @@ import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
 @Configuration
 public class ShiroConfig {
-	private static String ALGORITHM_NAME=Sha256Hash.ALGORITHM_NAME;
-	private static int HashIterations = 16;
+	private static String ALGORITHM_NAME=Md5Hash.ALGORITHM_NAME;
+	private static int HashIterations = 1;
 	@Bean
     public ShiroFilterChainDefinition shiroFilterChainDefinition() {
         DefaultShiroFilterChainDefinition chain = new DefaultShiroFilterChainDefinition();
@@ -73,7 +68,7 @@ public class ShiroConfig {
 	 * @return
 	 */
 	public static String hashUserPwd(String pwd,String salt){
-		return new SimpleHash(ALGORITHM_NAME,pwd,salt,HashIterations).toHex();
+		return new SimpleHash(ALGORITHM_NAME,pwd,null,HashIterations).toHex(); 
 	}
 	/*
 	public static void main(String[] args) {

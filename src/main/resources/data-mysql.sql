@@ -21,7 +21,7 @@
 
 LOCK TABLES `sys_app` WRITE;
 /*!40000 ALTER TABLE `sys_app` DISABLE KEYS */;
-INSERT INTO `sys_app` VALUES (1,'设置集成的应用及其功能模块23ab','框架应用系统','',1,'1.0'),(2,'应用系统管理及其功能模块','应用系统管理','',1,'1.0'),(3,'海师财务系统','海师财务系统','',0,'1.0'),(5,'海师教务系统的权限控制管理','海师教务系统','http://www.xxx.xxx',0,'1.0'),(6,'海师新生报到系统','海师新生报到系统','http://www.xxx.xxx',0,'1.0');
+INSERT INTO `sys_app` VALUES (1,'设置集成的应用及其功能模块23ab','框架应用系统','',1,'1.0'),(2,'应用系统管理及其功能模块','应用系统管理','',1,'1.0'),(3,'海师财务系统','海师财务系统','http://www.xxx.xxx',0,'1.0'),(5,'海师教务系统的权限控制管理','海师教务系统','http://www.xxx.xxx',0,'1.0'),(6,'海师新生报到系统','海师新生报到系统','http://www.xxx.xxx',0,'1.0');
 /*!40000 ALTER TABLE `sys_app` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -109,7 +109,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `sys_role` WRITE;
 /*!40000 ALTER TABLE `sys_role` DISABLE KEYS */;
-INSERT INTO `sys_role` VALUES (2,'系统管理','系统管理组'),(3,'aaa','aaa'),(4,'bbb','ccc'),(7,'dddxxx','ddd');
+INSERT INTO `sys_role` VALUES (2,'SYS_MNG_GROUP','系统管理组'),(3,'aaa','角色A'),(4,'bbb','角色C'),(7,'dddxxx','角色B');
 /*!40000 ALTER TABLE `sys_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,7 +119,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `sys_role_app` WRITE;
 /*!40000 ALTER TABLE `sys_role_app` DISABLE KEYS */;
-INSERT INTO `sys_role_app` VALUES (1,1),(2,2),(2,3);
+INSERT INTO `sys_role_app` VALUES (1,1),(2,2),(2,3),(4,3),(7,3);
 /*!40000 ALTER TABLE `sys_role_app` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -139,7 +139,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `sys_user` WRITE;
 /*!40000 ALTER TABLE `sys_user` DISABLE KEYS */;
-INSERT INTO `sys_user` VALUES (1,'超级管理员',4,0,0,'0,10,blue','2015-06-10 10:26:15.000000','10.10.10.89','2016-06-15 11:07:19','admin','','/resources/upload/user/image/15209958046719763_.jpg','b4f92a719c98cd13a50a117092f04250809a303ce0d63d5861b37e59d02d4b90','9e77501e-725f-4d69-812e-56b0c2186f11',0,0),(2,'aa',1,0,0,'','2020-09-23 10:20:55.186000',NULL,NULL,'aa','',NULL,'2287871b650ccd0ff233ca02aca8d419caba207882de2029cf008950795a7378','f3366bc8-a353-4ef3-a0db-13848c1966ff',0,2),(3,'cc',4,0,0,'',NULL,NULL,NULL,'cc','',NULL,'2eeca72ac63014743a75d71c930d27c533902b0c39f8035cbe9d1986043c528c',NULL,0,2);
+INSERT INTO `sys_user` VALUES (1,'超级管理员',4,0,0,'0,10,blue','2015-06-10 10:26:15.000000','10.10.10.89','2016-06-15 11:07:19','admin','','/resources/upload/user/image/15209958046719763_.jpg','e33c9532a8b8239bef1980e57f8a6bb3','9e77501e-725f-4d69-812e-56b0c2186f11',0,0),(2,'测试A',1,0,0,'','2020-09-23 10:20:55.186000',NULL,NULL,'aa','',NULL,'e33c9532a8b8239bef1980e57f8a6bb3','f3366bc8-a353-4ef3-a0db-13848c1966ff',0,2),(3,'测试C',4,0,0,'',NULL,NULL,NULL,'cc','',NULL,'e33c9532a8b8239bef1980e57f8a6bb3',NULL,0,2);
 /*!40000 ALTER TABLE `sys_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -149,7 +149,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `sys_user_role` WRITE;
 /*!40000 ALTER TABLE `sys_user_role` DISABLE KEYS */;
-INSERT INTO `sys_user_role` VALUES (2,4);
+INSERT INTO `sys_user_role` VALUES (2,2),(2,4),(2,7);
 /*!40000 ALTER TABLE `sys_user_role` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

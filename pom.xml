@@ -11,12 +11,12 @@
 	<groupId>com.jack</groupId>
 	<artifactId>Jkbase</artifactId>
 	<version>0.0.3-SNAPSHOT</version>
-	<packaging>jar</packaging>
-	<name>Jkbase</name>
+	<packaging>war</packaging>
+	<name>jkbase</name>
 	<description>Common framework project for Spring Boot</description>
 
 	<properties>
-		<java.version>14</java.version>
+		<java.version>11</java.version>
 	</properties>
 
 	<dependencies>
@@ -133,6 +133,7 @@
 	</dependencies>
 
 	<build>
+	  <finalName>jkbase</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
