@@ -1,21 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
- <link rel="shortcut icon" href="/favicon.ico"/>
-<style type="text/css">
-body {
-	margin:100 auto;
-}
-input{
-	margin:20px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
 </head>
 <body>
- <div style="text-align: center;">
-	a page
-</div>
+    <p th:text="'hello SpringBoot'">hello thymeleaf</p>
+    <a href="/a#access_token=AT-6-CGthJ-XpDEuOeQ-PpMQlpCQ6K3N6kjAo&token_type=bearer&expires_in=28800">登录</a>
+    <script type="text/javascript">
+    	var hash = window.location.hash;
+    	var idx = hash.indexOf("#");
+    	if(idx>-1){
+	    	hash = hash.substr(idx+1);
+	    	var splitStr  = hash.split("&");
+	    	var urlObj = {} 
+	    	for(var i = 0; i < splitStr.length; i++){
+	    		 urlObj[splitStr[i].split("=")[0]] = splitStr[i].split("=")[1];
+	    	}
+	    	console.log(urlObj);
+	    	alert(urlObj.access_token);
+    	}
+    </script>
 </body>
+
 </html>
