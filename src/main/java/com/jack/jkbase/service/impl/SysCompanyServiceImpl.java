@@ -77,4 +77,22 @@ public class SysCompanyServiceImpl extends ServiceImpl<SysCompanyMapper, SysComp
 		jo.put("rows", ja);
 		return jo;
 	}
+	
+	public JSONArray getApiTree(){
+		return apiTree(selectAll(), 0);
+	}
+	private JSONArray apiTree(List<ViewSysCompany> menuList, int parentId) {
+		JSONArray childMenu = new JSONArray();
+		for (SysCompany menu : menuList) {
+			if (parentId == menu.getcParentid()) {
+				JSONObject jo = new JSONObject();
+				jo.put("name",menu.getcCname());
+				jo.put("id",menu.getCompanyid());
+				JSONArray c_node = apiTree(menuList, menu.getCompanyid());
+				if(c_node.size()>0)jo.put("nodes", c_node);
+				childMenu.add(jo);
+			}
+		}
+		return childMenu;
+	}
 }

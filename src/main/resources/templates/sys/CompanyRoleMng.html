@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 
+</head>
+<body >
+<!-- roleUser -->
+
+<div class="modal fade" id="roleuserModal" tabindex="-1" role="dialog"  data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >编辑部门角色</h4>
+      </div>
+      <div class="modal-body">
+		  <form  class="model-form" action="SysMgr/roleuser_adduser.do" method="post">
+		    <input name="roleid" type="hidden" />
+		    <input id="formFucntion" name="fid" type="hidden" />
+		    <div class="form-group">
+		          <label class="control-label" >部门名称</label>
+		          <div class="controls">
+		            <input name="rRolename" type="text" readonly="readonly" class="form-control">
+		          </div>
+		        </div>
+		    <div class="form-group">
+		          <label class="control-label" for="input01">选择角色</label>
+		          <div class="controls">
+		            <input id="selectUsers" name="users" class="easyui-combobox" class="form-control" data-options=
+		            'valueField: "userid",textField: "uCname",required:true,groupField:"u_CompanyName",editable:false,multiline:true,multiple:true'
+		            >
+		          </div>
+		        </div>
+		  </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" onclick="saveRoleUser()">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end Modal -->
+
+ <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        	部门角色管理
+        <small>管理部门关联的角色</small>
+        <!-- Button trigger modal -->
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i>主页</a></li>
+        <li><a href="#">系统管理</a></li>
+        <li class="active">部门角色管理</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="roleuserTable" class="display">
+                <thead>
+                <tr>
+                  <th>部门</th>
+                  <th>角色列表</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+               
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  
+<!-- DataTables -->
+<script>
+//var output = { data: [] };//返回的格式
+var roleuserTable;
+$(document).ready(function() {
+	//easyui 重新解析
+	$.parser.parse();
+	roleuserTable = $('#roleuserTable').DataTable({
+		lengthMenu: [ 20, 40, 50, 60, 15 ],
+		"paging": true,
+		"lengthChange": true,
+		"searching": true,
+		"ordering": false,
+		"info": true,
+		"autoWidth": false,
+		"language": {
+			"url": "/dist/Chinese.json"
+		},
+		//ajax: 'SysMgr/roleuser_getUsersByRoleid.do?roleid='+roleid,
+		columns: [
+            { data: "uCname"},
+            { data: "uLoginname"},
+            { data: "uCompanyname"},
+            { data: "uStatustext"},
+            { data: "uTypetext"},
+            {
+          	  data:null,
+          	  className:"center",
+          	  render:function(data,type,row){
+          		  var str = '';
+          		  //删除
+          		  str += '<#if f11?? && f11.access??> <a href="#"  data-fid="11" class="editor_remove" data-target="#roleuserModal"><i class="fa fa-trash-o"></i>${f11.fDesc}</a></#if>';
+          		  return str;
+          	  } 
+            }
+        ],
+        scrollX: true,
+        select: 'single'
+	});	
+	//添加/编辑角色
+	$('#roleModal').on('show.bs.modal', function (event) {
+		  var modal = $(this);
+		  var button = $(event.relatedTarget);
+		  var action = button.data('action') ;
+		  var fid = button.data('fid');
+		  var title = 'title';
+		  if("edit"==action){
+			  title = '编辑';
+			  var  row = roleTable.row($(button).closest('tr')).data();
+			  modal.find('.model-form').form('load',row);
+		  }else if('create'==action){
+			  title = '添加';
+			  modal.find('.model-form').form('reset');//先重置
+		  }
+		  modal.find('#formFucntion').val(fid);
+		  modal.find('.modal-title').text(title);
+		  modal.find('#formAction').val(action);
+	});
+	//查看用户
+	$('#roleTable').on('click','a.view_role_users',function(e){
+		var row= roleTable.row($(this).closest('tr')).data();
+		$('#roleuser_box').show();
+		$('#roleuser_box .box-title #spanRoleName').html("<b>"+row.rRolename+"</b>");
+		$('#roleuser_box #roleid').val(row.roleid);
+		roleuserTable.ajax.url('SysMgr/roleuser_getUsersByRoleid.do?roleid='+row.roleid).load();
+	});
+	//删除某角色下所有用户
+	$('#roleuser_box').on('click','a.editor_deleteAllUser',function(e){
+		if(confirm("确定要删除该角色下所有用户吗？")){
+			var params = {};
+	    	params.fid = $(this).data('fid');
+	    	params.roleId = $('#roleuser_box #roleid').val();
+			$.post('SysMgr/roleuser_deleteByRole.do',params,function(data){
+	    		var data = eval('(' + data + ')');
+	    		if(data.success){
+	    			roleuserTable.clear().draw();
+	    			new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+		        }else{
+		        	new $.Zebra_Dialog(data.info,{modal: false});
+		        }
+	    	});
+		}
+	});
+	// Delete a record
+	$('#roleTable,#roleuserTable').on('click', 'a.editor_remove', function (e) {
+	    e.preventDefault();
+	    var target = $(this).data('target');
+	    if(confirm("确定要删除该条记录吗？"))
+	    {
+	    	var row ;
+	    	var idx;
+	    	var params = {};
+	    	params.fid = $(this).data('fid');
+	    	params.action = 'remove';
+	    	if('#roleModal'==target){
+	    		row= roleTable.row($(this).closest('tr')).data();
+	    		idx = roleTable.row($(this).closest('tr')).index();
+	    		params.roleid = row.roleid;
+	    		$.post('SysMgr/role_access.do',params,function(data){
+		    		var data = eval('(' + data + ')');
+		    		if(data.success){
+		    			roleTable.row(idx).remove().draw(false);
+		    			new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+		    			roleuserTable.clear().draw();
+			        }else{
+			        	new $.Zebra_Dialog(data.info,{modal: false});
+			        }
+		    	});
+	    	}else if('#roleuserModal'==target){
+	    		row = roleuserTable.row($(this).closest('tr')).data();
+	    		idx = roleuserTable.row($(this).closest('tr')).index();
+	    		params.userId = row.userid;
+	    		params.roleId = $('#roleuser_box #roleid').val();
+	    		$.post('SysMgr/roleuser_delete.do',params,function(data){
+		    		var data = eval('(' + data + ')');
+		    		if(data.success){
+		    			roleuserTable.row(idx).remove().draw(false);
+		    			new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+			        }else{
+			        	new $.Zebra_Dialog(data.info,{modal: false});
+			        }
+		    	});
+	    	}
+	    }
+	} );
+	//添加角色用户editor_adduser
+	$('#roleTable').on('click', 'a.editor_adduser', function (e) {
+		var modal = $('#roleuserModal');
+		var fid = $(this).data('fid');
+		var row= roleTable.row($(this).closest('tr')).data();
+		var roleId = row.roleid;
+		$('#selectUsers').combobox('reload','SysMgr/user_selectByRoleExcludeCombo.do?roleId='+roleId);
+		modal.find('.model-form').form('reset');
+		$('#selectUsers').combobox('clear');
+		modal.find('.model-form').form('load',row);
+		modal.find('#formFucntion').val(fid);
+		$('#roleuserModal').modal('show');
+	});
+});
+/* 功能 */
+function saveRole(){
+	$('#roleModal .model-form').form('submit', {
+		onSubmit: function(){
+			var rRolename = $(this).find('input[name=rRolename]').val();
+			if($.trim(rRolename)==''){
+				alert('角色名称不能为空！');
+				return false;
+			}
+		},
+	    success: function(data){
+	        var data = eval('(' + data + ')');  // change the JSON string to javascript object
+	        var action = $('#roleModal #formAction').val();
+	        if(data.success){
+	        	$('#roleModal').modal('hide');
+	        	if('edit'==action){
+	        		roleTable.row('#'+data.data.roleid).data(data.data).select().draw(false);
+	 	        }else if('create'==action){
+	 	        	roleTable.row.add(data.data).select().draw(false);
+	 	        }
+	        	new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+	        }else{
+	        	new $.Zebra_Dialog(data.info,{modal: false});
+	        }
+	    }
+	});
+}
+//添加角色用户
+function saveRoleUser(){
+	$('#roleuserModal .model-form').form('submit', {
+		onSubmit: function(){
+			return $(this).form('validate');
+		},
+	    success: function(data){
+	        var data = eval('(' + data + ')');  // change the JSON string to javascript object
+	        if(data.success){
+	        	$('#roleuserModal').modal('hide');
+	        	new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+	        	var rowid = $('#roleuserModal').find('.model-form input[name=roleid]').val();
+	        	$("#roleTable").find("#"+rowid).find("a.view_role_users").trigger("click");
+	        }else new $.Zebra_Dialog(data.info,{modal: false});
+	    }
+	});
+}
+</script>
+</body>
+</html>

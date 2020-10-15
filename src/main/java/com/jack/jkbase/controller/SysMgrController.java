@@ -493,4 +493,70 @@ public class SysMgrController {
 		}
 	}
 	*/
+	//-----------------------------部门 角色--------------------
+	@RequestMapping(value = "/companyrole_companysWithRoles.do", produces="text/html;charset=utf-8")
+	@ResponseBody
+	public String companyrole_getUsersByRoleid(int roleid) {
+		JSONObject jo = new JSONObject();
+		List<ViewSysUser> list = sysUserService.selectByRoleid(roleid);//.selectByRoleId(roleid);
+		JSONArray ja = new JSONArray();
+		ja.addAll(list);
+		jo.put("data", ja);
+		System.out.println(jo.toJSONString());
+		return jo.toJSONString();
+	}
+	@RequestMapping(value = "/companyrole_getByUser.do", produces="text/html;charset=utf-8")
+	@ResponseBody
+	public String companyrole_getByUser(int userId) {
+		return  JSON.toJSONString(sysUserroleService.selectByUserid(userId));
+	}
+	@RequestMapping(value = "/companyrole_adduser.do",params=Helper.PARAM_FUNCTION_ID, method = RequestMethod.POST, produces="text/html;charset=utf-8")
+	@ResponseBody
+	public String companyrole_adduser(int[] users,int roleid){
+		if(users==null||users.length == 0){
+			return JSON.toJSONString(new Result(false,"用户不能为空!"));
+		}
+		try{
+			if( sysUserroleService.insertbatchForRole(users,roleid))return JSON.toJSONString(new Result(true,"该角色批量添加用户成功！"));
+			else return JSON.toJSONString(new Result(false,"该角色添加用户失败！"));
+		}catch(Exception e){
+			e.printStackTrace();
+			return JSON.toJSONString(new Result(false,"操作出现异常："+e.getMessage()));
+		}
+	}
+	@RequestMapping(value = "/companyrole_delete.do",params=Helper.PARAM_FUNCTION_ID, method = RequestMethod.POST, produces="text/html;charset=utf-8")
+	@ResponseBody
+	public String companyrole_delete(int userId,int roleId){
+		SysUserRole key = new SysUserRole(userId,roleId);
+		try{
+			sysUserroleService.removeByKey(key);
+			return  JSON.toJSONString(new Result(true,"删除成功！"));
+		}catch(Exception e){
+			e.printStackTrace();
+			return JSON.toJSONString(new Result(false,"操作出现异常："+e.getMessage()));
+		}
+	}
+	@RequestMapping(value = "/companyrole_deleteByUser.do",params=Helper.PARAM_FUNCTION_ID, method = RequestMethod.POST, produces="text/html;charset=utf-8")
+	@ResponseBody
+	public String companyrole_deleteByUser(int userId){
+		try{
+			if(sysUserroleService.deleteByUserid(userId))return  JSON.toJSONString(new Result(true,"删除成功！"));
+			else return JSON.toJSONString(new Result(false,"删除失败！"));
+		}catch(Exception e){
+			e.printStackTrace();
+			return JSON.toJSONString(new Result(false,"操作出现异常："+e.getMessage()));
+		}
+	}
+	@RequestMapping(value = "/companyrole_deleteByRole.do",params=Helper.PARAM_FUNCTION_ID, method = RequestMethod.POST, produces="text/html;charset=utf-8")
+	@ResponseBody
+	public String companyrole_deleteByRole(int roleId){
+		try{
+			if(sysUserroleService.deleteByRoleid(roleId))return  JSON.toJSONString(new Result(true,"删除成功！"));
+			else return JSON.toJSONString(new Result(false,"删除失败！"));
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			return JSON.toJSONString(new Result(false,"操作出现异常："+e.getMessage()));
+		}
+	}
 }
