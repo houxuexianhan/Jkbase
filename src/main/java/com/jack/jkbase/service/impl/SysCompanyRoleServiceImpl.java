@@ -3,13 +3,21 @@ package com.jack.jkbase.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jack.jkbase.entity.SysCompany;
 import com.jack.jkbase.entity.SysCompanyRole;
+import com.jack.jkbase.entity.ViewSysCompany;
+import com.jack.jkbase.entity.ViewSysCompanyRole;
 import com.jack.jkbase.mapper.SysCompanyRoleMapper;
+import com.jack.jkbase.mapper.ViewSysCompanyRoleMapper;
 import com.jack.jkbase.service.ISysCompanyRoleService;
 
 /**
@@ -22,6 +30,24 @@ import com.jack.jkbase.service.ISysCompanyRoleService;
  */
 @Service
 public class SysCompanyRoleServiceImpl extends ServiceImpl<SysCompanyRoleMapper, SysCompanyRole> implements ISysCompanyRoleService {
+	@Autowired ViewSysCompanyRoleMapper viewMapper;
+	public List<ViewSysCompanyRole> selectAll(){
+		return viewMapper.selectList(null);
+	}
+	public JSONObject getTree(){
+		JSONObject jo = new JSONObject();
+		List<ViewSysCompanyRole> list = selectAll();
+		JSONArray ja = new JSONArray();
+		for(SysCompany item: list){
+			JSONObject joItem = (JSONObject) JSON.toJSON(item);
+			if(item.getcParentid()!=0) joItem.put("_parentId",item.getcParentid());
+			//第一层(顶层
+			joItem.put("iconCls",item.getcLevel()==1?"fa fa-circle-o":"fa fa-circle");
+			ja.add(joItem);
+		}
+		jo.put("rows", ja);
+		return jo;
+	}
 	public boolean removeByKey(SysCompanyRole entity) {
 		return remove(Wrappers.lambdaQuery(entity));
 	}

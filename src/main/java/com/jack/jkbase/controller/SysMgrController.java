@@ -33,6 +33,7 @@ import com.jack.jkbase.entity.SysUserRole;
 import com.jack.jkbase.entity.ViewSysRoleApp;
 import com.jack.jkbase.entity.ViewSysUser;
 import com.jack.jkbase.service.impl.SysAreaServiceImpl;
+import com.jack.jkbase.service.impl.SysCompanyRoleServiceImpl;
 import com.jack.jkbase.service.impl.SysCompanyServiceImpl;
 import com.jack.jkbase.service.impl.SysEventServiceImpl;
 import com.jack.jkbase.service.impl.SysFieldValueServiceImpl;
@@ -63,6 +64,7 @@ public class SysMgrController {
 	@Autowired SysAreaServiceImpl sysAreaService;
 	@Autowired SysCompanyServiceImpl sysCompanyService;
 	@Autowired SysEventServiceImpl sysEventService;
+	@Autowired SysCompanyRoleServiceImpl sysCompanyRoleService;
 	//用户
 	@RequestMapping(value = "/SystemParam.page", method = RequestMethod.GET, params = Helper.PARAM_MODULE_ID)
 	public String page_systemParam(Model model) {
@@ -494,6 +496,11 @@ public class SysMgrController {
 	}
 	*/
 	//-----------------------------部门 角色--------------------
+	@RequestMapping(value = "/companyrole_selectAll.do", produces="text/html;charset=utf-8")
+	@ResponseBody
+	public String companyrole_selectAll() {
+		return JSON.toJSONString(sysCompanyRoleService.getTree());
+	}
 	@RequestMapping(value = "/companyrole_companysWithRoles.do", produces="text/html;charset=utf-8")
 	@ResponseBody
 	public String companyrole_getUsersByRoleid(int roleid) {

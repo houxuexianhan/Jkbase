@@ -73,7 +73,7 @@ CREATE TABLE `sys_company` (
   `C_ParentID` int NOT NULL DEFAULT '0',
   `C_ShowOrder` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`CompanyID`),
-  UNIQUE KEY `sys_Company_idx1` (`C_CName`)
+  UNIQUE KEY `sys_Company_idx1` (`C_ParentID`,`C_CName`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -538,6 +538,9 @@ CREATE VIEW View_sys_RoleApp AS SELECT   a.*,b.*,c.* FROM sys_RoleApp AS a INNER
 drop view if exists view_sys_User;
 CREATE VIEW view_sys_User AS SELECT     a.*,(CASE U_Type WHEN 0 THEN '超级用户' WHEN 1 THEN '管理用户' WHEN 2 THEN '企业用户' ELSE '未定义' END) AS U_TypeText, (CASE U_Status WHEN 0 THEN '正常' WHEN 1 THEN '禁止' ELSE '未定义' END) AS U_StatusText,b.C_CName AS U_CompanyName FROM         sys_User a INNER JOIN sys_Company AS b ON a.U_CompanyID = b.CompanyID ;
 */
+DROP VIEW IF EXISTS `view_sys_company_role`;
+Create VIEW `view_sys_company_role` AS select `c`.`CompanyID` AS `CompanyID`,`c`.`C_AreaId` AS `C_AreaId`,`c`.`C_ChildCount` AS `C_ChildCount`,`c`.`C_CName` AS `C_CName`,`c`.`C_Level` AS `C_Level`,`c`.`C_ParentID` AS `C_ParentID`,`c`.`C_ShowOrder` AS `C_ShowOrder`,(select group_concat(`r`.`R_RoleName` separator ',') from (`sys_company_role` `cr` join `sys_role` `r` on((`cr`.`Roleid` = `r`.`RoleID`))) where (`c`.`CompanyID` = `cr`.`Companyid`)) AS `roles` from `sys_company` `c` ;
+
 drop view if exists view_sys_user_attr;
 CREATE VIEW `view_sys_user_attr` AS select `v`.`R_UserID` AS `R_UserID`,`v`.`AttrKey` AS `AttrKey`,`v`.`AttrValue` AS `AttrValue`,`u`.`U_LoginName` AS `U_LoginName` from ((select `ur`.`R_UserID` AS `R_UserID`,'role' AS `AttrKey`,`r`.`R_RoleName` AS `AttrValue` from ((`sys_user_role` `ur` join `sys_user` `u` on((`ur`.`R_UserID` = `u`.`UserId`))) join `sys_role` `r` on((`r`.`RoleID` = `ur`.`R_RoleID`))) union all select distinct `ur`.`R_UserID` AS `R_UserID`,'app' AS `AttrKey`,`a`.`A_AppName` AS `AttrValue` from ((`sys_user_role` `ur` join `sys_role_app` `ra` on((`ur`.`R_RoleID` = `ra`.`A_RoleID`))) join `sys_app` `a` on((`a`.`AppID` = `ra`.`A_AppID`)))) `v` join `sys_user` `u` on((`v`.`R_UserID` = `u`.`UserId`))) 
 -- Dump completed on 2020-09-24 22:40:04
