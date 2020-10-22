@@ -501,31 +501,19 @@ public class SysMgrController {
 	public String companyrole_selectAll() {
 		return JSON.toJSONString(sysCompanyRoleService.getTree());
 	}
-	@RequestMapping(value = "/companyrole_companysWithRoles.do", produces="text/html;charset=utf-8")
+	@RequestMapping(value = "/companyrole_getRolesByCompany.do", produces="text/html;charset=utf-8")
 	@ResponseBody
-	public String companyrole_getUsersByRoleid(int roleid) {
-		JSONObject jo = new JSONObject();
-		List<ViewSysUser> list = sysUserService.selectByRoleid(roleid);//.selectByRoleId(roleid);
-		JSONArray ja = new JSONArray();
-		ja.addAll(list);
-		jo.put("data", ja);
-		System.out.println(jo.toJSONString());
-		return jo.toJSONString();
+	public String companyrole_getRolesByCompany(int companyid) {
+		return  JSON.toJSONString(sysCompanyRoleService.selectRolesByCompanyid(companyid) );
 	}
-	@RequestMapping(value = "/companyrole_getByUser.do", produces="text/html;charset=utf-8")
+	@RequestMapping(value = "/companyrole_addroles.do",params=Helper.PARAM_FUNCTION_ID, method = RequestMethod.POST, produces="text/html;charset=utf-8")
 	@ResponseBody
-	public String companyrole_getByUser(int userId) {
-		return  JSON.toJSONString(sysUserroleService.selectByUserid(userId));
-	}
-	@RequestMapping(value = "/companyrole_adduser.do",params=Helper.PARAM_FUNCTION_ID, method = RequestMethod.POST, produces="text/html;charset=utf-8")
-	@ResponseBody
-	public String companyrole_adduser(int[] users,int roleid){
-		if(users==null||users.length == 0){
-			return JSON.toJSONString(new Result(false,"用户不能为空!"));
-		}
+	public String companyrole_addroles(int companyid,int[] roles){
+		if(roles==null) roles = new int[]{};
 		try{
-			if( sysUserroleService.insertbatchForRole(users,roleid))return JSON.toJSONString(new Result(true,"该角色批量添加用户成功！"));
-			else return JSON.toJSONString(new Result(false,"该角色添加用户失败！"));
+			if( sysCompanyRoleService.insertbatchForCompany(companyid, roles))
+					return JSON.toJSONString(new Result(true,"部门角色保存成功！",sysCompanyRoleService.selectByCompanyid(companyid)));
+			else return JSON.toJSONString(new Result(false,"部门角色保存失败！"));
 		}catch(Exception e){
 			e.printStackTrace();
 			return JSON.toJSONString(new Result(false,"操作出现异常："+e.getMessage()));

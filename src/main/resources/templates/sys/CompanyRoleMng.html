@@ -14,29 +14,30 @@
         <h4 class="modal-title" >编辑部门角色</h4>
       </div>
       <div class="modal-body">
-		  <form  class="model-form" action="SysMgr/roleuser_adduser.do" method="post">
-		    <input name="roleid" type="hidden" />
+		  <form  class="model-form" action="SysMgr/companyrole_addroles.do" method="post">
+		    <input name="companyid" type="hidden" />
 		    <input id="formFucntion" name="fid" type="hidden" />
 		    <div class="form-group">
 		          <label class="control-label" >部门名称</label>
 		          <div class="controls">
-		            <input name="rRolename" type="text" readonly="readonly" class="form-control">
+		            <input id="companyName" type="text" readonly="readonly" class="form-control">
 		          </div>
 		        </div>
-		    <div class="form-group">
-		          <label class="control-label" for="input01">选择角色</label>
-		          <!-- <div class="controls">
-		            <input id="selectUsers" name="users" class="easyui-combobox" class="form-control" data-options=
-		            'valueField: "userid",textField: "uCname",required:true,groupField:"u_CompanyName",editable:false,multiline:true,multiple:true'
-		            >
-		          </div> -->
-		        </div>
+		    <div class="form-group" id="formRoles">
+	          <label class="control-label">选择角色</label>
+	          <div class="controls">
+	        	 <#list roles as role>
+	              <label class="checkbox-inline">
+				   <input type="checkbox" name="roles" data-roleid="${role.roleid}"  value="${role.roleid}">${role.rRolename}
+				  </label>
+				</#list>
+	           </div>
+	        	</div>
 		  </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-        <!-- <button type="button" class="btn btn-primary" onclick="saveRoleUser()">保存</button> -->
-        
+        <button type="button" class="btn btn-primary" onclick="saveCompanyRoles()">保存</button>
       </div>
     </div>
   </div>
@@ -103,24 +104,49 @@
 $(function() {
 	$.parser.parse();
 	$('#CompanyRoleModal').on('show.bs.modal', function (event) {
-			/*
 		  var modal = $(this);
+		  var button = $(event.relatedTarget);
 		  var action = button.data('action') ;
-		  var fid = button.data('fid');
-		  var title = 'title';
+		  /*var fid = button.data('fid');
+		  var title = 'title'; */
+		  var row = $('#dg').treegrid('getSelected');  
 		  if("edit"==action){
-    		  var row = $('#dg').treegrid('getSelected');  
-    		  var level = row.cLevel;
-			  title = '编辑';
-			  modal.find('.model-form').form('load',row);
-			  var parent = $('#dg').treegrid('getParent',row.companyid);
-			  modal.find('.model-form input[name=cParentCname]').val(parent?parent.cCname:"顶级部门");
+			//获取用户所具有的角色列表
+			  $.post('SysMgr/companyrole_getRolesByCompany.do',{companyid:row.companyid},function(data){
+				  var roles = eval('('+data+')');
+				  $('#CompanyRoleModal #formRoles input[type=checkbox]').each(function(){
+					  var ck = $(this);
+					  var ckRoleId = ck.data('roleid');
+					  ck.prop('checked',false);
+					  for(var i=0;i<roles.length;i++){
+						  if(roles[i].roleid == ckRoleId){
+							  ck.prop('checked',true);
+							  break; 
+						  }
+					  }
+				  });
+			  });
 		  }
-		  modal.find('#formFucntion').val(fid);
-		  modal.find('.modal-title').text(title);
-		  modal.find('#formAction').val(action);*/
+		  modal.find('#companyName').val(row.cCname);
+		  modal.find('input[name=companyid]').val(row.companyid); 
+		  /* modal.find('#formFucntion').val(fid);
+		  modal.find('#formAction').val(action); */
 	});
 });
+/* 功能 */
+function saveCompanyRoles(){
+	$('#CompanyRoleModal .model-form').form('submit', {
+	    success: function(data){
+	        var data = eval('(' + data + ')');  // change the JSON string to javascript object
+	        var node = $('#dg').treegrid('getSelected');  
+	        if(data.success){
+	        	$('#CompanyRoleModal').modal('hide');
+	        	new $.Zebra_Dialog(data.info,{auto_close:1500,modal: false});
+	        	$('#dg').treegrid('update',{id:node.companyid,row:data.data});
+	        }else new $.Zebra_Dialog(data.info,{modal: false});
+	    }
+	});
+}
 </script>
 </body>
 </html>

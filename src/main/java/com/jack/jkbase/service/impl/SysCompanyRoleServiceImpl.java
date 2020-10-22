@@ -14,7 +14,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jack.jkbase.entity.SysCompany;
 import com.jack.jkbase.entity.SysCompanyRole;
-import com.jack.jkbase.entity.ViewSysCompany;
 import com.jack.jkbase.entity.ViewSysCompanyRole;
 import com.jack.jkbase.mapper.SysCompanyRoleMapper;
 import com.jack.jkbase.mapper.ViewSysCompanyRoleMapper;
@@ -33,6 +32,10 @@ public class SysCompanyRoleServiceImpl extends ServiceImpl<SysCompanyRoleMapper,
 	@Autowired ViewSysCompanyRoleMapper viewMapper;
 	public List<ViewSysCompanyRole> selectAll(){
 		return viewMapper.selectList(null);
+	}
+	public ViewSysCompanyRole selectByCompanyid(int companyid) {
+		return viewMapper.selectOne(Wrappers.lambdaQuery(ViewSysCompanyRole.class)
+				.eq(ViewSysCompanyRole::getCompanyid, companyid));
 	}
 	public JSONObject getTree(){
 		JSONObject jo = new JSONObject();
@@ -60,25 +63,22 @@ public class SysCompanyRoleServiceImpl extends ServiceImpl<SysCompanyRoleMapper,
 	/**
 	 * 根据部门id查找角色id列表
 	 */
-	public List<SysCompanyRole> selectByCompanyid(int companyid){
+	public List<SysCompanyRole> selectRolesByCompanyid(int companyid){
 		return list(Wrappers.lambdaQuery(SysCompanyRole.class).eq(SysCompanyRole::getCompanyid, companyid));
 	}
-	/**
-	 * 批量添加某角色的用户列表
+	/*
+	 * public List<SysRole> selectRolesByCompanyid(int companyid){ String sql
+	 * =String.format("select A_AppId from sys_RoleApp where A_RoleID = %d ",
+	 * roleid); return list(Wrappers.lambdaQuery(SysApp.class).eq(SysApp::getaIssys,
+	 * 0) .notInSql(SysApp::getAppid, sql)); }
 	 */
-	public boolean insertbatchForRole(int[] companyids,int roleid) {
-		List<SysCompanyRole> list = new ArrayList<>();
-		for(int userid:companyids) {
-			list.add(new SysCompanyRole(userid, roleid));
-		}
-		return saveBatch(list);
-	}
 	/**
 	 * 批量添加某部门的角色列表
 	 */
 	@Transactional
 	public boolean insertbatchForCompany(int companyid,int[] roleids) {
 		deleteByCompanyid(companyid);//先删除
+		if(roleids.length==0) return true;
 		List<SysCompanyRole> list = new ArrayList<>();
 		for(int roleid:roleids) {
 			list.add(new SysCompanyRole(companyid, roleid));

@@ -30,7 +30,8 @@ public class PageController {
 	@RequestMapping("/{moduleDir}/{templeteName}/module.page")
 	public String commonModuleMapper(@PathVariable String moduleDir ,
 			@PathVariable String templeteName,int moduleId,Model model ) {
-		if("UserMng".equals( templeteName)) model.addAttribute("roles",sysRoleService.list());
+		if("UserMng".equals( templeteName)||"CompanyRoleMng".equals( templeteName)) 
+			model.addAttribute("roles",sysRoleService.list());
 		//获取该模块的权限
 		SysModule optMod = moduleService.getById(moduleId);//校验模块
 		//if(optMod.isEmpty()||optMod.get().getmIsclose())

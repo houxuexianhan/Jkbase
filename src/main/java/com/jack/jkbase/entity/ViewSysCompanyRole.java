@@ -1,7 +1,11 @@
 package com.jack.jkbase.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-
+/**
+ * 注意此视图以companyid作为主键，没有roleid字段
+ * @author LIBO
+ *
+ */
 @TableName("view_sys_company_role")
 public class ViewSysCompanyRole extends SysCompany{
 	//@TableField("roles")
