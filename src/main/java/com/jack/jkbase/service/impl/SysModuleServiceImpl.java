@@ -123,6 +123,6 @@ public class SysModuleServiceImpl extends ServiceImpl<SysModuleMapper, SysModule
 		for(int val : arr) {
 			mod |= val;  //按位 或 运算
 		}
-		return 0;
+		return mod;
 	}
 }
