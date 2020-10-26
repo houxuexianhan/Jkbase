@@ -32,6 +32,7 @@ public class SysRoleModuleServiceImpl extends ServiceImpl<SysRoleModuleMapper, S
 		remove(Wrappers.lambdaQuery(SysRoleModule.class)
 				.eq(SysRoleModule::getpRoleid, roleId)
 				.inSql(SysRoleModule::getpModuleid, insql));
+		
 		List<SysRoleModule> list = new ArrayList<>();
 		for(int i=0;i<array.size();i++) {
 			JSONObject jo = array.getJSONObject(i);
@@ -43,6 +44,7 @@ public class SysRoleModuleServiceImpl extends ServiceImpl<SysRoleModuleMapper, S
 			p.setpValue(val);
 			list.add(p);
 		}
+		if(list.size()==0) return true;
 		return saveBatch(list);
 	}
 }

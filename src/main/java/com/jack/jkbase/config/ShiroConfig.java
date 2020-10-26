@@ -8,6 +8,7 @@ import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
@@ -53,6 +54,7 @@ public class ShiroConfig {
 	public DefaultWebSecurityManager securityManager(){
 		DefaultWebSecurityManager securityManager =  new DefaultWebSecurityManager();
 		securityManager.setRealm(myShiroRealm());
+		securityManager.setSessionManager(sessionManager());
 		return securityManager;
 	}
 	@Bean
@@ -61,6 +63,13 @@ public class ShiroConfig {
 		r.setCredentialsMatcher(hashedCredentialsMatcher());
 		return r;
 	}
+	@Bean
+    public DefaultWebSessionManager sessionManager() {
+        DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+        //设置url重新setSessionIdUrlRewritingEnabled值为false
+        sessionManager.setSessionIdUrlRewritingEnabled(false);
+        return sessionManager;
+    }
 	/**
 	 * 
 	 * @param pwd	
